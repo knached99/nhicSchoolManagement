@@ -24,7 +24,7 @@ function openLink(link){
   window.location.replace(link);
  }
  else{
-  console.log(`You cannot visit ${link}`);
+ window.location.replace('/'); // Redirect home 
  }
 }
 
