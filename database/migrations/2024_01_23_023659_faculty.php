@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('faculty', function(Blueprint $table){
-            $table->id('faculty_id'); // Change the column name to 'faculty_id'
+            $table->id('faculty_id'); // Keep the column name as 'faculty_id'
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
@@ -20,11 +20,13 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('teacher_student_id')->nullable();
             $table->timestamps();
-
+    
             // Foreign key constraint
             $table->foreign('teacher_student_id')->references('student_id')->on('students')->onDelete('set null');
         });
     }
+    
+    
 
     /**
      * Reverse the migrations.
