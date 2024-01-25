@@ -126,15 +126,7 @@ function HomeNav() {
             <a href="/">NHIC</a>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {/* {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))} */}
+            
             {pages.map((page) => (
               <MenuItem key={page} onClick={() => openLink(links[page])}>
                 <Typography textAlign="center">
