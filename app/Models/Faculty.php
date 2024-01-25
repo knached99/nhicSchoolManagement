@@ -19,7 +19,12 @@ class Faculty extends Model
         'teacher_student_id',
     ];
 
-    public function student()
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class, 'faculty_id');
+    }
+
+    public function teacherStudent()
     {
         return $this->belongsTo(Student::class, 'teacher_student_id');
     }
