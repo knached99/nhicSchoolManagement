@@ -16,6 +16,9 @@ class Students extends Model
         'parent_guardian_email',
         'date_of_birth',
         'address',
+        'city',
+        'state',
+        'zip',
         'grade',
         'user_id',
     ];

@@ -17,6 +17,9 @@ return new class extends Migration
         $table->string('parent_guardian_email')->nullable();
         $table->date('date_of_birth')->nullable();
         $table->string('address')->nullable();
+        $table->string('city')->nullable();
+        $table->string('state')->nullable();
+        $table->string('zip')->nullable();
         $table->string('grade');
         $table->unsignedBigInteger('user_id')->nullable();
         $table->timestamps();

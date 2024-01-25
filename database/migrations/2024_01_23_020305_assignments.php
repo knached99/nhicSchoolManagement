@@ -16,12 +16,12 @@ return new class extends Migration
             $table->text('assignment_description');
             $table->datetime('assignment_due_date');
             $table->unsignedBigInteger('student_id')->nullable();
-            $table->unsignedBigInteger('faculty_id')->nullable(); // Add this line
-
-            // Foreign key constraints
+           // $table->unsignedBigInteger('faculty_id')->nullable();
+                
+            // Foreign key constraints with explicit data types
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('set null');
-            $table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('set null'); // Add this line
-
+            //$table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('set null');
+        
             $table->timestamps();
         });
     }
