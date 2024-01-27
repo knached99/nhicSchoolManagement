@@ -52,7 +52,7 @@ export default function Dashboard({ auth }) {
             <div className="py-12">
                 
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                           {/* Modal Goes Here */}
+                           {/* Modal Goes Here
                            <div>
                         <Button onClick={handleOpen} variant="contained" style={{margin: 10, backgroundColor: '#000'}}>Add Student</Button>
                         <Modal
@@ -94,7 +94,7 @@ export default function Dashboard({ auth }) {
                                 </InputLabel>
                                 <TextField className="m-1" fullWidth id="state" name="state"/>
 
-                                <InputLabel>
+                                 <InputLabel>
                                 Zipcode 
                                 </InputLabel>
                                 <TextField className="m-1" fullWidth id="zip" name="zip"/>
@@ -103,7 +103,7 @@ export default function Dashboard({ auth }) {
                             </Typography>
                             </Box>
                         </Modal>
-                        </div>
+                        </div> */}
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">Welcome back, {auth.user.name}!</div>
