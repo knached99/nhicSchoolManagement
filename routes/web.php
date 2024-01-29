@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\AdminAuth;
+use App\Http\Controllers\Faculty\FacultyAuth;
+use App\Http\Controllers\Faculty\FacultyDash;
+use App\Http\Middleware\FacultyMiddleware;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,8 +39,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-/* Admin Routes */
+/* Faculty Middlware Routes 
+These are protected routes and can only be 
+accessed if the faculty user is authenticated  
+*/ 
+Route::group(['middleware' => [FacultyMiddleware::class]], function () {
+    Route::get('/faculty/dash', [FacultyDash::class, 'loadDashboard'])->name('faculty.dash');
+});
 
-Route::get('/admin/login', [AdminAuth::class, 'viewLogin'])->name('login');
+
+/* Faculty Auth Routes */
+
+Route::get('/faculty/login', [FacultyAuth::class, 'viewLogin'])->name('login');
+Route::post('/authenticate', [FacultyAuth::class, 'authenticate'])->name('authenticate');
 
 require __DIR__.'/auth.php';

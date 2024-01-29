@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Faculty;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use App\Http\Controllers\Controller;
 
-class AdminDash extends Controller
+class FacultyDash extends Controller
 {
   public function loadDashboard(){
-    return Inertia::render('admin/dash');
+    return Inertia::render('Faculty/Dash');
   }
  /**
   * Different Roles 

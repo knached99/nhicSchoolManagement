@@ -4,10 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
 
-class Faculty extends Model
+class Faculty extends Model implements Authenticatable
+ 
 {
-    use HasFactory;
+    use HasFactory, AuthenticatableTrait;
+    
+    protected $table="faculty";
+
+    protected $primaryKey="faculty_id";
 
     protected $fillable = [
         'name',
@@ -17,6 +24,15 @@ class Faculty extends Model
         'role',
         'status',
         'teacher_student_id',
+    ];
+
+       /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
     ];
 
     public function assignments()
