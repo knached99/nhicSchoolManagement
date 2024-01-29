@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('role');
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('teacher_student_id')->nullable();
+            $table->rememberToken();
             $table->timestamps();
                 
             // Foreign key constraint

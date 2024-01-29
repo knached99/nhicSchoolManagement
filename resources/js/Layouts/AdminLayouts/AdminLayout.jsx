@@ -16,7 +16,7 @@ export default function AdminLayout({ user, header, children }) {
                         <div className="flex">
                             <div className="shrink-0 flex items-center">
                                 <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                                    <ApplicationLogo className="block h-9 w-100 fill-current text-gray-800" />
                                 </Link>
                             </div>
 
@@ -37,8 +37,7 @@ export default function AdminLayout({ user, header, children }) {
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 {user.name}
-                                                {user.role}
-
+                                            
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -56,8 +55,9 @@ export default function AdminLayout({ user, header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
+                                        <span className="m-3 font-semibold">Role: {user.role}</span>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
+                                        <Dropdown.Link href={route('faculty.logout')} method="post" as="button">
                                             Log Out
                                         </Dropdown.Link>
                                     </Dropdown.Content>
@@ -106,7 +106,7 @@ export default function AdminLayout({ user, header, children }) {
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button">
+                            <ResponsiveNavLink method="post" href={route('faculty.logout')} as="button">
                                 Log Out
                             </ResponsiveNavLink>
                         </div>

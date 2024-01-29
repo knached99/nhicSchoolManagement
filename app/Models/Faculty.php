@@ -33,6 +33,11 @@ class Faculty extends Model implements Authenticatable
      */
     protected $hidden = [
         'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'password' => 'hashed',
     ];
 
     public function assignments()

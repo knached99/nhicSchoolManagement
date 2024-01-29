@@ -1,5 +1,6 @@
+import logo from '../../../public/assets/images/logo.jpg';
 export default function ApplicationLogo(props) {
     return (
-        <img src={`assets/images/logo.jpg`} {...props} style={{width: '100%', width: '100%'}}/>
+        <img src={logo} {...props} />
     );
 }

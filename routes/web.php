@@ -47,6 +47,8 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/faculty/dash', [FacultyDash::class, 'loadDashboard'])->name('faculty.dash');
 });
 
+Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');
+
 
 /* Faculty Auth Routes */
 

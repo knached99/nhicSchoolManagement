@@ -9,7 +9,12 @@ use App\Http\Controllers\Controller;
 class FacultyDash extends Controller
 {
   public function loadDashboard(){
-    return Inertia::render('Faculty/Dash');
+    return Inertia::render('Faculty/Dash', [
+      'auth' => function () {
+          return ['faculty' => auth('faculty')->user()];
+      },
+  ]);
+  
   }
  /**
   * Different Roles 
