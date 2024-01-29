@@ -4,6 +4,12 @@ import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+import GridViewIcon from '@mui/icons-material/GridView';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import CreateFacultyModal from '@/Components/CreateFacultyModal';
 
 export default function AdminLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
@@ -19,16 +25,27 @@ export default function AdminLayout({ user, header, children }) {
                                     <ApplicationLogo className="block h-9 w-100 fill-current text-gray-800" />
                                 </Link>
                             </div>
-
+                           
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
-                                    Welcome Back!
+                                
+                                <NavLink href={route('faculty.dash')} active={route().current('dashboard')}>  
+                                   <Tooltip title="Dashboard Home">
+                                    <IconButton>
+                                    <GridViewIcon />
+                                    </IconButton>
+                                    </Tooltip>
                                 </NavLink>
+                                {user.role === 'Admin' && <CreateFacultyModal/> }
+                               
+
+                              
                             </div>
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
+                            
                             <div className="ms-3 relative">
+                                
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
@@ -56,9 +73,9 @@ export default function AdminLayout({ user, header, children }) {
 
                                     <Dropdown.Content>
                                         <span className="m-3 font-semibold">Role: {user.role}</span>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        <Dropdown.Link href={route('faculty.profile')}><AccountCircleOutlinedIcon/> Profile</Dropdown.Link>
                                         <Dropdown.Link href={route('faculty.logout')} method="post" as="button">
-                                            Log Out
+                                          <LogoutOutlinedIcon/>  Log Out
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -105,7 +122,7 @@ export default function AdminLayout({ user, header, children }) {
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('faculty.profile')}>Profile</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('faculty.logout')} as="button">
                                 Log Out
                             </ResponsiveNavLink>
