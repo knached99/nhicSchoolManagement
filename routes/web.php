@@ -46,6 +46,7 @@ accessed if the faculty user is authenticated
 Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/faculty/dash', [FacultyDash::class, 'loadDashboard'])->name('faculty.dash');
     Route::get('/faculty/profile', [FacultyDash::class, 'loadProfile'])->name('faculty.profile');
+    Route::post('/createFacultyRole', [FacultyDash::class, 'createFacultyRole'])->name('createFacultyRole');
 });
 
 Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');

@@ -6,14 +6,20 @@ import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
+import Collapse from '@mui/material/Collapse';
+import Alert from '@mui/material/Alert';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import TextField from '@mui/material/TextField';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
+import FormHelperText  from '@mui/material/FormHelperText';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const style = {
   position: 'absolute',
@@ -28,37 +34,79 @@ p: 4,
 
 
 export default function CreateFacultyModal() {
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const [role, setRole] = useState('');
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [errorOpen, setErrorOpen] = useState(true);
+  const [successOpen, setSuccessOpen] = useState(true);
 
-    const handleRoleSelect = (event) => {
-        setRole(event.target.value);
+  // Form Intial Values
+  const initialValues = {
+    name: '',
+    email: '',
+    phone_number: '',
+    role: '',
+  };
+
+  // Yup Validation
+  const validation = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    email: Yup.string().email('Invalid email format').required('Email is required'),
+    phone_number: Yup.string()
+      .matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format')
+      .required('Phone number is required'),
+    role: Yup.string().required('Role is required'),
+  });
+
+      const createFacultyRole = async (values, {setSubmitting}) => {
+        try {
+          const response = await axios.post('/createFacultyRole', values, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+        
+          if (response.data.errors) {
+            // Handling validation errors
+            const errors = response.data.errors;
+            const errorMessage = Object.values(errors).flat().join('');
+            setError(errorMessage);
+            setErrorOpen(true);
+            setOpen(true);
+          } else if (response.data.success) {
+            // Handling success response
+            setSuccess(response.data.success);
+            setSuccessOpen(true);
+            setSubmitting(false);
+        
+            // Reset form values
+            Object.keys(values).forEach((key) => {
+              values[key] = '';
+            });
+          }
+        } catch (error) {
+          // Handling other errors (e.g., network error)
+          const errorMessage = Object.values(error.message).flat().join(' ');
+          setError(errorMessage);
+          setErrorOpen(true);
+          setOpen(true);
+        } finally {
+          setSubmitting(false);
+        }
+        
       };
-
-    // Form Intial Values
-    const initialValues = {
-        name: '',
-        email: '',
-        phone_number: '',
-        role: '',
-    };
-    // Yup Validation 
-    const validation = Yup.object().shape({
-        name: Yup.string().required('Name is required'),
-        email: Yup.string().email('Invalid email format').required('Email is required'),
-        phone_number: Yup.string()
-          .matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format')
-          .required('Phone number is required'),
-        role: Yup.string().required('Role is required')
-      });
-
-      const handleSubmit = () => {
-        console.log('ALERT');
-      };
-
       
+      const handleCloseSuccess = () => {
+        setSuccessOpen(false);
+        setSuccess(null);
+    };
+
+    const handleCloseError = () => {
+        setErrorOpen(false);
+        setError(null);
+    };
       
 
   return (
@@ -75,6 +123,54 @@ export default function CreateFacultyModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+
+        {error && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
             <IconButton onClick={handleClose} className="inline-flex float-end m-2">
                 <CloseIcon/>
             </IconButton>
@@ -87,7 +183,7 @@ export default function CreateFacultyModal() {
           Upon successful user creation, the new user will get an email, notifying them that they've been assigned the role and will receive a temporary password to login with. 
           </span>
           </Typography>
-          <Formik initialValues={initialValues} validationSchema={validation} onSubmit={handleSubmit}>
+          <Formik initialValues={initialValues} validationSchema={validation} onSubmit={createFacultyRole}>
 
           {({
             values, 
@@ -95,35 +191,56 @@ export default function CreateFacultyModal() {
             touched,
             handleSubmit,
             handleBlur,
+            handleChange,
             isValid,
             dirty,
             isSubmitting,
           }) => (
             <Form onSubmit={handleSubmit} autoComplete="off">
-            <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}}/>
-            <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}}/>
-            <Field as={TextField} value={values.phone_number} helperText={touched.phone_number && errors.phone_number} error={touched.phone_number && Boolean(errors.phone_number)} onBlur={handleBlur} id="phone_number" name="phone_number" placeholder="Phone Number" fullWidth style={{margin: 5}}/>
-           
-            <InputLabel id="role">Role</InputLabel>
-
+            <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}} />
+            <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}} />
+            <Field as={TextField} value={values.phone_number} helperText={touched.phone_number && errors.phone_number} error={touched.phone_number && Boolean(errors.phone_number)} onBlur={handleBlur} id="phone_number" name="phone_number" placeholder="Phone Number" fullWidth style={{margin: 5}} />
+            <FormControl sx={{ m: 1, width: '100%', }}>
+            <InputLabel id="role">Select Role</InputLabel>
             <Select
-            labelId="role"
-          value={values.role}
-          helperText={touched.role && errors.role} error={touched.role && Boolean(errors.role)} onBlur={handleBlur} id="role" name="role"
-          label="Role"
-          onChange={handleRoleSelect}
-        >
-          <MenuItem value="Admin">Admin</MenuItem>
-          <MenuItem value="Teacher">Teacher</MenuItem>
-        </Select>
-            <Button variant="contained"    style={{
-                  color: 'white',
-                  width: '100%',
-                  backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#000',
-                  padding: 10,
-                  marginTop: 10,
-                }}
-                disabled={isSubmitting || !isValid || !dirty} fullWidth>Create</Button>
+                labelId="role"
+                id="role"
+                name="role"
+                value={values.role}
+                onChange={handleChange} >
+                <MenuItem value="">
+                    <em>Make a Selection</em>
+                </MenuItem>
+                <MenuItem value="Teacher">Teacher</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+            </Select>
+             {touched.role && errors.role && (
+                <FormHelperText>{errors.role}</FormHelperText>
+             )}
+        </FormControl>
+
+
+
+        <Button
+                                        type="submit"
+                                        variant="contained"
+                                        style={{
+                                            color: 'white',
+                                            width: '100%',
+                                            backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#059669',
+                                            padding: 15,
+                                            marginTop: 10,
+                                        }}
+                                        disabled={isSubmitting || !isValid || !dirty}
+                                    >
+                                        {isSubmitting ? (
+                                            <CircularProgress size={24} style={{ color: '#fff' }} />
+                                        ) : (
+                                            <>
+                                               Create User
+                                            </>
+                                        )}
+                                    </Button>
          </Form>
          )}
          </Formik>
