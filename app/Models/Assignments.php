@@ -12,6 +12,7 @@ class Assignment extends Model
         'assignment_name',
         'assignment_description',
         'assignment_due_date',
+        'assignment_grade',
         'student_id',
         'admin_id',
     ];

@@ -14,6 +14,7 @@ return new class extends Migration
             $table->id('assignment_id');
             $table->string('assignment_name');
             $table->text('assignment_description');
+            $table->float('assignment_grade');
             $table->datetime('assignment_due_date');
             $table->unsignedBigInteger('student_id')->nullable();
            // $table->unsignedBigInteger('faculty_id')->nullable();

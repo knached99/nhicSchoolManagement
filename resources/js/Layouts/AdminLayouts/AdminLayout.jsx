@@ -10,7 +10,7 @@ import GridViewIcon from '@mui/icons-material/GridView';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreateFacultyModal from '@/Components/CreateFacultyModal';
-
+import ImportStudentsModal from '@/Components/ImportStudentsModal';
 export default function AdminLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
@@ -28,14 +28,22 @@ export default function AdminLayout({ user, header, children }) {
                            
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 
-                                <NavLink href={route('faculty.dash')} active={route().current('dashboard')}>  
+                                <NavLink href={route('faculty.dash')} active={route().current('faculty.dash')}>  
                                    <Tooltip title="Dashboard Home">
                                     <IconButton>
                                     <GridViewIcon />
                                     </IconButton>
                                     </Tooltip>
                                 </NavLink>
-                                {user.role === 'Admin' && <CreateFacultyModal/> }
+                                {user.role === 'Admin' && (
+                                <>
+                                    <CreateFacultyModal />
+                                </>
+                                )}
+                                <ImportStudentsModal />
+
+
+                                
                                
 
                               
@@ -110,7 +118,7 @@ export default function AdminLayout({ user, header, children }) {
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                        <ResponsiveNavLink href={route('faculty.dash')} active={route().current('faculty.dash')}>
                             Dashboard
                         </ResponsiveNavLink>
                     </div>

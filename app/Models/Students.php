@@ -12,7 +12,8 @@ class Students extends Model
     protected $table='students';
 
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'parent_guardian_email',
         'date_of_birth',
         'address',
@@ -22,6 +23,8 @@ class Students extends Model
         'grade',
         'user_id',
     ];
+    
+    protected $dates = ['date_of_birth'];
 
     public function user()
     {
