@@ -11,6 +11,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreateFacultyModal from '@/Components/CreateFacultyModal';
 import ImportStudentsModal from '@/Components/ImportStudentsModal';
+import SideBar from '@/Components/SideBar';
 export default function AdminLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
@@ -42,15 +43,6 @@ export default function AdminLayout({ user, header, children }) {
                                 </>
                                 )}
                                 
-                                
-                                
-                                
-
-
-                                
-                               
-
-                              
                             </div>
                         </div>
 
@@ -148,8 +140,10 @@ export default function AdminLayout({ user, header, children }) {
                     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
                 </header>
             )}
-
+            
+            {/* <SideBar/> */}
             <main>{children}</main>
         </div>
+        
     );
 }

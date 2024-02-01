@@ -109,7 +109,7 @@ public function viewFacultyUser($faculty_id){
 public function studentBatchImport(Request $request)
 {
     try {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->only('file'), [
             'file' => 'required|mimes:xls,xlsx',
         ]);
 
@@ -126,6 +126,59 @@ public function studentBatchImport(Request $request)
         return response()->json(['error' => $e->getMessage()], 500);
     }
 }
+
+// Manually add student
+
+public function addStudent(Request $request){
+    try{
+        $validator = Validator::make($request->only([
+            'first_name',
+            'last_name',
+            'parent_guardian_email',
+            'date_of_birth',
+            'address',
+            'city',
+            'state',
+            'zip',
+            'grade'
+        ]), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'parent_guardian_email' => 'required|email',
+            'date_of_birth' => 'required|date',
+            'address' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required',
+            'grade' => 'required'
+        ]);
+        
+        if($validator->fails()){
+            \Log::error('Validation Errors In Adding Student: '.$validator->errors());
+            return response()->json(['error'=>$validator->errors()], 419);
+        }
+
+        $data = [
+            'first_name'=>$request->first_name,
+            'last_name'=>$request->last_name,
+            'parent_guardian_email'=>$request->parent_guardian_email,
+            'date_of_birth'=>$request->date_of_birth,
+            'address'=>$request->address,
+            'city'=>$request->city,
+            'state'=>$request->state,
+            'zip'=>$request->zip,
+            'grade'=>$request->grade 
+        ];
+
+        Students::create($data);
+        return response()->json(['success'=>$request->first_name. ' '.$request->last_name. ' was added to the system']);
+    }
+    catch(\Exception $e){
+        \Log::error('Add Student Exception: '.$e->getMessage());
+        return response()->json(['error'=>$e->getMessage()], 500);
+    }
+}
+
 
 public function showAllStudents()
 {

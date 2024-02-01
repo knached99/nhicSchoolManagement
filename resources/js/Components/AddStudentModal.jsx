@@ -39,16 +39,20 @@ export default function AddStudentModal() {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [errorOpen, setErrorOpen] = useState(true);
+    const [successOpen, setSuccessOpen] = useState(true);
 
     const handleCloseSuccess = () => {
-        setSuccessOpen(false);
-        setSuccess(null);
-    };
+      setSuccessOpen(false);
+      setSuccess(null);
+  };
 
-    const handleCloseError = () => {
-        setErrorOpen(false);
-        setError(null);
-    };
+  const handleCloseError = () => {
+      setErrorOpen(false);
+      setError(null);
+  };
       
 
     const initialValues = {
@@ -193,6 +197,55 @@ export default function AddStudentModal() {
           <Box sx={style}>
             <Typography id="transition-modal-title" variant="h6" component="h2">
               Add a Student 
+
+              {error && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+                        
             <IconButton onClick={handleClose} className="inline-flex float-end m-2">
             <CloseIcon/>
             </IconButton>
