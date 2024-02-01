@@ -12,7 +12,10 @@ export default function Login({ errors, status, canResetPassword }) {
         email: '',
         password: '',
         remember: false,
+        auth_error: ''
     });
+
+    console.log(errors);
 
     useEffect(() => {
         return () => {
@@ -31,7 +34,7 @@ export default function Login({ errors, status, canResetPassword }) {
             <Head title="Log in" />
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
+            {errors.auth_error && <div className="bg-red-400 p-3 text-white">{errors.auth_error}</div>}            
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />

@@ -74,18 +74,22 @@ class FacultyAuth extends Controller
 
                 return redirect()->intended(RouteServiceProvider::DASH);
             } else {
-                dd('User Authentication failed, remaining attempts: '.$remainingAttempts);
+                
                 RateLimiter::hit($rateLimitKey, 3600);
-                throw ValidationException::withMessages([
-                    'auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before the account gets locked out for 1 hour.',
+                return Inertia::render('Faculty/Login', [
+                    'auth_error'=>'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before the account gets locked out for 1 hour.'
                 ]);
+
+                // throw ValidationException::withMessages([
+                //     'auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before the account gets locked out for 1 hour.',
+                // ]);
             }
         } catch (ValidationException $e) {
-            \Log::info('Validation Exception: ',$e->errors());
+            \Log::info(['Validation Exception: ',$e->errors()]);
             \Log::info(['Email: '.$request->email, ' Password: '.$request->password]);
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            \Log::info('Auth Exception: ', $e->getMessage());
+            \Log::info(['Auth Exception: ', $e->getMessage()]);
             return redirect()->back()->with('EXCEPTION', $e->getMessage());
         }
     }
