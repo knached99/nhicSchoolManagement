@@ -62,6 +62,10 @@ export default function UpdateFacultyProfile({className = '' }) {
                     <InputError className="mt-2" message={errors.email} />
                 </div>
 
+                <div>
+                  <p>My Role: {user.role}</p>
+                </div>
+
 
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>Save</PrimaryButton>

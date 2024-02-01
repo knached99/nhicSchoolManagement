@@ -38,9 +38,13 @@ export default function AdminLayout({ user, header, children }) {
                                 {user.role === 'Admin' && (
                                 <>
                                     <CreateFacultyModal />
+                                    <ImportStudentsModal />
                                 </>
                                 )}
-                                <ImportStudentsModal />
+                                
+                                
+                                
+                                
 
 
                                 

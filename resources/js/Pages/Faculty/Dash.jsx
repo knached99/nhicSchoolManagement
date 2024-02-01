@@ -2,6 +2,7 @@ import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import AdminsTable from '@/Components/AdminsTable';
 import StudentsTable from '@/Components/StudentsTable';
+import MyStudentsTable from '@/Components/MyStudentsTable';
 export default function Dash({ auth }) {
   // Check if auth object is defined before accessing its properties
   const userName = auth && auth.faculty ? auth.faculty.name : 'Guest';
@@ -24,6 +25,13 @@ export default function Dash({ auth }) {
           <AdminsTable/>
           <StudentsTable/>
           </>
+           }
+
+           {auth.faculty.role === 'Teacher' && 
+           <>
+           
+            <MyStudentsTable/>
+           </>
            }
           
         </div>

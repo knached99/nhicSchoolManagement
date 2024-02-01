@@ -98,13 +98,11 @@ public function fetchFacultyUsers()
 public function viewFacultyUser($faculty_id){
   try{
     $user = Faculty::where('faculty_id',$faculty_id)->firstOrFail();
-   // dd($user, Auth::guard('faculty')->user());
     return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user]);
   }
   catch(ModelNotFoundException $e) {
-    \Log::error('Exception Caught in: '.__FUNCTION__.' On Line: '.$e->getLine().' Error Message: '.$e->getMessage());
-
-    return Inertia::render('Faculty/Dash', ['error'=>' Cannot find information on that user, it is possible that user does not exist.']);
+        \Log::error('Exception Caught in: '.__FUNCTION__.' On Line: '.$e->getLine().' Error Message: '.$e->getMessage());
+    return redirect('faculty/dash');
   }
 }
 
@@ -132,7 +130,7 @@ public function studentBatchImport(Request $request)
 public function showAllStudents()
 {
     try {
-        $students = Students::orderBy('created_at', 'desc')->take(10)->get();
+        $students = Students::orderBy('created_at', 'desc')->get();
         return response()->json(['admins'=>$students]);
     } catch (\Exception $e) {
       \Log::error('Cannot load faculty users: '.$e->getMessage());
