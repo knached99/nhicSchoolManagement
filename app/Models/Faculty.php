@@ -22,6 +22,7 @@ class Faculty extends Model implements Authenticatable
         'phone',
         'password',
         'role',
+        'permissions',
         'status',
         'teacher_student_id',
     ];
@@ -38,6 +39,7 @@ class Faculty extends Model implements Authenticatable
 
     protected $casts = [
         'password' => 'hashed',
+        'permissions'=>'json'
     ];
 
     public function assignments()

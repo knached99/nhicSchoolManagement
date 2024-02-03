@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->longText('password');
             $table->string('role');
+            $table->json('permissions')->nullable();
             $table->boolean('status')->default(1);
             $table->unsignedBigInteger('teacher_student_id')->nullable();
             $table->rememberToken();

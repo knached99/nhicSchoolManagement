@@ -5,6 +5,17 @@ import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 export default function ViewProfile({auth, user}) {
+
+  const formatPermissions = (permissions) => {
+    if (!permissions || !Array.isArray(permissions)) {
+        return 'N/A';
+    }
+
+    // Replace underscores with spaces and join permissions with spaces
+    return permissions.map(permission => permission.replace(/_/g, ' ')).join(', ');
+};
+
+
   return (
     <>
       <AdminLayout
@@ -18,8 +29,13 @@ export default function ViewProfile({auth, user}) {
     <div className="h-[90px] shadow-md w-[90px] rounded-full border-4 overflow-hidden -mt-14 border-white bg-slate-100">
     <img src={defaultProfilePic} className="w-full h-full rounded-full object-center object-cover" />
     </div>
+    <div className="shadow-sm p-3">
+    <span className="block m-2"><MailOutlineOutlinedIcon/> {user.email}</span>
+    <span className="block m-2"><SmartphoneOutlinedIcon/> {user.phone_number ?? 'N/A'} </span>
+    <span className="block m-2"><WorkOutlineOutlinedIcon/> {user.role} </span>
+    <p className="block m-2 font-semibold"> Permissions: <span className="font-normal">{formatPermissions(user.permissions)}</span></p>
+    </div>
 
-    <div className="flex gap-3 flex-wrap"><span className="rounded-sm bg-slate-300 px-1 text-center py-1 text-xs font-medium text-black"><MailOutlineOutlinedIcon/>{user.email}</span><span className="rounded-sm bg-slate-300 px-1 text-center py-1 text-xs font-medium text-black"><SmartphoneOutlinedIcon/> {user.phone_number ? user.phone_number : 'N/A'}</span><span className="rounded-sm bg-slate-300 px-1 text-center py-1 text-xs font-medium text-black"><WorkOutlineOutlinedIcon/> {user.role}</span></div>
     <div className="flex gap-2"><button type="button" className="inline-flex w-auto cursor-pointer select-none appearance-none items-center justify-center space-x-1 rounded border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 transition hover:border-gray-300 active:bg-white hover:bg-gray-100 focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">Send Message</button><button type="button" className="inline-flex w-auto cursor-pointer select-none appearance-none items-center justify-center space-x-1 rounded border border-gray-200 bg-blue-700 px-3 py-2 text-sm font-medium text-white transition hover:border-blue-300 hover:bg-blue-600 active:bg-blue-700 focus:blue-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300">Add to projects</button></div>
   
     <h4 className="text-md font-medium leading-3">Students</h4>

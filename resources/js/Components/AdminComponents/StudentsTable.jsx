@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import AddStudentModal from '@/Components/AddStudentModal';
+import AddStudentModal from '@/Components/AdminComponents/AddStudentModal';
 
 const columns = [
   { field: 'student_id', headerName: 'Student ID', width: 120 },
@@ -39,13 +39,12 @@ export default function StudentsTable() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
 
-
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const response = await fetch('/showAllStudents');
         const { admins, error } = await response.json();
-    
+
         if (error) {
           setError(error);
         } else if (admins) {
@@ -53,25 +52,45 @@ export default function StudentsTable() {
         } else {
           setError('Unexpected response format from the server');
         }
-    
+
         setLoading(false);
       } catch (error) {
         setError('Error fetching students: ' + error.message);
         setLoading(false);
       }
     };
-    
-  
+
     fetchStudents();
   }, []);
-  
+
+  // Function to refresh the data
+  const refreshData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/showAllStudents');
+      const { admins, error } = await response.json();
+
+      if (error) {
+        setError(error);
+      } else if (admins) {
+        setRows(admins.map(row => ({ ...row, id: row.student_id })));
+      } else {
+        setError('Unexpected response format from the server');
+      }
+
+      setLoading(false);
+    } catch (error) {
+      setError('Error fetching students: ' + error.message);
+      setLoading(false);
+    }
+  };
   
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
       <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
         <h1 className="m-3 text-center font-black text-xl">Students</h1>
-        <AddStudentModal/>
+        <AddStudentModal refreshData={refreshData}/>
         {error && 
           <div className="text-red-500 text-xl text-center p-3 m-3">{error}</div>
         }

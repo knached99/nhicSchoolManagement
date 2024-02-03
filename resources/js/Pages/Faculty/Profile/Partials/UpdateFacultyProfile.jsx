@@ -19,6 +19,15 @@ export default function UpdateFacultyProfile({className = '' }) {
         patch(route('profile.update'));
     };
 
+    const formatPermissions = (permissions) => {
+        if (!permissions || !Array.isArray(permissions)) {
+            return 'N/A';
+        }
+    
+        // Replace underscores with spaces and join permissions with spaces
+        return permissions.map(permission => permission.replace(/_/g, ' ')).join(', ');
+    };
+
     return (
         <section className={className}>
             <header>
@@ -63,7 +72,10 @@ export default function UpdateFacultyProfile({className = '' }) {
                 </div>
 
                 <div>
-                  <p>My Role: {user.role}</p>
+                  <p className="font-semibold">My Role: <span className="font-noraml">{user.role}</span></p>
+                </div>
+                <div>
+                    <p className="font-semibold">My Permissions: <span className="font-normal">{formatPermissions(user.permissions)}</span></p>
                 </div>
 
 

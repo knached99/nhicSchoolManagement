@@ -1,8 +1,8 @@
 import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
-import AdminsTable from '@/Components/AdminsTable';
-import StudentsTable from '@/Components/StudentsTable';
-import MyStudentsTable from '@/Components/MyStudentsTable';
+import AdminsTable from '@/Components/AdminComponents/AdminsTable';
+import StudentsTable from '@/Components/AdminComponents/StudentsTable';
+import MyStudentsTable from '@/Components/AdminComponents/MyStudentsTable';
 export default function Dash({ auth }) {
   // Check if auth object is defined before accessing its properties
   const userName = auth && auth.faculty ? auth.faculty.name : 'Guest';
@@ -20,19 +20,18 @@ export default function Dash({ auth }) {
               Welcome back, {userName}!
             </div>
           </div>
-          {auth.faculty.role === 'Admin' &&
-          <>
-          <AdminsTable/>
-          <StudentsTable/>
-          </>
-           }
+          {auth.faculty && (
+          (auth.faculty.role === 'Admin' || (auth.faculty.permissions && auth.faculty.permissions.includes('can_view_all_students'))) && (
+              <>
+                  <AdminsTable />
+                  <StudentsTable />
+              </>
+          )
+      )}
 
-           {auth.faculty.role === 'Teacher' && 
-           <>
-           
-            <MyStudentsTable/>
-           </>
-           }
+
+
+
           
         </div>
       </div>

@@ -67,7 +67,8 @@ class FacultyDash extends Controller
             'email' => $request->email,
             'phone_number' => $request->phone_number,
             'password' => Hash::make($password),
-            'role' => $request->role
+            'role' => $request->role,
+            'permissions' => $request->input('permissions', []),
         ];
 
         Faculty::create($data);

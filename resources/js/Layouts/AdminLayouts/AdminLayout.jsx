@@ -9,12 +9,12 @@ import Tooltip from '@mui/material/Tooltip';
 import GridViewIcon from '@mui/icons-material/GridView';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import CreateFacultyModal from '@/Components/CreateFacultyModal';
-import ImportStudentsModal from '@/Components/ImportStudentsModal';
-import SideBar from '@/Components/SideBar';
+import CreateFacultyModal from '@/Components/AdminComponents/CreateFacultyModal';
+import ImportStudentsModal from '@/Components/AdminComponents/ImportStudentsModal';
+import SideBar from '@/Components/AdminComponents/SideBar';
 export default function AdminLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-
+    
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
@@ -36,12 +36,39 @@ export default function AdminLayout({ user, header, children }) {
                                     </IconButton>
                                     </Tooltip>
                                 </NavLink>
-                                {user.role === 'Admin' && (
+                                {user && (
+                                (user.role === 'Admin' || (user.permissions && user.permissions.includes('can_batch_import_students'))) && (
+                                    <>
+                                      <ImportStudentsModal />
+                                    </>
+                                )
+                            )}
+
+                                {user && (
+                                (user.role === 'Admin' || (user.permissions && user.permissions.includes('can_batch_import_students'))) && (
+                                    <>
+                                      <CreateFacultyModal />
+                                    </>
+                                )
+                            )}
+
+                                {/* {user.role==="Admin" || user.permissions.includes('can_batch_import_students') && 
+                                <>
+                                <ImportStudentsModal />
+                                </>
+                                } */}
+                                {/* {user.role === 'Admin' && (
                                 <>
                                     <CreateFacultyModal />
                                     <ImportStudentsModal />
                                 </>
-                                )}
+                                )} */}
+                                {/* {user.role === "Admin" || user.permissions.includes('can_create_faculty_users')
+                                &&
+                                <>
+                                
+                                </>
+                                } */}
                                 
                             </div>
                         </div>

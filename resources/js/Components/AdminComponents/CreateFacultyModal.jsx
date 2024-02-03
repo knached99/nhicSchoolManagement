@@ -20,6 +20,9 @@ import FormHelperText  from '@mui/material/FormHelperText';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CircularProgress from '@mui/material/CircularProgress';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
 const style = {
   position: 'absolute',
@@ -41,6 +44,7 @@ export default function CreateFacultyModal() {
   const [success, setSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
+  const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
 
   // Form Intial Values
   const initialValues = {
@@ -48,6 +52,7 @@ export default function CreateFacultyModal() {
     email: '',
     phone_number: '',
     role: '',
+    permissions: [],
   };
 
   // Yup Validation
@@ -106,6 +111,14 @@ export default function CreateFacultyModal() {
     const handleCloseError = () => {
         setErrorOpen(false);
         setError(null);
+    };
+
+    const handleOpenPermissionsMenu = () => {
+      setOpenPermissionsMenu(true);
+    };
+
+    const handleClosePermissionsMenu = () => {
+      setOpenPermissionsMenu(false);
     };
       
 
@@ -218,6 +231,17 @@ export default function CreateFacultyModal() {
                 <FormHelperText>{errors.role}</FormHelperText>
              )}
         </FormControl>
+
+        <FormGroup>
+          <p className="text-start text-slate-600 mt-3 mb-3 font-bold">Teacher Permissions <span className="block font-normal">(You can modify these any time. Also please note, admins are granted all these permissions.)</span></p>
+          <FormControlLabel control={<Field as={Switch} value="can_view_all_students" name="permissions" id="can_view_all_students" />} label="Can view all students"/>
+          <FormControlLabel control={<Field as={Switch} value="can_batch_import_students" name="permissions" id="can_batch_import_students" />} label="Can batch import students"/>
+          <FormControlLabel control={<Field as={Switch} value="can_delete_parents" name="permissions" id="can_delete_parents" />} label="Can delete parents"/> 
+          <FormControlLabel control={<Field as={Switch} value="can_delete_students" name="permissions" id="can_delete_students" />} label="Can delete students"/>
+          <FormControlLabel control={<Field as={Switch} value="can_create_faculty_users" name="permissions" id="can_create_faculty_users" />} label="Can create faculty users"/>
+          <FormControlLabel control={<Field as={Switch} value="can_delete_faculty_users" name="permissions" id="can_delete_faculty_users" />} label="Can delete faculty users"/>
+          <FormControlLabel control={<Field as={Switch} value="can_revoke_user_access" name="permissions" id="can_revoke_user_access" />} label="Can revoke user access"/>
+        </FormGroup>
 
 
 

@@ -35,7 +35,7 @@ const style = {
   };
 
   
-export default function AddStudentModal() {
+export default function AddStudentModal({refreshData}) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -96,6 +96,7 @@ export default function AddStudentModal() {
             // Handling success response
             setSuccess(response.data.success);
             setSuccessOpen(true);
+            refreshData();
       
             // Reset form values
             // Assuming values is an object with form field keys
@@ -178,8 +179,11 @@ export default function AddStudentModal() {
       ];
 
   return (
-    <div>
-      <Button onClick={handleOpen} style={{backgroundColor: '#cbd5e1', color: '#000', margin: 20}}>Add Student</Button>
+    <div className="mb-5">
+      <button onClick={handleOpen} class="bg-slate-300 hover:bg-slate-400 text-black font-normal py-2 px-4 rounded">
+        Add Student
+      </button>
+      {/* <Button onClick={handleOpen} style={{backgroundColor: '#cbd5e1', color: '#000', margin: 20}}>Add Student</Button> */}
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -192,6 +196,7 @@ export default function AddStudentModal() {
             timeout: 500,
           },
         }}
+
       >
         <Fade in={open}>
           <Box sx={style}>

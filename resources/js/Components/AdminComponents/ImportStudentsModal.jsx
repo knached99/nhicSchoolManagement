@@ -100,6 +100,7 @@ export default function ImportStudentsModal() {
           setErrorOpen(true);
       } finally {
           setSubmitting(false);
+          window.location.reload(); // page refresh 
       }
   };
 
@@ -199,7 +200,14 @@ export default function ImportStudentsModal() {
                 error={touched.file && Boolean(errors.file)}
                 onChange={(e) => setFieldValue('file', e.currentTarget.files[0])}
             />
-
+                
+                {isSubmitting ? (
+                    <>
+                    <span className="inline-block mr-2">importing... </span>
+                    <CircularProgress size={24} style={{ color: '#6366f1' }} />
+                    </>
+                ) : (
+                    <>
                 <Button
                 disabled={isSubmitting || !isValid || !dirty}
                 type="submit"
@@ -212,8 +220,12 @@ export default function ImportStudentsModal() {
                 variant="outlined"
                 startIcon={<CloudUploadOutlinedIcon />}
                 >
-                Import
+                import 
                 </Button>
+                    </>
+                )}
+
+                
 
               </Form>
             )}
