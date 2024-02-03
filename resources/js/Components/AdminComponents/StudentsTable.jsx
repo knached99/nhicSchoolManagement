@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import AddStudentModal from '@/Components/AdminComponents/AddStudentModal';
 
+
 const columns = [
   { field: 'student_id', headerName: 'Student ID', width: 120 },
   { field: 'first_name', headerName: 'First Name', width: 120 },

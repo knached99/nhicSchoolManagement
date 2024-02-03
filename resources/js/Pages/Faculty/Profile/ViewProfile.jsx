@@ -33,7 +33,7 @@ export default function ViewProfile({auth, user}) {
     <span className="block m-2"><MailOutlineOutlinedIcon/> {user.email}</span>
     <span className="block m-2"><SmartphoneOutlinedIcon/> {user.phone_number ?? 'N/A'} </span>
     <span className="block m-2"><WorkOutlineOutlinedIcon/> {user.role} </span>
-    <p className="block m-2 font-semibold"> Permissions: <span className="font-normal">{formatPermissions(user.permissions)}</span></p>
+    <p className="block m-2 font-semibold"> Permissions: <span className="font-normal">{user.role==='Admin' && 'All Permissions' || user.role==='Teacher' && formatPermissions(user.permissions)}</span></p>
     </div>
 
     <div className="flex gap-2"><button type="button" className="inline-flex w-auto cursor-pointer select-none appearance-none items-center justify-center space-x-1 rounded border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-800 transition hover:border-gray-300 active:bg-white hover:bg-gray-100 focus:border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">Send Message</button><button type="button" className="inline-flex w-auto cursor-pointer select-none appearance-none items-center justify-center space-x-1 rounded border border-gray-200 bg-blue-700 px-3 py-2 text-sm font-medium text-white transition hover:border-blue-300 hover:bg-blue-600 active:bg-blue-700 focus:blue-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-300">Add to projects</button></div>
