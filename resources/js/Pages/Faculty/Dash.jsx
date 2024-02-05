@@ -24,7 +24,7 @@ export default function Dash({ auth }) {
           (auth.faculty.role === 'Admin' || (auth.faculty.permissions && auth.faculty.permissions.includes('can_view_all_students'))) && (
               <>
                   <AdminsTable auth={auth} />
-                  <StudentsTable />
+                  <StudentsTable auth={auth} />
               </>
           )
       )}

@@ -39,66 +39,130 @@ export default function AdminsTable({auth}) {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  {console.log('Delete button condition met:', auth.faculty.role)}
+  const [errorOpen, setErrorOpen] = useState(true);
+  const [successOpen, setSuccessOpen] = useState(true);
 
   const viewFacultyDetails = (userID) => {
     window.location.href = `/faculty/profile/${userID}/view`;
   }
   
-  const deleteAdminUser = async (userId) => {
-    try {
-      const response = await axios.delete(`/deleteAdminUser/${userId}`);
-  
-      if (response.data.success) {
-        // Handling success response
-        setSuccess(response.data.success);
-      } else {
-        // Handling failure response
-        setError(`Error deleting admin user: ${userId} because: ${response.data.error}`);
-        //console.error('Error deleting admin user:', response.data.error);
-      }
-    } catch (error) {
-      // Handling other errors (e.g., network error)
-      // console.error('Error deleting admin user:', error.message);
-      setError(`Error deleting admin user: ${userId} because: ${error.message}`);
+const deleteAdminUser = async (userId) => {
+  try {
+    const response = await axios.delete(`/deleteFacultyUser/${userId}`);
 
+    if (response.data.success) {
+      setRows(await fetchFacultyUsers());
+      setSuccess(response.data.success);
+      setSuccessOpen(true);
+    } else {
+      setError(response.data.error);
+      setErrorOpen(true);
     }
-  };
-  
+  } catch (error) {
+    setError(`Error deleting admin user: ${userId} because: ${error.message}`);
+    setErrorOpen(true);
+  }
+};
 
-  useEffect(() => {
     const fetchFacultyUsers = async () => {
       try {
         const response = await fetch('/fetchFacultyUsers');
         const { admins, error } = await response.json();
-  
+    
         if (error) {
-          setError(error);
-        } else if (admins) {
-          setRows(admins);
-        } else {
-          setError('Unexpected response format from the server');
+          throw new Error(error);
         }
-  
-        setLoading(false);
+    
+        return admins || [];
       } catch (error) {
-        setError('Error fetching faculty users: ' + error.message);
-        setLoading(false);
+        throw new Error('Error fetching faculty users: ' + error.message);
       }
     };
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const facultyUsers = await fetchFacultyUsers();
+          setRows(facultyUsers);
+          setLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+        }
+      };
   
-    fetchFacultyUsers();
-  }, []);
+      fetchData();
+    }, []);
   
+
+    const handleCloseSuccess = () => {
+      setSuccessOpen(false);
+      setSuccess(null);
+  };
+
+  const handleCloseError = () => {
+      setErrorOpen(false);
+      setError(null);
+  };
   
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
       <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      {error && (
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
         <h1 className="m-3 text-center font-black text-xl">Faculty Users</h1>
-        {error && (
-          <div className="text-red-500 text-xl text-center p-3 m-3">{error}</div>
-        )}
+      
 
         {/* Table Section */}
         {loading ? (
@@ -128,7 +192,7 @@ export default function AdminsTable({auth}) {
                         <TableCell>{row.name}</TableCell>
                         <TableCell>{row.email}</TableCell>
                         <TableCell>
-                          {row.phone_number ? row.phone_number : 'N/A'}
+                          {row.phone ? row.phone : 'N/A'}
                         </TableCell>
                         <TableCell>{row.role}</TableCell>
                         <TableCell>
@@ -139,6 +203,7 @@ export default function AdminsTable({auth}) {
                             <IconButton
                               className="hover:text-emerald-500"
                               onClick={() => viewFacultyDetails(row.faculty_id)}
+                              disabled={row.faculty_id === auth.faculty.faculty_id}
                             >
                               <VisibilityOutlinedIcon />
                             </IconButton>
@@ -146,21 +211,20 @@ export default function AdminsTable({auth}) {
                          
                         </TableCell>
 
-                        {auth.faculty && (
-                            (auth.faculty.role === 'Admin' || (auth.faculty.permissions && auth.faculty.permissions.includes('can_delete_faculty_users'))) && (
-                                <>
+                       
+                                
                                 <TableCell>
                                 <Tooltip
                                 title={`Delete ${row.name} from the system`}
                               >
-                                <IconButton className="hover:text-red-500" onClick ={()=>deleteAdminUser(row.faculty_id)}>
+                                <IconButton className="hover:text-red-500" onClick ={()=>deleteAdminUser(row.faculty_id)}
+                                  disabled={/* Add a condition for disabling */ row.faculty_id === auth.faculty.faculty_id || auth.faculty.role === 'Teacher' && ! auth.faculty.permissions.includes('can_delete_faculty_users')}
+                                >
                                   <DeleteOutlineOutlinedIcon />
                                 </IconButton>
                               </Tooltip>
                                     </TableCell>
-                                </>
-                            )
-                        )}
+                           
                       </TableRow>
                     ))}
                 </TableBody>

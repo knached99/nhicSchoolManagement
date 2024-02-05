@@ -22,12 +22,14 @@ return new class extends Migration
         $table->string('state')->nullable();
         $table->string('zip')->nullable();
         $table->integer('grade')->nullable();
+        $table->unsignedBigInteger('faculty_id')->nullable();
         $table->unsignedBigInteger('user_id')->nullable();
         $table->timestamps();
-
-        // Foreign key constraint
         $table->foreign('user_id')->references('user_id')->on('users')->onDelete('set null');
+       // $table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('set null');
+
     });
+    
 }
 
 

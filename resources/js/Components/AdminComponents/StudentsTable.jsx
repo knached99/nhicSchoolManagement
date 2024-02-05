@@ -35,7 +35,7 @@ const columns = [
   },
 ];
 
-export default function StudentsTable() {
+export default function StudentsTable({auth}) {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
@@ -91,7 +91,14 @@ export default function StudentsTable() {
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
       <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
         <h1 className="m-3 text-center font-black text-xl">Students</h1>
-        <AddStudentModal refreshData={refreshData}/>
+        {auth.faculty && (
+          (auth.faculty.role === 'Admin' || (auth.faculty.permissions && auth.faculty.permissions.includes('can_add_student'))) && (
+              <>
+              <AddStudentModal refreshData={refreshData}/>
+
+              </>
+          )
+      )}
         {error && 
           <div className="text-red-500 text-xl text-center p-3 m-3">{error}</div>
         }

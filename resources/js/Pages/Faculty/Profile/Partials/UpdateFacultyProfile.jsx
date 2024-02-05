@@ -1,26 +1,96 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
+import {useState, useEffect } from 'react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { Transition } from '@headlessui/react';
+
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import CloseIcon from '@mui/icons-material/Close';
+import Collapse from '@mui/material/Collapse';
+import Alert from '@mui/material/Alert';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 export default function UpdateFacultyProfile({className = '' }) {
     const user = usePage().props.auth.faculty;
-
-    const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
-        name: user.name,
-        email: user.email,
+    const { data, setData } = useForm({
+        email: user.email
     });
 
-    const submit = (e) => {
-        e.preventDefault();
+    const [errors, setErrors] = useState();
+    const [success, setSuccess] = useState();
+    const [errorOpen, setErrorOpen] = useState(true);
+    const [successOpen, setSuccessOpen] = useState(true);
+    const [refreshData, setRefreshData] = useState(false); // handle state for refreshed data 
 
-        patch(route('profile.update'));
+    const initialValues = {
+        email: ''
+    };
+    const validationSchema = Yup.object().shape({
+        email: Yup.string().required('email is required').email('Must be a valid email')
+    });
+
+    const updateProfile = async (values, { setSubmitting }) => {
+        try {
+            const response = await axios.put('/updateProfile', values, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (response.data.errors) {
+                setErrors(response.data.errors);
+                setErrorOpen(true);
+            } else if (response.data.success) {
+                setSuccess(response.data.success);
+                setSuccessOpen(true);
+                setData('email', values.email); // Update local form data
+                Object.keys(values).forEach((key) => {
+                    values[key] = '';
+                });
+                setRefreshData(true); // Set the flag to refresh data
+
+            }
+        } catch (error) {
+            setErrors(error.message);
+            setErrorOpen(true);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+       // useEffect for data refresh
+       useEffect(() => {
+        const fetchData = async () => {
+            // Fetch updated data from the server and update local state
+            const updatedData = await axios.get('/fetchFacultyData');
+            setData(updatedData);
+        };
+
+        if (refreshData) {
+            fetchData();
+            setRefreshData(false); // Reset the flag
+        }
+    }, [refreshData, setData]);
+
+    const handleCloseSuccess = () => {
+        setSuccessOpen(false);
+        setSuccess(null);
+    };
+
+    const handleCloseError = () => {
+        setErrorOpen(false);
+        setErrors(null);
     };
 
     const formatPermissions = (permissions) => {
-        if (!permissions || !Array.isArray(permissions)) {
+        if(user.role === 'Admin'){
+            return 'All Permissions'
+        }
+        else if (!permissions || !Array.isArray(permissions)) {
             return 'N/A';
         }
     
@@ -32,43 +102,83 @@ export default function UpdateFacultyProfile({className = '' }) {
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                {errors && (
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {errors}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
 
                 <p className="mt-1 text-sm text-gray-600">
                     Update your account's profile information and email address.
                 </p>
             </header>
-
-            <form onSubmit={submit} className="mt-6 space-y-6">
+            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={updateProfile}>
+            {({
+                values,
+                errors,
+                touched,
+                handleSubmit,
+                handleBlur,
+                handleChange,
+                isValid,
+                dirty,
+                isSubmitting,
+            }) => (
+                <Form onSubmit={handleSubmit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
-
-                    <TextInput
-                        id="name"
-                        className="mt-1 block w-full"
-                        value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                        isFocused
-                        autoComplete="name"
-                    />
-
-                    <InputError className="mt-2" message={errors.name} />
+                    <p className="font-bold">Name: {user.name}</p>
+     
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        className="mt-1 block w-full"
-                        value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                        autoComplete="username"
-                    />
-
-                    <InputError className="mt-2" message={errors.email} />
+                <Field style={{margin: 10}} fullWidth placeholder="Email" as={TextField}  value={values.email || data.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/>
                 </div>
 
                 <div>
@@ -80,19 +190,30 @@ export default function UpdateFacultyProfile({className = '' }) {
 
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600">Saved.</p>
-                    </Transition>
+                <Button
+                    type="submit"
+                    variant="contained"
+                    style={{
+                        color: 'white',
+                        width: '100%',
+                        backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#3d5afe',
+                        padding: 15,
+                        marginTop: 10,
+                    }}
+                    disabled={isSubmitting || !isValid || !dirty}
+                >
+                    {isSubmitting ? (
+                        <CircularProgress size={24} style={{ color: '#fff' }} />
+                    ) : (
+                        <>
+                            Save
+                        </>
+                    )}
+                </Button> 
                 </div>
-            </form>
+            </Form>
+            )}
+            </Formik>
         </section>
     );
 }

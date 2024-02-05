@@ -42,6 +42,7 @@ class FacultyDash extends Controller
 
     public function createFacultyRole(Request $request)
 {
+
     $rules = [
         'name' => 'required',
         'email' => 'required|email',
@@ -65,10 +66,10 @@ class FacultyDash extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'phone_number' => $request->phone_number,
+            'phone' => $request->phone_number,
             'password' => Hash::make($password),
             'role' => $request->role,
-            'permissions' => $request->input('permissions', []),
+            'permissions' => ($request->role === 'Admin') ? null : $request->input('permissions', []),
         ];
 
         Faculty::create($data);
@@ -84,6 +85,16 @@ class FacultyDash extends Controller
     }
 }
 
+
+public function deleteFacultyUser($faculty_id){
+    try{
+        Faculty::destroy($faculty_id);
+        return response()->json(['success'=>'Successfully deleted that user from the system']);
+    }
+    catch(\Exception $e){
+        return response()->json(['error'=>'Could not delete that user: '.$e->getMessage()]);
+    }
+}
 
 public function fetchFacultyUsers()
 {
@@ -132,6 +143,8 @@ public function studentBatchImport(Request $request)
 
 public function addStudent(Request $request){
     try{
+        $role = Auth::guard('faculty')->user()->role;
+
         $validator = Validator::make($request->only([
             'first_name',
             'last_name',
@@ -168,7 +181,8 @@ public function addStudent(Request $request){
             'city'=>$request->city,
             'state'=>$request->state,
             'zip'=>$request->zip,
-            'grade'=>$request->grade 
+            'grade'=>$request->grade,
+            'faculty_id' => ($role === 'Teacher' && $permissions->contains('can_add_student')) ? Auth::id() : null
         ];
 
         Students::create($data);
@@ -191,6 +205,17 @@ public function showAllStudents()
         return response()->json(['error' => 'Error fetching students: ' . $e->getMessage()], 500);
     }
 }
+
+public function viewStudentDetails($student_id){
+    try{
+      $student = Students::where('student_id',$student_id)->firstOrFail();
+      return Inertia::render('Student', ['auth'=> Auth::guard('faculty')->user(), 'student'=>$student]);
+    }
+    catch(ModelNotFoundException $e) {
+          \Log::error('Exception Caught in: '.__FUNCTION__.' On Line: '.$e->getLine().' Error Message: '.$e->getMessage());
+      return redirect('faculty/dash');
+    }
+  }
 
 
     /**

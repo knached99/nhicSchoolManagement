@@ -20,12 +20,9 @@ return new class extends Migration
             $table->string('role');
             $table->json('permissions')->nullable();
             $table->boolean('status')->default(1);
-            $table->unsignedBigInteger('teacher_student_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
                 
-            // Foreign key constraint
-            $table->foreign('teacher_student_id')->references('student_id')->on('students')->onDelete('set null');
         });
         
     }

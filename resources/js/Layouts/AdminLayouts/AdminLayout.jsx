@@ -45,7 +45,7 @@ export default function AdminLayout({ user, header, children }) {
                             )}
 
                                 {user && (
-                                (user.role === 'Admin' || (user.permissions && user.permissions.includes('can_batch_import_students'))) && (
+                                (user.role === 'Admin' || (user.permissions && user.permissions.includes('can_create_faculty_users'))) && (
                                     <>
                                       <CreateFacultyModal />
                                     </>

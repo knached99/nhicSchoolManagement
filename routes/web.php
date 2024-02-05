@@ -3,8 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Faculty\FacultyAuth;
 use App\Http\Controllers\Faculty\FacultyDash;
+use App\Http\Controllers\Faculty\FacultyProfileController;
 use App\Http\Middleware\FacultyMiddleware;
-
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,11 +47,17 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/faculty/dash', [FacultyDash::class, 'loadDashboard'])->name('faculty.dash');
     Route::get('/faculty/profile', [FacultyDash::class, 'loadProfile'])->name('faculty.profile');
     Route::post('/createFacultyRole', [FacultyDash::class, 'createFacultyRole'])->name('createFacultyRole');
+    Route::delete('/deleteFacultyUser/{faculty_id}', [FacultyDash::class, 'deleteFacultyUser'])->name('deleteFacultyUser');
     Route::get('/fetchFacultyUsers', [FacultyDash::class, 'fetchFacultyUsers'])->name('fetchFacultyUsers');
     Route::get('/faculty/profile/{faculty_id}/view', [FacultyDash::class, 'viewFacultyUser'])->name('faculty.profile.view');
     Route::post('/studentBatchImport', [FacultyDash::class, 'studentBatchImport'])->name('studentBatchImport');
     Route::post('/addStudent', [FacultyDash::class, 'addStudent'])->name('addStudent');
     Route::get('/showAllStudents', [FacultyDash::class, 'showAllStudents'])->name('showAllStudents');
+    Route::get('/student/{student_id}', [FacultyDash::class, 'viewStudentDetails'])->name('viewStudentDetails');
+    // Profile Update Routes
+    Route::put('/updateProfile', [FacultyProfileController::class, 'updateProfile'])->name('updateProfile');
+    Route::put('/updateFacultyPassword', [FacultyProfileController::class, 'updatePassword'])->name('updateFacultyPassword');
+
 });
 
 Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');

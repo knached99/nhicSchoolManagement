@@ -113,32 +113,45 @@ export default function CreateFacultyModal() {
         setError(null);
     };
 
-    const handleOpenPermissionsMenu = () => {
-      setOpenPermissionsMenu(true);
-    };
-
-    const handleClosePermissionsMenu = () => {
-      setOpenPermissionsMenu(false);
+    const handleTogglePermissionsMenu = () => {
+      setOpenPermissionsMenu(!openPermissionsMenu);
     };
       
 
   return (
-    <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ">
+    <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
     <Tooltip title="Create Faculty User">
         <IconButton onClick={handleOpen} className="hover:text-emerald-500">
             <AddCircleOutlineIcon/>
         </IconButton>
     </Tooltip>
       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+       open={open}
+       onClose={handleClose}
+       aria-labelledby="modal-modal-title"
+       aria-describedby="modal-modal-description"
+       style={{
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'center',
+       }}
       >
-        <Box sx={style}>
+        <Box   style={{
+          width: '100%',
+          maxWidth: '80%',
+          maxHeight: '80vh',
+          overflowY: 'auto',
+          padding: '1rem',
+          backgroundColor: '#fff'
+        }}>
 
         {error && (
-                            <Box sx={{ width: '100%' }}>
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
                                 <Collapse in={errorOpen}>
                                     <Alert
                                         icon={<ErrorOutlineIcon fontSize="inherit" />}
@@ -212,7 +225,7 @@ export default function CreateFacultyModal() {
             <Form onSubmit={handleSubmit} autoComplete="off">
             <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}} />
             <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}} />
-            <Field as={TextField} value={values.phone_number} helperText={touched.phone_number && errors.phone_number} error={touched.phone_number && Boolean(errors.phone_number)} onBlur={handleBlur} id="phone_number" name="phone_number" placeholder="Phone Number" fullWidth style={{margin: 5}} />
+            <Field as={TextField} onChange={handleChange} value={values.phone_number} helperText={touched.phone_number && errors.phone_number} error={touched.phone_number && Boolean(errors.phone_number)} onBlur={handleBlur} id="phone_number" name="phone_number" placeholder="Phone Number" fullWidth style={{margin: 5}} />
             <FormControl sx={{ m: 1, width: '100%', }}>
             <InputLabel id="role">Select Role</InputLabel>
             <Select
@@ -232,16 +245,27 @@ export default function CreateFacultyModal() {
              )}
         </FormControl>
 
+        <Button onClick={handleTogglePermissionsMenu} variant="outlined" style={{ margin: '10px 0' }}>
+        {openPermissionsMenu ? 'Hide Permissions' : 'Show Permissions (For Teachers Only)'}
+        </Button>
+
+        <Collapse in={openPermissionsMenu}>   
         <FormGroup>
           <p className="text-start text-slate-600 mt-3 mb-3 font-bold">Teacher Permissions <span className="block font-normal">(You can modify these any time. Also please note, admins are granted all these permissions.)</span></p>
           <FormControlLabel control={<Field as={Switch} value="can_view_all_students" name="permissions" id="can_view_all_students" />} label="Can view all students"/>
           <FormControlLabel control={<Field as={Switch} value="can_batch_import_students" name="permissions" id="can_batch_import_students" />} label="Can batch import students"/>
+          <FormControlLabel control={<Field as={Switch} value="can_add_student" name="permissions" id="can_add_student" />} label="Can add student"/>
           <FormControlLabel control={<Field as={Switch} value="can_delete_parents" name="permissions" id="can_delete_parents" />} label="Can delete parents"/> 
           <FormControlLabel control={<Field as={Switch} value="can_delete_students" name="permissions" id="can_delete_students" />} label="Can delete students"/>
           <FormControlLabel control={<Field as={Switch} value="can_create_faculty_users" name="permissions" id="can_create_faculty_users" />} label="Can create faculty users"/>
           <FormControlLabel control={<Field as={Switch} value="can_delete_faculty_users" name="permissions" id="can_delete_faculty_users" />} label="Can delete faculty users"/>
           <FormControlLabel control={<Field as={Switch} value="can_revoke_user_access" name="permissions" id="can_revoke_user_access" />} label="Can revoke user access"/>
         </FormGroup>
+        </Collapse>
+
+       
+
+ 
 
 
 
