@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Students;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -20,6 +21,8 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
 
     public function model(array $row)
     {
+        $role = Auth::guard('faculty')->user()->role;
+        $permissions = collect(Auth::guard('faculty')->user()->permissions);
         $dateOfBirth = null;
     
         // Check if the date column is set and not empty
@@ -40,6 +43,7 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
             'state' => $row[6] ?? null,
             'zip' => $row[7] ?? null,
             'grade' => $row[8] ?? null, // Use null if key 8 is undefined
+            'faculty_id' => ($role === 'Teacher' && $permissions->contains('can_add_student')) ? Auth::guard('faculty')->id() : null
         ]);
     }
     

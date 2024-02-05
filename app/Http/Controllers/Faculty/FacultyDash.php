@@ -145,6 +145,7 @@ public function studentBatchImport(Request $request)
 public function addStudent(Request $request){
     try{
         $role = Auth::guard('faculty')->user()->role;
+        $permissions = collect(Auth::guard('faculty')->user()->permissions);
 
         $validator = Validator::make($request->only([
             'first_name',
@@ -174,19 +175,24 @@ public function addStudent(Request $request){
         }
 
         $data = [
-            'first_name'=>$request->first_name,
-            'last_name'=>$request->last_name,
-            'parent_guardian_email'=>$request->parent_guardian_email,
-            'date_of_birth'=>$request->date_of_birth,
-            'address'=>$request->address,
-            'city'=>$request->city,
-            'state'=>$request->state,
-            'zip'=>$request->zip,
-            'grade'=>$request->grade,
-            'faculty_id' => ($role === 'Teacher' && $permissions->contains('can_add_student')) ? Auth::id() : null
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'parent_guardian_email' => $request->parent_guardian_email,
+            'date_of_birth' => $request->date_of_birth,
+            'address' => $request->address,
+            'city' => $request->city,
+            'state' => $request->state,
+            'zip' => $request->zip,
+            'grade' => $request->grade,
         ];
-
+        
+        // If the user has the role of Teacher and the permission to add a student, set faculty_id
+        if ($role === 'Teacher' && $permissions->contains('can_add_student')) {
+            $data['faculty_id'] = Auth::guard('faculty')->id();
+        }
+        
         Students::create($data);
+        
         return response()->json(['success'=>$request->first_name. ' '.$request->last_name. ' was added to the system']);
     }
     catch(\Exception $e){
@@ -195,11 +201,66 @@ public function addStudent(Request $request){
     }
 }
 
+public function deleteStudent($student_id)
+{
+    try {
+        // Retrieve the student with associated data
+        $student = Students::with(['attendance', 'assignments', 'grades'])->findOrFail($student_id);
+
+        if (!$student) {
+            return response()->json(['errors'=>'Student not found']);
+        }
+
+        // Delete attendance records
+        if ($student->attendance) {
+            $student->attendance->each->delete();
+        }
+
+        // Delete assignment records
+        if ($student->assignments) {
+            $student->assignments->each->delete();
+        }
+
+        // Delete grade records
+        if ($student->grades) {
+            $student->grades->each->delete();
+        }
+
+        // Delete the student
+        $student->delete();
+
+        return response()->json(['success' => 'Student and associated data deleted successfully']);
+    }
+    catch (ModelNotFoundException $e) {
+        \Log::error('Delete Student Exception: ' . $e->getMessage());
+
+        return response()->json(['errors' => $e->getMessage()]);
+    }
+    catch (QueryException $e) {
+        \Log::error('Delete Student Exception: ' . $e->getMessage());
+
+        return response()->json(['errors' => $e->getMessage()]);
+    }
+
+}
+
+
 
 public function showAllStudents()
 {
     try {
         $students = Students::orderBy('created_at', 'desc')->get();
+        return response()->json(['admins'=>$students]);
+    } catch (\Exception $e) {
+      \Log::error('Cannot load faculty users: '.$e->getMessage());
+        return response()->json(['error' => 'Error fetching students: ' . $e->getMessage()], 500);
+    }
+}
+
+public function getMyStudents()
+{
+    try {
+        $students = Students::where('faculty_id', Auth::guard('faculty')->id())->orderBy('created_at', 'desc')->get();
         return response()->json(['admins'=>$students]);
     } catch (\Exception $e) {
       \Log::error('Cannot load faculty users: '.$e->getMessage());

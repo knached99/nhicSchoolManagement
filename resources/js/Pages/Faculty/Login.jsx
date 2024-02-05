@@ -1,13 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Checkbox from '@/Components/Checkbox';
 import FacultyGuestLayout from '@/Layouts/AdminLayouts/FacultyGuestLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
+import CloseIcon from '@mui/icons-material/Close';
+import Collapse from '@mui/material/Collapse';
+import Alert from '@mui/material/Alert';
 import { Head, Link, useForm } from '@inertiajs/react';
+import Box from '@mui/material/Box';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import IconButton from '@mui/material/IconButton';
 
 export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_error, status, canResetPassword }) {
+    const [errorOpen, setErrorOpen] = useState(true);
+    const [successOpen, setSuccessOpen] = useState(true);
+
     const { data, setData, post, processing, reset } = useForm({
         email: '',
         password: '',
@@ -15,7 +24,6 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
 
     });
 
-    console.log(errors);
 
     useEffect(() => {
         return () => {
@@ -29,13 +37,76 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
         post(route('authenticate'));
     };
 
+    const handleCloseError = () => {
+        setErrorOpen(false);
+        setError(null);
+    };
+
     return (
         <FacultyGuestLayout>
             <Head title="Log in" />
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-            {errors.auth_error && <div className="bg-red-400 p-3 text-white">{errors.auth_error}</div>}
-            {errors.RATE_LIMIT_THRESHOLD_EXCEEDED && <div className="bg-red-400 p-3 text-white">{errors.RATE_LIMIT_THRESHOLD_EXCEEDED}</div>}         
+             {errors.auth_error && (
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {errors.auth_error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                            {errors.RATE_LIMIT_THRESHOLD_EXCEEDED && (
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {errors.RATE_LIMIT_THRESHOLD_EXCEEDED}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+            {/* {errors.auth_error && <div className="bg-red-400 p-3 text-white">{errors.auth_error}</div>} */}
+            {/* {errors.RATE_LIMIT_THRESHOLD_EXCEEDED && <div className="bg-red-400 p-3 text-white">{errors.RATE_LIMIT_THRESHOLD_EXCEEDED}</div>}          */}
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />

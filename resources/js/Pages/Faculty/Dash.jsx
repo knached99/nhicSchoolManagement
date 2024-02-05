@@ -21,12 +21,26 @@ export default function Dash({ auth }) {
             </div>
           </div>
           {auth.faculty && (
-          (auth.faculty.role === 'Admin' || (auth.faculty.permissions && auth.faculty.permissions.includes('can_view_all_students'))) && (
+          (auth.faculty.role === 'Admin') && (
               <>
                   <AdminsTable auth={auth} />
                   <StudentsTable auth={auth} />
               </>
           )
+      )}
+
+     {auth.faculty && (
+      auth.faculty.role ==='Teacher' && (auth.faculty.permissions && auth.faculty.permissions.includes('can_view_all_students') && (
+        <StudentsTable auth={auth}/>
+      ))
+
+     )}
+      {auth.faculty && (
+        auth.faculty.role === 'Teacher' && (
+          <>
+          <MyStudentsTable auth={auth} />
+          </>
+        )
       )}
 
 
