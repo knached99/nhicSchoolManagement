@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->longText('password');
             $table->string('role');
+            $table->string('profile_pic')->nullable();
             $table->json('permissions')->nullable();
             $table->boolean('status')->default(1);
             $table->rememberToken();

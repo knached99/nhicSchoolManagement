@@ -16,6 +16,7 @@ use App\Models\Students;
 use Illuminate\Notifications\NotificationException; 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use App\Imports\StudentsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
@@ -41,50 +42,50 @@ class FacultyDash extends Controller
     }
 
     public function createFacultyRole(Request $request)
-{
-
-    $rules = [
-        'name' => 'required',
-        'email' => 'required|email',
-        'phone_number' => 'required|regex:/^\d{3}-\d{3}-\d{4}$/',
-        'role' => 'required'
-    ];
-
-    $messages = [
-        'name.required' => 'Name is required',
-        'email.required' => 'Email is required',
-        'email.email' => 'That is not a valid email',
-        'phone_number.required' => 'Phone Number is required',
-        'phone_number.regex' => 'Phone number must be a valid US number',
-        'role.required' => 'Role is required'
-    ];
-
-    try {
-        $this->validate($request, $rules, $messages);
-
-        $password = Str::random(10);
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'phone' => $request->phone_number,
-            'password' => Hash::make($password),
-            'role' => $request->role,
-            'permissions' => ($request->role === 'Admin') ? null : $request->input('permissions', []),
+    {
+        $rules = [
+            'name' => 'required',
+            'email' => 'required|email',
+            'phone_number' => 'required|regex:/^\d{3}-\d{3}-\d{4}$/',
+            'role' => 'required'
         ];
-
-        Faculty::create($data);
-        Notification::route('mail', $data['email'])->notify(new AccountCreated($data['name'], $data['email'], $password, $data['role']));
-
-        return response()->json(['success' => 'Account created for ' . $data['name'] . ' and instructions have been emailed to ' . $data['email']]);
-    } catch (ValidationException $e) {
-        return response()->json(['errors' => $e->errors()], 422);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    } catch (NotificationException $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
+    
+        $messages = [
+            'name.required' => 'Name is required',
+            'email.required' => 'Email is required',
+            'email.email' => 'That is not a valid email',
+            'phone_number.required' => 'Phone Number is required',
+            'phone_number.regex' => 'Phone number must be a valid US number',
+            'role.required' => 'Role is required'
+        ];
+    
+        try {
+            $this->validate($request, $rules, $messages);
+    
+            $password = Str::random(10);
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone' => $request->phone_number,
+                'password' => Hash::make($password),
+                'role' => $request->role,
+                'permissions' => ($request->role === 'Admin') ? null : $request->input('permissions', []),
+            ];
+    
+            Faculty::create($data);
+            Notification::route('mail', $data['email'])->notify(new AccountCreated($data['name'], $data['email'], $password, $data['role']));
+    
+            return response()->json(['success' => 'Account created for ' . $data['name'] . ' and instructions have been emailed to ' . $data['email']]);
+        } catch (ValidationException $e) {
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (QueryException $e) {
+            \Log::error(['Query Exception: ', $e->errorInfo]);
+            return response()->json(['errors' => 'Something went wrong creating that account']);
+        } catch (NotificationException $e) {
+            \Log::error(['Notification Exception: ', $e->getMessage()]);
+            return response()->json(['errors' => 'Account created but unable to send email notification: ' . $e->getMessage()]);
+        }
     }
-}
-
 
 public function deleteFacultyUser($faculty_id){
     try{

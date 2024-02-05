@@ -22,6 +22,7 @@ class Faculty extends Model implements Authenticatable
         'phone',
         'password',
         'role',
+        'profile_pic',
         'permissions',
         'status',
         'teacher_student_id',

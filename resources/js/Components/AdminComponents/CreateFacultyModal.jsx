@@ -65,44 +65,33 @@ export default function CreateFacultyModal() {
     role: Yup.string().required('Role is required'),
   });
 
-      const createFacultyRole = async (values, {setSubmitting}) => {
-        try {
-          const response = await axios.post('/createFacultyRole', values, {
+  const createFacultyRole = async (values, { setSubmitting }) => {
+    try {
+        const response = await axios.post('/createFacultyRole', values, {
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
-          });
-        
-          if (response.data.errors) {
-            // Handling validation errors
-            const errors = response.data.errors;
-            const errorMessage = Object.values(errors).flat().join('');
-            setError(errorMessage);
+        });
+
+        if (response.data.errors) {
+            setError(response.data.errors);
             setErrorOpen(true);
-            setOpen(true);
-          } else if (response.data.success) {
-            // Handling success response
+        } else if (response.data.success) {
             setSuccess(response.data.success);
             setSuccessOpen(true);
-            setSubmitting(false);
-        
+
             // Reset form values
             Object.keys(values).forEach((key) => {
-              values[key] = '';
+                values[key] = '';
             });
-          }
-        } catch (error) {
-          // Handling other errors (e.g., network error)
-          const errorMessage = Object.values(error.message).flat().join(' ');
-          setError(errorMessage);
-          setErrorOpen(true);
-          setOpen(true);
-        } finally {
-          setSubmitting(false);
         }
-        
-      };
-      
+    } catch (error) {
+        setError(error.message || 'An error occurred');
+        setErrorOpen(true);
+    } finally {
+        setSubmitting(false);
+    }
+};
       const handleCloseSuccess = () => {
         setSuccessOpen(false);
         setSuccess(null);

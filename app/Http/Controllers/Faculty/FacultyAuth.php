@@ -31,28 +31,21 @@ class FacultyAuth extends Controller
     public function authenticate(Request $request)
     {
         try {
-            $rules = [
+            $request->validate([
                 'email' => 'required|email|exists:faculty',
                 'password' => 'required',
-            ];
-
-            $messages = [
+            ], [
                 'email.required' => 'Your email is required',
                 'email.email' => 'You\'ve entered an invalid email',
                 'email.exists' => 'An account for that email does not exist',
                 'password.required' => 'Your password is required',
-            ];
-
-            $this->validate($request, $rules, $messages);
+            ]);
 
             $rateLimitKey = $request->ip();
-            $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
 
             if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
                 $minutesRemaining = ceil(RateLimiter::availableIn($rateLimitKey) / 60);
-                throw ValidationException::withMessages([
-                    'RATE_LIMIT_THRESHOLD_EXCEEDED' => 'Your account has been locked out due to too many failed login attempts. Please try again in ' . $minutesRemaining . ' minutes.',
-                ]);
+                return redirect()->back()->withErrors(['RATE_LIMIT_THRESHOLD_EXCEEDED' => 'Your account has been locked out due to too many failed login attempts. Please try again in ' . $minutesRemaining . ' minutes.']);
             }
 
             $rememberMe = $request->input('remember');
@@ -68,32 +61,18 @@ class FacultyAuth extends Controller
                 }
 
                 RateLimiter::clear($rateLimitKey);
-               // dd('User Authenticated: '.Auth::guard('faculty')->user());
-
                 session(['faculty' => Auth::guard('faculty')->user()]);
-
                 return redirect()->intended(RouteServiceProvider::DASH);
             } else {
-                
                 RateLimiter::hit($rateLimitKey, 3600);
-                return Inertia::render('Faculty/Login', [
-                    'auth_error'=>'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before the account gets locked out for 1 hour.'
-                ]);
-
-                // throw ValidationException::withMessages([
-                //     'auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before the account gets locked out for 1 hour.',
-                // ]);
+                return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records.']);
             }
         } catch (ValidationException $e) {
-            \Log::info(['Validation Exception: ',$e->errors()]);
-            \Log::info(['Email: '.$request->email, ' Password: '.$request->password]);
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            \Log::info(['Auth Exception: ', $e->getMessage()]);
-            return redirect()->back()->with('EXCEPTION', $e->getMessage());
+            return redirect()->back()->withErrors(['EXCEPTION' => $e->getMessage()]);
         }
     }
-
 
     public function logout(Request $request): RedirectResponse
     {

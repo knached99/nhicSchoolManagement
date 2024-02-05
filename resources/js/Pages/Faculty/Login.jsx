@@ -7,12 +7,12 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-export default function Login({ errors, status, canResetPassword }) {
+export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_error, status, canResetPassword }) {
     const { data, setData, post, processing, reset } = useForm({
         email: '',
         password: '',
         remember: false,
-        auth_error: ''
+
     });
 
     console.log(errors);
@@ -34,7 +34,8 @@ export default function Login({ errors, status, canResetPassword }) {
             <Head title="Log in" />
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-            {errors.auth_error && <div className="bg-red-400 p-3 text-white">{errors.auth_error}</div>}            
+            {errors.auth_error && <div className="bg-red-400 p-3 text-white">{errors.auth_error}</div>}
+            {errors.RATE_LIMIT_THRESHOLD_EXCEEDED && <div className="bg-red-400 p-3 text-white">{errors.RATE_LIMIT_THRESHOLD_EXCEEDED}</div>}         
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
