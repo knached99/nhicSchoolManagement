@@ -12,6 +12,8 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import CreateFacultyModal from '@/Components/AdminComponents/CreateFacultyModal';
 import ImportStudentsModal from '@/Components/AdminComponents/ImportStudentsModal';
 import SideBar from '@/Components/AdminComponents/SideBar';
+import Zoom from '@mui/material/Zoom';
+
 export default function AdminLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     
@@ -30,7 +32,7 @@ export default function AdminLayout({ user, header, children }) {
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 
                                 <NavLink href={route('faculty.dash')} active={route().current('faculty.dash')}>  
-                                   <Tooltip title="Dashboard Home">
+                                   <Tooltip title="Dashboard Home" TransitionComponent={Zoom} >
                                     <IconButton>
                                     <GridViewIcon />
                                     </IconButton>

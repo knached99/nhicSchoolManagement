@@ -244,6 +244,28 @@ public function deleteStudent($student_id)
 
 }
 
+public function deleteMyStudents()
+{
+    $permissions = collect(Auth::guard('faculty')->user()->permissions);
+
+    try {
+        // Check if the user has the 'can_delete_students' permission
+        if (!$permissions->contains('can_delete_students')) {
+            return response()->json(['errors' => 'You do not have permission to perform this action']);
+        }
+
+        // Delete all students and associated data
+        Students::with(['attendance', 'assignments', 'grades'])->where('faculty_id', Auth::guard('faculty')->id())->delete();
+
+        return response()->json(['success' => 'All of your students and associated data deleted successfully']);
+    } catch (Exception $e) {
+        \Log::error('Delete All Students Exception: ' . $e->getMessage());
+
+        return response()->json(['errors' => $e->getMessage()]);
+    }
+}
+
+
 
 
 public function showAllStudents()

@@ -39,6 +39,9 @@ class Students extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function faculty(){
+        return $this->belongsTo(Faculty::class);
+    }
   
     public function attendance()
     {

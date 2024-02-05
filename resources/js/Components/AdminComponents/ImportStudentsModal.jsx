@@ -22,6 +22,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { styled } from '@mui/material/styles';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+import Zoom from '@mui/material/Zoom';
+
 const style = {
     position: 'absolute',
     top: '50%',
@@ -115,7 +117,7 @@ export default function ImportStudentsModal() {
   };
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ">
-     <Tooltip title="Batch Import Students">
+     <Tooltip title="Batch Import Students" TransitionComponent={Zoom} >
         <IconButton onClick={handleOpen} className="hover:text-emerald-500">
         <FileUploadOutlinedIcon/>
         </IconButton>

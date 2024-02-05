@@ -13,6 +13,9 @@ import Box from '@mui/material/Box';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
+import Button from '@mui/material/Button';
+import Zoom from '@mui/material/Zoom';
+
 
 export default function MyStudentsTable({auth}) {
   const [loading, setLoading] = useState(true);
@@ -156,12 +159,34 @@ const handleCloseError = () => {
     }
 };
 
+const deleteMyStudents = async () => {
+  try {
+      const response = await axios.delete(`/deleteMyStudents`);
+
+      if (response.data.errors) {
+          setError(response.data.errors);
+          setErrorOpen(true);
+      } else if (response.data.success) {
+          setSuccess(response.data.success);
+          setSuccessOpen(true);
+          refreshData();
+
+      }
+  } catch (error) {
+      setError(error.message || 'An error occurred deleting your students');
+      setErrorOpen(true);
+  } finally {
+      setSubmitting(false);
+  }
+};
+
 
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
       <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
         <h1 className="m-3 text-center font-black text-xl">My Students</h1>
+        
         {auth.faculty && (
           (auth.faculty.role === 'Teacher' && (auth.faculty.permissions && auth.faculty.permissions.includes('can_add_student'))) && (
               <>
@@ -170,6 +195,25 @@ const handleCloseError = () => {
               </>
           )
       )}
+      {rows.length === 0 ? (
+        // No data, do not display the button
+        <></>
+      ) : (
+        // There is data
+        auth.faculty && (
+          auth.faculty.role === 'Teacher' &&
+          (auth.faculty.permissions && auth.faculty.permissions.includes('can_delete_students')) && (
+            <>
+              <Tooltip title="Once you delete all of your students, there is no going back as this action will delete all of your students and their associated data." arrow TransitionComponent={Zoom} >
+                <Button variant="contained" style={{ backgroundColor: '#ef4444', marginBottom: 20 }} onClick={deleteMyStudents}>
+                  Delete All Students
+                </Button>
+              </Tooltip>
+            </>
+          )
+        )
+      )}
+
         {error && (
                             <Box   style={{
                               padding: '1rem',
@@ -233,6 +277,7 @@ const handleCloseError = () => {
         ) : (
           <Paper sx={{ width: '100%', backgroundColor: '#fff' }}>
             <div style={{ height: 400, width: '100%' }}>
+              
               <DataGrid
                 rows={rows}
                 columns={columns}
