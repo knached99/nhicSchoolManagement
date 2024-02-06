@@ -180,7 +180,7 @@ export default function AddStudentModal({refreshData}) {
 
   return (
     <div className="mb-5">
-      <button onClick={handleOpen} class="bg-slate-300 hover:bg-slate-400 text-black font-normal py-2 px-4 rounded">
+      <button onClick={handleOpen} className="bg-slate-300 hover:bg-slate-400 text-black font-normal py-2 px-4 rounded">
         Add Student
       </button>
       {/* <Button onClick={handleOpen} style={{backgroundColor: '#cbd5e1', color: '#000', margin: 20}}>Add Student</Button> */}

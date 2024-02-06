@@ -241,7 +241,7 @@ export default function CreateFacultyModal() {
         <Collapse in={openPermissionsMenu}>   
         <FormGroup>
           <p className="text-start text-slate-600 mt-3 mb-3 font-bold">Teacher Permissions <span className="block font-normal">(You can modify these any time. Also please note, admins are granted all these permissions.)</span></p>
-          <FormControlLabel control={<Field as={Switch} value="can_view_all_students" name="permissions" id="can_view_all_students" />} label="Can view all students"/>
+          {/* <FormControlLabel control={<Field as={Switch} value="can_view_all_students" name="permissions" id="can_view_all_students" />} label="Can view all students"/> */}
           <FormControlLabel control={<Field as={Switch} value="can_batch_import_students" name="permissions" id="can_batch_import_students" />} label="Can batch import students"/>
           <FormControlLabel control={<Field as={Switch} value="can_add_student" name="permissions" id="can_add_student" />} label="Can add student"/>
           <FormControlLabel control={<Field as={Switch} value="can_delete_parents" name="permissions" id="can_delete_parents" />} label="Can delete parents"/> 

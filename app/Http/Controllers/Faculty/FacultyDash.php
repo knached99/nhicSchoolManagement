@@ -244,6 +244,21 @@ public function deleteStudent($student_id)
 
 }
 
+public function deleteAllStudents()
+{
+
+    try {
+        // Delete all students and associated data
+        Students::with(['attendance', 'assignments', 'grades'])->delete();
+
+        return response()->json(['success' => 'All students and their associated data has been deleted successfully']);
+    } catch (Exception $e) {
+        \Log::error('Delete All Students Exception: ' . $e->getMessage());
+
+        return response()->json(['errors' => $e->getMessage()]);
+    }
+}
+
 public function deleteMyStudents()
 {
     $permissions = collect(Auth::guard('faculty')->user()->permissions);
@@ -257,7 +272,7 @@ public function deleteMyStudents()
         // Delete all students and associated data
         Students::with(['attendance', 'assignments', 'grades'])->where('faculty_id', Auth::guard('faculty')->id())->delete();
 
-        return response()->json(['success' => 'All of your students and associated data deleted successfully']);
+        return response()->json(['success' => 'All of your students and their associated data has been deleted successfully']);
     } catch (Exception $e) {
         \Log::error('Delete All Students Exception: ' . $e->getMessage());
 
