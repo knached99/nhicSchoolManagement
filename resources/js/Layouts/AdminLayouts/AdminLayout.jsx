@@ -16,7 +16,7 @@ import Zoom from '@mui/material/Zoom';
 
 export default function AdminLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-    
+    const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
@@ -86,7 +86,7 @@ export default function AdminLayout({ user, header, children }) {
                                                 type="button"
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
-                                                {user.name}
+                                                {!user.profile_pic ? user.name : <img src={`${profilePicPath}/${user.profile_pic}`} class="inline-block h-10 w-10 rounded-full ring-2 ring-white"/> }
                                             
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Image;
 
 class FacultyProfileController extends Controller {
 
@@ -27,6 +29,7 @@ class FacultyProfileController extends Controller {
 
     public function updatePassword(Request $request)
     {
+       
         try {
             $validated = $request->validate([
                 'current_password' => ['required'],
@@ -48,7 +51,41 @@ class FacultyProfileController extends Controller {
         }
     }
     
+    public function uploadProfilePic(Request $request)
+    {
+        try {
+            $user = Auth::guard('faculty')->user();
     
+            $validated = $request->validate([
+                'profile_pic' => ['required', 'image', 'mimes:jpeg,png,jpg|max:2048'],
+            ]);
+    
+            if ($user->profile_pic && Storage::exists('public/profile_pics/' . basename($user->profile_pic))) {
+                Storage::delete('public/profile_pics/' . basename($user->profile_pic));
+            }
+    
+            $file = $request->file('profile_pic');
+            $fileName = $file->hashName() . '.' . $file->extension();
+    
+            // Save the original image to storage without resizing
+            $saveImage = Storage::putFileAs('public/profile_pics', $file, $fileName);
+    
+            $user->profile_pic = $fileName;
+            $savePfpToDb = $user->save();
+    
+            if (!$saveImage || !$savePfpToDb) {
+                \Log::error(['Image Upload Errors: ', 'Unable to save picture, something went wrong']);
+                return response()->json(['errors' => 'Unable to save picture, something went wrong']);
+            }
+    
+            return response()->json(['success' => 'Image uploaded successfully']);
+        } catch (\Exception $e) {
+            \Log::error(['Exception Caught: ' . $e->getMessage()]);
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+
 }
 
 ?>
