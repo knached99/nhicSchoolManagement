@@ -190,11 +190,14 @@ export default function UpdateProfilePic({ className = '' }) {
                 {/* Image Preview Start */}
                 <div className="mt-2">
                     {previewImage && (
+                        <>
+                        <p className="font-semibold">Image Preview: </p>
                         <img
                             src={previewImage}
                             alt="Profile Preview"
-                            className="w-24 h-24 object-cover rounded-full ring-2 ring-gray-300 dark:ring-gray-500"
+                            className="w-50 h-50 object-cover rounded ring-2 ring-gray-300 dark:ring-gray-500"
                         />
+                        </>
                     )}
                 </div>
                 {/* Image Preview End */}
@@ -229,7 +232,7 @@ export default function UpdateProfilePic({ className = '' }) {
                         style={{
                             color: 'white',
                             width: '100%',
-                            backgroundColor: isSubmitting || !isValid || !dirty || !values.profile_pic ? '#165634' : '#3d5afe',
+                            backgroundColor: isSubmitting || !isValid || !dirty || !values.profile_pic ? '#l66534' : '#3d5afe',
                             padding: 15,
                             marginTop: 10,
                         }}

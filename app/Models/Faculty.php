@@ -1,20 +1,16 @@
 <?php 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class Faculty extends Model implements Authenticatable
- 
+class Faculty extends Authenticatable
 {
-    use HasFactory, AuthenticatableTrait;
+    use HasFactory, Notifiable;
     
-    protected $table="faculty";
-
-    protected $primaryKey="faculty_id";
+    protected $table = "faculty";
+    protected $primaryKey = "faculty_id";
 
     protected $fillable = [
         'name',
@@ -28,7 +24,7 @@ class Faculty extends Model implements Authenticatable
         'teacher_student_id',
     ];
 
-       /**
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -40,7 +36,7 @@ class Faculty extends Model implements Authenticatable
 
     protected $casts = [
         'password' => 'hashed',
-        'permissions'=>'json'
+        'permissions' => 'json'
     ];
 
     public function assignments()
@@ -53,5 +49,4 @@ class Faculty extends Model implements Authenticatable
         return $this->belongsTo(Student::class, 'teacher_student_id');
     }
 }
-
 ?>

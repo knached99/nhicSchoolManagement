@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
 These are protected routes and can only be 
 accessed if the faculty user is authenticated  
 */ 
+
 Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/faculty/dash', [FacultyDash::class, 'loadDashboard'])->name('faculty.dash');
     Route::get('/faculty/profile', [FacultyDash::class, 'loadProfile'])->name('faculty.profile');
@@ -69,7 +70,7 @@ Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.lo
 
 /* Faculty Auth Routes */
 
-Route::get('/faculty/login', [FacultyAuth::class, 'viewLogin'])->name('login');
+Route::get('/faculty/login', [FacultyAuth::class, 'viewLogin'])->name('faculty.login');
 Route::post('/authenticate', [FacultyAuth::class, 'authenticate'])->name('authenticate');
 
 require __DIR__.'/auth.php';

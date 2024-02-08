@@ -23,6 +23,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import Zoom from '@mui/material/Zoom';
 
 const style = {
   position: 'absolute',
@@ -109,7 +110,7 @@ export default function CreateFacultyModal() {
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
-    <Tooltip title="Create Faculty User">
+    <Tooltip title="Create Faculty User" TransitionComponent={Zoom}>
         <IconButton onClick={handleOpen} className="hover:text-emerald-500">
             <AddCircleOutlineIcon/>
         </IconButton>

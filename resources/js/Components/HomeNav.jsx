@@ -11,10 +11,11 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 
-const pages = ['Create Account', 'Login'];
+const pages = ['Create Account', 'Login', 'Faculty'];
 const links = {
   "Create Account": '/register',
-  'Login': '/login'
+  'Login': '/login',
+  'Faculty': '/faculty/login',
 };
 
 function openLink(link){
@@ -104,6 +105,7 @@ function HomeNav() {
                 </Typography>
               </MenuItem>
             ))}
+           
             </Menu>
           </Box>
        
@@ -134,6 +136,7 @@ function HomeNav() {
                 </Typography>
               </MenuItem>
             ))}
+      
           </Box>
 
         </Toolbar>

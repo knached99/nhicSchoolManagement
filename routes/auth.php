@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Faculty\FacultyNewPasswordController;
+use App\Http\Controllers\Faculty\FacultyPasswordResetLinkController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -34,6 +36,23 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.store');
 });
+
+// // Faculty Password Reset 
+// Route::get('/faculty/password/reset', [FacultyAuth::class, 'passwordResetView'])->name('faculty.password.request');
+// Route::post('/sendPasswordResetRequest', [FacultyAuth::class, 'sendPasswordResetRequest'])->name('sendPasswordResetRequest');
+// Route::get('/password-reset/{token}', [FacultyAuth::class, 'resetPassword']);
+        Route::get('forgot-password', [FacultyPasswordResetLinkController::class, 'create'])
+            ->name('faculty.password.request'); // Update to the expected name
+
+        Route::post('forgot-password', [FacultyPasswordResetLinkController::class, 'store'])
+            ->name('password.email'); // Update to the expected name
+
+        Route::get('reset-password/{token}', [FacultyNewPasswordController::class, 'create'])
+            ->name('password.reset'); // Update to the expected name
+
+        Route::post('reset-password', [FacultyNewPasswordController::class, 'store'])
+            ->name('faculty.password.store'); // Update to the expected name
+
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

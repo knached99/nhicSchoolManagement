@@ -15,7 +15,6 @@ import IconButton from '@mui/material/IconButton';
 
 export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_error, status, canResetPassword }) {
     const [errorOpen, setErrorOpen] = useState(true);
-    const [successOpen, setSuccessOpen] = useState(true);
 
     const { data, setData, post, processing, reset } = useForm({
         email: '',
@@ -42,11 +41,14 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
         setError(null);
     };
 
+
+
     return (
         <FacultyGuestLayout>
             <Head title="Log in" />
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
+
              {errors.auth_error && (
                             <Box   style={{
                               padding: '1rem',
@@ -105,8 +107,7 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
                             </Box>
                         )}
 
-            {/* {errors.auth_error && <div className="bg-red-400 p-3 text-white">{errors.auth_error}</div>} */}
-            {/* {errors.RATE_LIMIT_THRESHOLD_EXCEEDED && <div className="bg-red-400 p-3 text-white">{errors.RATE_LIMIT_THRESHOLD_EXCEEDED}</div>}          */}
+       
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
@@ -153,11 +154,11 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
-                    {canResetPassword && (
-                        <Link href={route('password.request')} className="text-sm text-gray-600 hover:text-gray-900">
+
+                        <Link href={route('faculty.password.request')} className="text-sm text-gray-600 hover:text-gray-900">
                             Forgot your password?
                         </Link>
-                    )}
+              
 
                     <PrimaryButton
                         type="submit"
@@ -168,6 +169,7 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
                         Log in
                     </PrimaryButton>
                 </div>
+                
             </form>
         </FacultyGuestLayout>
     );

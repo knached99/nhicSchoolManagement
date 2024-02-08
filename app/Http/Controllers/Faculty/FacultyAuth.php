@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Auth\AuthenticationException; // Catches Authentication Exceptions
@@ -17,7 +18,6 @@ use Illuminate\Support\Facades\Cookie;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -25,7 +25,9 @@ use Illuminate\Support\Facades\RateLimiter;
 class FacultyAuth extends Controller
 {
     public function viewLogin(){
-        return Inertia::render('Faculty/Login');
+        return Inertia::render('Faculty/Login', [ 
+        'status' => session('status'),
+        ]);
     }
 
     public function authenticate(Request $request)
@@ -91,5 +93,34 @@ class FacultyAuth extends Controller
     {
         return redirect()->back()->withErrors(['RATE_LIMIT_THRESHOLD_EXCEEDED' => 'Your account has been locked out due to too many failed login attempts. Please try again in ' . $minutesRemaining . ' minutes.']);
     }
+
+    public function sendPasswordResetRequest(Request $request)
+    {
+        try {
+            $request->validate([
+                'email' => 'required|email',
+            ]);
+
+            // Send password reset link
+            $status = Password::sendResetLink($request->only('email'));
+
+            if ($status === Password::RESET_LINK_SENT) {
+                return response()->json(['success' => $status]);
+            }
+        } catch (ValidationException $e) {
+
+            \Log::error('Validation Errors: ' . $e->getMessage());
+
+            return response()->json(['errors' => $e->getMessage()]);
+        } catch (\Exception $e) {
+
+            \Log::error('Exception Caught: ' . $e->getMessage());
+
+            return response()->json(['errors' => 'Unexpected error occurred.']);
+        }
+    }
+
+  
+
     
 }

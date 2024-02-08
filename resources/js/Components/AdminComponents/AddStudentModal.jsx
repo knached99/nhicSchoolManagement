@@ -301,7 +301,7 @@ export default function AddStudentModal({refreshData}) {
             )}
           </FormControl>
 
-            <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth style={{margin: 5}} />
+            <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.zip)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth style={{margin: 5}} />
             <Field as={TextField} value={values.grade} helperText={touched.grade && errors.grade} error={touched.grade && Boolean(errors.grade)} onBlur={handleBlur} id="grade" name="grade" placeholder="Grade" fullWidth style={{margin: 5}} />
 
         
