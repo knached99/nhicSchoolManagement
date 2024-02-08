@@ -18,6 +18,7 @@ return new class extends Migration
         $table->string('parent_guardian_email')->nullable();
         $table->date('date_of_birth')->nullable(); // Change the type to date
         $table->string('address')->nullable();
+        $table->string('street_address_2')->nullable();
         $table->string('city')->nullable();
         $table->string('state')->nullable();
         $table->string('zip')->nullable();

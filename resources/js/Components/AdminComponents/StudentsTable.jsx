@@ -130,6 +130,7 @@ const columns = [
   { field: 'parent_guardian_email', headerName: 'Parent/Guardian Email', width: 200 },
   { field: 'date_of_birth', headerName: 'Date Of Birth', width: 150 },
   { field: 'address', headerName: 'Address', width: 150 },
+  {field: 'street_address_2', headerName: 'Apt/Unit', width: 150},
   { field: 'city', headerName: 'City', width: 120 },
   { field: 'state', headerName: 'State', width: 120 },
   { field: 'zip', headerName: 'Zip Code', width: 120 },

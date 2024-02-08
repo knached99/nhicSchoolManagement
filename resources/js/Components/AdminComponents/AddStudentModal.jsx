@@ -61,6 +61,7 @@ export default function AddStudentModal({refreshData}) {
         parent_guardian_email: '',
         date_of_birth: null, // You can set a default date or leave it as null
         address: '',
+        street_address_2: '',
         city: '',
         state: '',
         zip: '',
@@ -75,7 +76,8 @@ export default function AddStudentModal({refreshData}) {
         date_of_birth:  Yup.date()
         .max(new Date(), 'Date of Birth cannot be today or a future date')
         .required('Date of Birth is required'),
-        address: Yup.string().required('Address is required'),
+        address: Yup.string().required('Address is required').matches(/^[a-zA-Z0-9\s,.-]+$/, 'Invalid address'),
+        street_address_2: Yup.string().nullable().matches(/^[a-zA-Z0-9\s]+$/, 'Invalid apartment or unit number'),
         city: Yup.string().required('City is required'),
         state: Yup.string().required('State is required'),
         zip: Yup.string()
@@ -277,6 +279,8 @@ export default function AddStudentModal({refreshData}) {
              <InputLabel>Date Of Birth</InputLabel>
             <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 5}} />
             <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth style={{margin: 5}} />
+            <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth style={{margin: 5}} />
+
             <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{margin: 5}} />
             <FormControl sx={{ m: 1, width: '100%' }}>
             <InputLabel id="state">Select State</InputLabel>
