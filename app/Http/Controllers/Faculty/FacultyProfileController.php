@@ -8,21 +8,25 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Image;
+use Illuminate\Validation\ValidationException;
 
 class FacultyProfileController extends Controller {
 
     public function updateProfile(Request $request){
         try{
             $validated = $request->validate([
-                'email'=>['required', 'email'],
+                'email'=>['required', 'email', 'unique:faculty'],
             ]);
             $request->user('faculty')->update([
                 'email'=>$validated['email'],
             ]);
             return response()->json(['success'=>'Your information has been saved']);
         }
+        catch(ValidationException $e){
+            return response()->json(['errors'=>$e->getMessage()]);
+        }
         catch(\Exception $e){
-            \Log::error($e->getMessage());
+            //\Log::error($e->getMessage());
             return response()->json(['errors'=>$e->getMessage()]);
         }
     }

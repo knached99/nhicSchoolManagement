@@ -67,7 +67,8 @@ class FacultyAuth extends Controller
                 }
     
                 RateLimiter::clear($rateLimitKey);
-                session(['faculty' => Auth::guard('faculty')->user()]);
+                //session(['faculty' => Auth::guard('faculty')->user()]);
+                $request->session()->regenerate();
                 return redirect()->intended(RouteServiceProvider::DASH);
             } else {
                 RateLimiter::hit($rateLimitKey, $lockoutDuration);

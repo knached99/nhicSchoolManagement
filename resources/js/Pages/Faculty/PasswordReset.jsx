@@ -13,7 +13,7 @@ export default function PasswordReset({status}) {
   const submit = (e) => {
     e.preventDefault();
 
-    post(route('password.email'));
+    post(route('faculty.password.email'));
 };
 
 

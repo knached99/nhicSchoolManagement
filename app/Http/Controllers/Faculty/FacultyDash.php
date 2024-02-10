@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AccountCreated;
+use App\Notifications\StudentAssigned;
 use App\Models\Faculty;
 use App\Models\Students;
+use App\Models\User;
 use Illuminate\Notifications\NotificationException; 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -45,7 +47,7 @@ class FacultyDash extends Controller
     {
         $rules = [
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:faculty',
             'phone_number' => 'required|regex:/^\d{3}-\d{3}-\d{4}$/',
             'role' => 'required'
         ];
@@ -77,12 +79,10 @@ class FacultyDash extends Controller
     
             return response()->json(['success' => 'Account created for ' . $data['name'] . ' and instructions have been emailed to ' . $data['email']]);
         } catch (ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
+            return response()->json(['errors' =>$e->getMessage()]);
         } catch (QueryException $e) {
-            \Log::error(['Query Exception: ', $e->errorInfo]);
             return response()->json(['errors' => 'Something went wrong creating that account']);
         } catch (NotificationException $e) {
-            \Log::error(['Notification Exception: ', $e->getMessage()]);
             return response()->json(['errors' => 'Account created but unable to send email notification: ' . $e->getMessage()]);
         }
     }
@@ -103,18 +103,39 @@ public function fetchFacultyUsers()
         $admins = Faculty::all();
         return response()->json(['admins'=>$admins]);
     } catch (\Exception $e) {
-      \Log::error('Cannot load faculty users: '.$e->getMessage());
-        return response()->json(['error' => 'Error fetching faculty users: ' . $e->getMessage()], 500);
+        return response()->json(['error' => 'Error getting faculty users: ' . $e->getMessage()]);
+    }
+}
+
+
+
+public function fetchParents()
+{
+    try {
+        $parents = User::select('user_id', 'name', 'email')->get();
+        return response()->json(['parents'=>$parents]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error getting parents: ' . $e->getMessage()]);
+    }
+}
+
+public function fetchTeachers(){
+    try{
+        $teachers = Faculty::select('faculty_id', 'name', 'email')->where('role', 'Teacher')->get();
+        return response()->json(['teachers'=>$teachers]);
+    }
+    catch(\Exception $e){
+        return response()->json(['error' => 'Error getting teachers: ' . $e->getMessage()]);
     }
 }
 
 public function viewFacultyUser($faculty_id){
   try{
     $user = Faculty::where('faculty_id',$faculty_id)->firstOrFail();
-    return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user]);
+    $students = Students::where('faculty_id', $faculty_id)->get();
+    return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students]);
   }
   catch(ModelNotFoundException $e) {
-        \Log::error('Exception Caught in: '.__FUNCTION__.' On Line: '.$e->getLine().' Error Message: '.$e->getMessage());
     return redirect('faculty/dash');
   }
 }
@@ -127,7 +148,7 @@ public function studentBatchImport(Request $request)
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 400);
+            return response()->json(['error' => $validator->errors()]);
         }
 
         $file = $request->file('file');
@@ -135,8 +156,7 @@ public function studentBatchImport(Request $request)
 
         return response()->json(['success' => 'Students successfully imported into the system']);
     } catch (\Exception $e) {
-        \Log::error('Unable to import students excel spreadsheet: ' . $e->getMessage());
-        return response()->json(['error' => $e->getMessage()], 500);
+        return response()->json(['error' => $e->getMessage()]);
     }
 }
 
@@ -153,7 +173,6 @@ public function addStudent(Request $request){
             'parent_guardian_email',
             'date_of_birth',
             'address',
-            'street_address_2',
             'city',
             'state',
             'zip',
@@ -161,10 +180,9 @@ public function addStudent(Request $request){
         ]), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'parent_guardian_email' => 'required|email',
+            'parent_guardian_email' => 'nullable|email',
             'date_of_birth' => 'required|date_format:Y-m-d',
             'address' => 'required',
-            'street_address_2'=>'required',
             'city' => 'required',
             'state' => 'required',
             'zip' => 'required',
@@ -172,7 +190,6 @@ public function addStudent(Request $request){
         ]);
         
         if($validator->fails()){
-            \Log::error('Validation Errors In Adding Student: '.$validator->errors());
             return response()->json(['error'=>$validator->errors()], 419);
         }
 
@@ -187,6 +204,7 @@ public function addStudent(Request $request){
             'state' => $request->state,
             'zip' => $request->zip,
             'grade' => $request->grade,
+            'user_id'=>$request->user_id
         ];
         
         // If the user has the role of Teacher and the permission to add a student, set faculty_id
@@ -199,8 +217,7 @@ public function addStudent(Request $request){
         return response()->json(['success'=>$request->first_name. ' '.$request->last_name. ' was added to the system']);
     }
     catch(\Exception $e){
-        \Log::error('Add Student Exception: '.$e->getMessage());
-        return response()->json(['error'=>$e->getMessage()], 500);
+        return response()->json(['error'=>$e->getMessage()]);
     }
 }
 
@@ -235,13 +252,10 @@ public function deleteStudent($student_id)
         return response()->json(['success' => 'Student and associated data deleted successfully']);
     }
     catch (ModelNotFoundException $e) {
-        \Log::error('Delete Student Exception: ' . $e->getMessage());
 
         return response()->json(['errors' => $e->getMessage()]);
     }
     catch (QueryException $e) {
-        \Log::error('Delete Student Exception: ' . $e->getMessage());
-
         return response()->json(['errors' => $e->getMessage()]);
     }
 
@@ -256,8 +270,6 @@ public function deleteAllStudents()
 
         return response()->json(['success' => 'All students and their associated data has been deleted successfully']);
     } catch (Exception $e) {
-        \Log::error('Delete All Students Exception: ' . $e->getMessage());
-
         return response()->json(['errors' => $e->getMessage()]);
     }
 }
@@ -277,8 +289,6 @@ public function deleteMyStudents()
 
         return response()->json(['success' => 'All of your students and their associated data has been deleted successfully']);
     } catch (Exception $e) {
-        \Log::error('Delete All Students Exception: ' . $e->getMessage());
-
         return response()->json(['errors' => $e->getMessage()]);
     }
 }
@@ -290,10 +300,9 @@ public function showAllStudents()
 {
     try {
         $students = Students::orderBy('created_at', 'desc')->get();
-        return response()->json(['admins'=>$students]);
+        return response()->json(['students'=>$students]);
     } catch (\Exception $e) {
-      \Log::error('Cannot load faculty users: '.$e->getMessage());
-        return response()->json(['error' => 'Error fetching students: ' . $e->getMessage()], 500);
+        return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
     }
 }
 
@@ -301,21 +310,93 @@ public function getMyStudents()
 {
     try {
         $students = Students::where('faculty_id', Auth::guard('faculty')->id())->orderBy('created_at', 'desc')->get();
-        return response()->json(['admins'=>$students]);
+        return response()->json(['students'=>$students]);
     } catch (\Exception $e) {
-      \Log::error('Cannot load faculty users: '.$e->getMessage());
-        return response()->json(['error' => 'Error fetching students: ' . $e->getMessage()], 500);
+        return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
     }
 }
 
-public function viewStudentDetails($student_id){
-    try{
-      $student = Students::where('student_id',$student_id)->firstOrFail();
-      return Inertia::render('Student', ['auth'=> Auth::guard('faculty')->user(), 'student'=>$student]);
+
+public function showStudentsForTeacher($faculty_id)
+{
+    try {
+        $students = Students::where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
+
+        return response()->json(['students' => $students]);
+    } catch (\Exception $e) {
+        // Log the error message
+        error('Error getting students: ' . $e->getMessage());
+
+        return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
     }
-    catch(ModelNotFoundException $e) {
-          \Log::error('Exception Caught in: '.__FUNCTION__.' On Line: '.$e->getLine().' Error Message: '.$e->getMessage());
-      return redirect('faculty/dash');
+}
+
+
+public function viewStudentDetails($student_id) {
+    try {
+        $student = Students::with('faculty')->findOrFail($student_id);
+        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student]);
+    } catch (ModelNotFoundException $e) {
+        return redirect('faculty/dash');
+    }
+}
+
+
+
+  public function assignTeacherToStudent($student_id, $faculty_id){
+    try{
+
+      if(!isset($student_id, $faculty_id)){
+        \Log::error('Student ID: '.$student_id. ' and Faculty ID: '.$faculty_id. ' not found');
+        return response()->json(['error'=>'Student ID and Faculty ID are required']);
+      }
+      $student = Students::where('student_id', $student_id)->firstOrFail();
+    //   if($student =  == null){
+    //     \Log::info($student);
+    //     return response()->json(['error'=>'Unable to find student']);
+    //   }
+
+      $assign = Students::where('student_id', $student_id)->update(['faculty_id'=>$faculty_id]);
+      $faculty = Faculty::findOrFail($faculty_id);
+      Notification::route('mail', $faculty->email)->notify(new StudentAssigned($student_id, $student->first_name, $student->last_name, $faculty->name));
+      return response()->json(['success'=>'Teacher has been assigned to this student']);
+    }
+   
+    catch(ModelNotFoundException $e){
+        \Log::error($e->getMessage());
+        return response()->json(['error'=>'Unable to assign teacher to this student: '. $e->getMessage()]);
+
+    }
+    catch(\Exception $e){
+        \Log::error($e->getMessage());
+        return response()->json(['error'=>'Unable to assign teacher to this student: '. $e->getMessage()]);
+    }
+  }
+
+
+
+  public function assignStudentToParent($student_id, $user_id){
+    try{
+
+      if(!isset($student_id, $user_id)){
+        \Log::error('Student ID: '.$student_id. ' and User ID: '.$user_id. ' not found');
+        return response()->json(['error'=>'Student ID and User ID are required']);
+      }
+      $student = Students::where('student_id', $student_id)->firstOrFail();
+      $assign = Students::where('student_id', $student_id)->update(['user_id'=>$user_id]);
+      $user = User::findOrFail($user_id);
+      Notification::route('mail', $user->email)->notify(new NotifyUserOfStudentAssigned($student_id, $student->first_name, $student->last_name, $user->name));
+      return response()->json(['success'=>'Parent has been assigned to this student']);
+    }
+   
+    catch(ModelNotFoundException $e){
+        \Log::error($e->getMessage());
+        return response()->json(['error'=>'Unable to assign parent to this student: '. $e->getMessage()]);
+
+    }
+    catch(\Exception $e){
+        \Log::error($e->getMessage());
+        return response()->json(['error'=>'Unable to assign parent to this student: '. $e->getMessage()]);
     }
   }
 

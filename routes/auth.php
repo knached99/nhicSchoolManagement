@@ -24,8 +24,8 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-                ->name('password.request');
+    Route::get('user-forgot-password', [PasswordResetLinkController::class, 'create'])
+                ->name('user.password.request');
 
     Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
                 ->name('password.email');
@@ -34,18 +34,16 @@ Route::middleware('guest')->group(function () {
                 ->name('password.reset');
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.store');
+                ->name('user.password.store');
 });
 
 // // Faculty Password Reset 
-// Route::get('/faculty/password/reset', [FacultyAuth::class, 'passwordResetView'])->name('faculty.password.request');
-// Route::post('/sendPasswordResetRequest', [FacultyAuth::class, 'sendPasswordResetRequest'])->name('sendPasswordResetRequest');
-// Route::get('/password-reset/{token}', [FacultyAuth::class, 'resetPassword']);
+
         Route::get('forgot-password', [FacultyPasswordResetLinkController::class, 'create'])
             ->name('faculty.password.request'); // Update to the expected name
 
         Route::post('forgot-password', [FacultyPasswordResetLinkController::class, 'store'])
-            ->name('password.email'); // Update to the expected name
+            ->name('faculty.password.email'); // Update to the expected name
 
         Route::get('reset-password/{token}', [FacultyNewPasswordController::class, 'create'])
             ->name('password.reset'); // Update to the expected name

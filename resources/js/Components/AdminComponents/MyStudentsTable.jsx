@@ -25,6 +25,10 @@ export default function MyStudentsTable({auth}) {
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
 
+  const viewStudentDetails = (student_id) => {
+  window.location.href = `/student/${student_id}/view`;
+}
+
   const columns = [
     { field: 'student_id', headerName: 'Student ID', width: 120 },
     { field: 'first_name', headerName: 'First Name', width: 120 },
@@ -39,17 +43,17 @@ export default function MyStudentsTable({auth}) {
     { field: 'grade', headerName: 'Grade', width: 120 },
     { field: 'created_at', headerName: 'Uploaded At', width: 180 },
     {
-      field: 'details',
-      headerName: 'Details',
-      width: 120,
-      renderCell: (params) => (
-        <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
-          <IconButton className="hover:text-emerald-500" onClick={() => viewFacultyDetails(params.row.student_id)}>
-            <VisibilityOutlinedIcon />
-          </IconButton>
-        </Tooltip>
-      ),
-    },
+    field: 'details',
+    headerName: 'Details',
+    width: 120,
+    renderCell: (params) => (
+      <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
+        <IconButton className="hover:text-emerald-500" onClick={() => viewStudentDetails(params.row.student_id)}>
+          <VisibilityOutlinedIcon />
+        </IconButton>
+      </Tooltip>
+    ),
+  },
     {
       field: 'delete',
       headerName: 'Delete',
@@ -84,12 +88,12 @@ export default function MyStudentsTable({auth}) {
     const fetchStudents = async () => {
       try {
         const response = await fetch('/getMyStudents');
-        const { admins, error } = await response.json();
+        const { students, error } = await response.json();
 
         if (error) {
           setError(error);
-        } else if (admins) {
-          setRows(admins.map(row => ({ ...row, id: row.student_id })));
+        } else if (students) {
+          setRows(students.map(row => ({ ...row, id: row.student_id })));
         } else {
           setError('Unexpected response format from the server');
         }

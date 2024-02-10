@@ -37,12 +37,15 @@ class Students extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
+
     public function faculty(){
-        return $this->belongsTo(Faculty::class);
+
+        return $this->belongsTo(Faculty::class, 'faculty_id');
     }
+
   
     public function attendance()
     {

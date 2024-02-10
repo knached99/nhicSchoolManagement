@@ -20,6 +20,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
 import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
+
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 const style = {
@@ -43,6 +44,39 @@ export default function AddStudentModal({refreshData}) {
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
+    const [parents, setParents] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const fetchParents = async () => {
+      try {
+        const response = await fetch('/fetchParents');
+        console.log(response);
+        const { parents, error } = await response.json();
+
+        if (error) {
+          throw new Error(error);
+        }
+    
+        return parents || [];
+      } catch (error) {
+        throw new Error('Error fetching parents: ' + error.message);
+      }
+    };
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const parents = await fetchParents();
+          setParents(parents);
+          setLoading(false);
+        } catch (error) {
+          setError(error.message);
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, []);
+  
 
     const handleCloseSuccess = () => {
       setSuccessOpen(false);
@@ -66,13 +100,14 @@ export default function AddStudentModal({refreshData}) {
         state: '',
         zip: '',
         grade: '',
+        user_id: '',
         // Add other fields as needed
       };
     
     const validation = Yup.object().shape({
         first_name: Yup.string().required('First Name is required'),
         last_name: Yup.string().required('Last Name is required'),
-        parent_guardian_email: Yup.string().email('Invalid email address').required('Email is required'),
+        parent_guardian_email: Yup.string().email('Invalid email address'),
         date_of_birth:  Yup.date()
         .max(new Date(), 'Date of Birth cannot be today or a future date')
         .required('Date of Birth is required'),
@@ -275,12 +310,35 @@ export default function AddStudentModal({refreshData}) {
             <Form onSubmit={handleSubmit} autoComplete="off">
             <Field as={TextField} value={values.first_name} helperText={touched.first_name && errors.first_name} error={touched.first_name && Boolean(errors.first_name)} onBlur={handleBlur} id="first_name" name="first_name" placeholder="First Name" fullWidth style={{margin: 5}} />
             <Field as={TextField} value={values.last_name} helperText={touched.last_name && errors.last_name} error={touched.last_name && Boolean(errors.last_name)} onBlur={handleBlur} id="last_name" name="last_name" placeholder="Last Name" fullWidth style={{margin: 5}} />
-            <Field as={TextField} value={values.parent_guardian_email} helperText={touched.parent_guardian_email && errors.parent_guardian_email} error={touched.parent_guardian_email && Boolean(errors.parent_guardian_email)} onBlur={handleBlur} id="parent_guardian_email" name="parent_guardian_email" placeholder="Parent/Guardian Email" fullWidth style={{margin: 5}} />
+
+            {/* <Field as={TextField} value={values.parent_guardian_email} helperText={touched.parent_guardian_email && errors.parent_guardian_email} error={touched.parent_guardian_email && Boolean(errors.parent_guardian_email)} onBlur={handleBlur} id="parent_guardian_email" name="parent_guardian_email" placeholder="Parent/Guardian Email" fullWidth style={{margin: 5}} /> */}
              <InputLabel>Date Of Birth</InputLabel>
             <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 5}} />
             <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth style={{margin: 5}} />
             <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth style={{margin: 5}} />
-
+            {loading ? <CircularProgress color="primary" /> : 
+            <FormControl sx={{ m: 1, width: '100%' }}>
+                            <InputLabel id="user_id">Select Parent</InputLabel>
+                            <Select
+                              labelId="user_id"
+                              id="user_id"
+                              name="user_id"
+                              value={values.user_id || ''}
+                              onChange={handleChange}
+                              style={{ width: 300 }}
+                            >
+                              <MenuItem value="">
+                                <em>Make a Selection</em>
+                              </MenuItem>
+                    
+                              {parents.map((parent) => (
+                                <MenuItem key={parent.user_id} value={parent.user_id}>
+                                  {parent.name} - {parent.email}
+                                </MenuItem>
+                              ))}
+                            </Select>
+            </FormControl>
+            }
             <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{margin: 5}} />
             <FormControl sx={{ m: 1, width: '100%' }}>
             <InputLabel id="state">Select State</InputLabel>

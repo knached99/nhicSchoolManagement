@@ -24,7 +24,7 @@ export default function Dash({ auth }) {
           (auth.faculty.role === 'Admin') && (
               <>
                   <AdminsTable auth={auth} />
-                  <StudentsTable auth={auth} />
+                  <StudentsTable auth={auth} path="/showAllStudents"/>
               </>
           )
       )}

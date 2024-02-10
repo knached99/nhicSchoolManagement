@@ -50,6 +50,8 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::post('/createFacultyRole', [FacultyDash::class, 'createFacultyRole'])->name('createFacultyRole');
     Route::delete('/deleteFacultyUser/{faculty_id}', [FacultyDash::class, 'deleteFacultyUser'])->name('deleteFacultyUser');
     Route::get('/fetchFacultyUsers', [FacultyDash::class, 'fetchFacultyUsers'])->name('fetchFacultyUsers');
+    Route::get('/fetchTeachers', [FacultyDash::class, 'fetchTeachers'])->name('fetchTeachers');
+    Route::get('/fetchParents', [FacultyDash::class, 'fetchParents'])->name('fetchParents');
     Route::get('/faculty/profile/{faculty_id}/view', [FacultyDash::class, 'viewFacultyUser'])->name('faculty.profile.view');
     Route::post('/studentBatchImport', [FacultyDash::class, 'studentBatchImport'])->name('studentBatchImport');
     Route::post('/addStudent', [FacultyDash::class, 'addStudent'])->name('addStudent');
@@ -58,7 +60,10 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::delete('/deleteMyStudents', [FacultyDash::class, 'deleteMyStudents'])->name('deleteMyStudents');
     Route::get('/showAllStudents', [FacultyDash::class, 'showAllStudents'])->name('showAllStudents');
     Route::get('/getMyStudents', [FacultyDash::class, 'getMyStudents'])->name('getMyStudents');
-    Route::get('/student/{student_id}', [FacultyDash::class, 'viewStudentDetails'])->name('viewStudentDetails');
+    Route::get('/showStudentsForTeacher/{faculty_id}', [FacultyDash::class, 'showStudentsForTeacher'])->name('showStudentsForTeacher');
+    Route::get('/student/{student_id}/view', [FacultyDash::class, 'viewStudentDetails'])->name('viewStudentDetails');
+    Route::put('/assignTeacherToStudent/{student_id}/{faculty_id}', [FacultyDash::class, 'assignTeacherToStudent'])->name('assignTeacherToStudent');
+    Route::put('/assignStudentToParent/{student_id}/{user_id}', [FacultyDash::class, 'assignStudentToParent'])->name('assignStudentToParent');
     // Profile Update Routes
     Route::put('/updateProfile', [FacultyProfileController::class, 'updateProfile'])->name('updateProfile');
     Route::put('/updateFacultyPassword', [FacultyProfileController::class, 'updatePassword'])->name('updateFacultyPassword');

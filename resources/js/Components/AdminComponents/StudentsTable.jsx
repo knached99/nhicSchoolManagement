@@ -17,7 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 
-export default function StudentsTable({auth}) {
+export default function StudentsTable({auth, path}) {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
@@ -28,13 +28,15 @@ export default function StudentsTable({auth}) {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch('/showAllStudents');
-        const { admins, error } = await response.json();
+        const response = await fetch(path, {
+          method: 'GET', 
+        });
+        const { students, error } = await response.json();
 
         if (error) {
           setError(error);
-        } else if (admins) {
-          setRows(admins.map(row => ({ ...row, id: row.student_id })));
+        } else if (students) {
+          setRows(students.map(row => ({ ...row, id: row.student_id })));
         } else {
           setError('Unexpected response format from the server');
         }
@@ -63,13 +65,13 @@ const handleCloseError = () => {
   const refreshData = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/showAllStudents');
-      const { admins, error } = await response.json();
+      const response = await fetch(path);
+      const { students, error } = await response.json();
 
       if (error) {
         setError(error);
-      } else if (admins) {
-        setRows(admins.map(row => ({ ...row, id: row.student_id })));
+      } else if (students) {
+        setRows(students.map(row => ({ ...row, id: row.student_id })));
       } else {
         setError('Unexpected response format from the server');
       }
@@ -123,6 +125,10 @@ const handleCloseError = () => {
     }
 };
 
+const viewStudentDetails = (student_id) => {
+  window.location.href = `/student/${student_id}/view`;
+}
+
 const columns = [
   { field: 'student_id', headerName: 'Student ID', width: 120 },
   { field: 'first_name', headerName: 'First Name', width: 120 },
@@ -142,7 +148,7 @@ const columns = [
     width: 120,
     renderCell: (params) => (
       <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
-        <IconButton className="hover:text-emerald-500" onClick={() => viewFacultyDetails(params.row.faculty_id)}>
+        <IconButton className="hover:text-emerald-500" onClick={() => viewStudentDetails(params.row.student_id)}>
           <VisibilityOutlinedIcon />
         </IconButton>
       </Tooltip>
@@ -155,7 +161,7 @@ const columns = [
     width: 120, 
     renderCell: (params) => (
       <Tooltip title={`Delete ${params.row.first_name} ${params.row.last_name} from the system`}>
-        <IconButton className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
+        <IconButton disabled={!auth.role==='Admin' || auth.role === 'Teacher' && auth.permissions.includes('can_delete_students')} className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
           <DeleteOutlineOutlinedIcon/>
         </IconButton>
       </Tooltip>
