@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('assignment_id');
             $table->unsignedBigInteger('student_id');
             $table->integer('score');
+           
             $table->timestamps();
-
             // Foreign key constraints
             $table->foreign('assignment_id')->references('assignment_id')->on('assignments')->onDelete('cascade');
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');

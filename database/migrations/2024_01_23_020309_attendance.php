@@ -14,7 +14,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id'); // Foreign key to link to students table
             $table->date('attendance_date');
-            $table->boolean('is_present')->nullable(); // 0 -> not present 1 -> present 
+            $table->boolean('is_present')->nullable(); // 0 -> not present 1 -> present
+            $table->string('reason_for_abscence')->nullable(); 
             $table->timestamps();
 
             // Foreign key constraint

@@ -227,22 +227,22 @@ export default function CreateFacultyModal() {
                 <MenuItem value="">
                     <em>Make a Selection</em>
                 </MenuItem>
-                <MenuItem value="Teacher">Teacher</MenuItem>
                 <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="Teacher">Teacher</MenuItem>
+                <MenuItem value="Asisstant Teacher">Asisstant Teacher</MenuItem>
             </Select>
              {touched.role && errors.role && (
                 <FormHelperText>{errors.role}</FormHelperText>
              )}
         </FormControl>
 
-        <Button onClick={handleTogglePermissionsMenu} variant="outlined" style={{ margin: '10px 0' }}>
+        {/* <Button onClick={handleTogglePermissionsMenu} variant="outlined" style={{ margin: '10px 0' }}>
         {openPermissionsMenu ? 'Hide Permissions' : 'Show Permissions (For Teachers Only)'}
         </Button>
 
         <Collapse in={openPermissionsMenu}>   
         <FormGroup>
           <p className="text-start text-slate-600 mt-3 mb-3 font-bold">Teacher Permissions <span className="block font-normal">(You can modify these any time. Also please note, admins are granted all these permissions.)</span></p>
-          {/* <FormControlLabel control={<Field as={Switch} value="can_view_all_students" name="permissions" id="can_view_all_students" />} label="Can view all students"/> */}
           <FormControlLabel control={<Field as={Switch} value="can_batch_import_students" name="permissions" id="can_batch_import_students" />} label="Can batch import students"/>
           <FormControlLabel control={<Field as={Switch} value="can_add_student" name="permissions" id="can_add_student" />} label="Can add student"/>
           <FormControlLabel control={<Field as={Switch} value="can_delete_parents" name="permissions" id="can_delete_parents" />} label="Can delete parents"/> 
@@ -251,13 +251,7 @@ export default function CreateFacultyModal() {
           <FormControlLabel control={<Field as={Switch} value="can_delete_faculty_users" name="permissions" id="can_delete_faculty_users" />} label="Can delete faculty users"/>
           <FormControlLabel control={<Field as={Switch} value="can_revoke_user_access" name="permissions" id="can_revoke_user_access" />} label="Can revoke user access"/>
         </FormGroup>
-        </Collapse>
-
-       
-
- 
-
-
+        </Collapse> */}
 
         <Button
                                         type="submit"

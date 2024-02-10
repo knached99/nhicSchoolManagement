@@ -29,19 +29,14 @@ export default function Dash({ auth }) {
           )
       )}
 
-     {auth.faculty && (
-      auth.faculty.role ==='Teacher' && (auth.faculty.permissions && auth.faculty.permissions.includes('can_view_all_students') && (
-        <StudentsTable auth={auth}/>
-      ))
-
-     )}
-      {auth.faculty && (
+    {auth.faculty && (
         auth.faculty.role === 'Teacher' && (
           <>
           <MyStudentsTable auth={auth} />
           </>
         )
       )}
+     
 
 
 

@@ -14,6 +14,11 @@ return new class extends Migration
             $table->id('assignment_id');
             $table->string('assignment_name');
             $table->text('assignment_description');
+             //may consider the following:
+            $table->string('assignment_question')->nullable();
+            $table->string('student_answer')->nullable();
+            $table->string('assignment_video')->nullable();
+            
             $table->float('assignment_grade');
             $table->datetime('assignment_due_date');
             $table->unsignedBigInteger('student_id')->nullable();

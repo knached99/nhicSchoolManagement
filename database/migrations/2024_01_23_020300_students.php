@@ -22,7 +22,11 @@ return new class extends Migration
         $table->string('city')->nullable();
         $table->string('state')->nullable();
         $table->string('zip')->nullable();
-        $table->integer('grade')->nullable();      
+        $table->integer('grade')->nullable();  // levels 
+        $table->string('gender')->nullable();
+        $table->longText('allergies_or_special_needs')->nullable(); 
+        $table->string('emergency_contact_person');
+        $table->string('emergency_contact_hospital');
         $table->unsignedBigInteger('user_id')->nullable();
         $table->foreign('user_id')->references('user_id')->on('users')->onDelete('set null');
         $table->unsignedBigInteger('faculty_id')->nullable();
