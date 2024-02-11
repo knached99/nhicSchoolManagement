@@ -2,6 +2,7 @@ import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import AdminsTable from '@/Components/AdminComponents/AdminsTable';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
+import ParentsTable from '@/Components/AdminComponents/ParentsTable';
 import MyStudentsTable from '@/Components/AdminComponents/MyStudentsTable';
 export default function Dash({ auth }) {
   // Check if auth object is defined before accessing its properties
@@ -25,6 +26,7 @@ export default function Dash({ auth }) {
               <>
                   <AdminsTable auth={auth} />
                   <StudentsTable auth={auth} path="/showAllStudents"/>
+                  <ParentsTable auth={auth} />
               </>
           )
       )}

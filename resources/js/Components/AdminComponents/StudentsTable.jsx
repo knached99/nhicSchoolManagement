@@ -140,7 +140,7 @@ const columns = [
   { field: 'city', headerName: 'City', width: 120 },
   { field: 'state', headerName: 'State', width: 120 },
   { field: 'zip', headerName: 'Zip Code', width: 120 },
-  { field: 'grade', headerName: 'Grade', width: 120 },
+  { field: 'grade', headerName: 'Level', width: 120 },
   { field: 'created_at', headerName: 'Uploaded At', width: 180 },
   {
     field: 'details',
@@ -161,7 +161,7 @@ const columns = [
     width: 120, 
     renderCell: (params) => (
       <Tooltip title={`Delete ${params.row.first_name} ${params.row.last_name} from the system`}>
-        <IconButton disabled={!auth.role==='Admin' || auth.role === 'Teacher' && auth.permissions.includes('can_delete_students')} className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
+        <IconButton disabled={!auth.role==='Admin'} className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
           <DeleteOutlineOutlinedIcon/>
         </IconButton>
       </Tooltip>
@@ -174,7 +174,7 @@ const columns = [
       <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
         <h1 className="m-3 text-center font-black text-xl">Students</h1>
         {auth.faculty && (
-          (auth.faculty.role === 'Admin' || (auth.faculty.permissions && auth.faculty.permissions.includes('can_add_student'))) && (
+          (auth.faculty.role === 'Admin') && (
               <>
               <AddStudentModal refreshData={refreshData}/>
 

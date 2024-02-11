@@ -8,14 +8,14 @@ import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 export default function ViewProfile({auth, user, students}) {
 
-    const formatPermissions = (permissions) => {
-      if (!permissions || !Array.isArray(permissions)) {
-          return 'N/A';
-      }
+  //   const formatPermissions = (permissions) => {
+  //     if (!permissions || !Array.isArray(permissions)) {
+  //         return 'N/A';
+  //     }
   
-      // Replace underscores with spaces and join permissions with spaces
-      return permissions.map(permission => permission.replace(/_/g, ' ')).join(', ');
-  };
+  //     // Replace underscores with spaces and join permissions with spaces
+  //     return permissions.map(permission => permission.replace(/_/g, ' ')).join(', ');
+  // };
 
 
 
@@ -41,7 +41,7 @@ export default function ViewProfile({auth, user, students}) {
                     <div className="flex flex-col">
                         <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Teacher Information</span>
                         <ul>
-                        <li className="mb-2">Permissions:  <span className="font-normal">{user.role==='Admin' && 'All Permissions' || user.role==='Teacher' && formatPermissions(user.permissions)}</span></li>                      
+                        {/* <li className="mb-2">Permissions:  <span className="font-normal">{user.role==='Admin' && 'All Permissions' || user.role==='Teacher' && formatPermissions(user.permissions)}</span></li>                       */}
                         <li className="mb-2"><SmartphoneOutlinedIcon/> {user.phone ?? 'N/A'}</li>
                         <li className="mb-2"><WorkOutlineOutlinedIcon/> {user.role}</li>  
                         </ul>

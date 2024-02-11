@@ -44,7 +44,12 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
             'state' => $row[7] ?? null,
             'zip' => $row[8] ?? null,
             'grade' => $row[9] ?? null, // Use null if key 8 is undefined
-            'faculty_id' => ($role === 'Teacher' && $permissions->contains('can_add_student')) ? Auth::guard('faculty')->id() : null
+            'allergies_or_special_needs'=>$row[10] ?? null,
+            'emergency_contact_person'=>$row[11] ?? null, 
+            'emergency_contact_hospital'=>$row[12] ?? null, 
+            'user_id'=>$row[13] ?? null, 
+            'faculty_id' => $role === 'Teacher' ? Auth::guard('faculty')->id() : null
+            
         ]);
     }
     

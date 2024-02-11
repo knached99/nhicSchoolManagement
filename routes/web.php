@@ -52,18 +52,22 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/fetchFacultyUsers', [FacultyDash::class, 'fetchFacultyUsers'])->name('fetchFacultyUsers');
     Route::get('/fetchTeachers', [FacultyDash::class, 'fetchTeachers'])->name('fetchTeachers');
     Route::get('/fetchParents', [FacultyDash::class, 'fetchParents'])->name('fetchParents');
+    Route::delete('/deleteAllParents', [FacultyDash::class, 'deleteAllParents'])->name('deleteAllParents');
+    Route::delete('/deleteParent/{user_id}', [FacultyDash::class, 'deleteParent'])->name('deleteParent');
     Route::get('/faculty/profile/{faculty_id}/view', [FacultyDash::class, 'viewFacultyUser'])->name('faculty.profile.view');
     Route::post('/studentBatchImport', [FacultyDash::class, 'studentBatchImport'])->name('studentBatchImport');
     Route::post('/addStudent', [FacultyDash::class, 'addStudent'])->name('addStudent');
     Route::delete('/deleteStudent/{student_id}', [FacultyDash::class, 'deleteStudent'])->name('deleteStudent');
     Route::delete('/deleteAllStudents', [FacultyDash::class, 'deleteAllStudents'])->name('deleteAllStudents');
     Route::delete('/deleteMyStudents', [FacultyDash::class, 'deleteMyStudents'])->name('deleteMyStudents');
+    Route::delete('/deleteParents', [FacultyDash::class, 'deleteParents'])->name('deleteParents');
+    Route::delete('/deleteParent/{user_id}', [FacultyDash::class, 'deleteParent'])->name('deleteParent');
     Route::get('/showAllStudents', [FacultyDash::class, 'showAllStudents'])->name('showAllStudents');
     Route::get('/getMyStudents', [FacultyDash::class, 'getMyStudents'])->name('getMyStudents');
     Route::get('/showStudentsForTeacher/{faculty_id}', [FacultyDash::class, 'showStudentsForTeacher'])->name('showStudentsForTeacher');
     Route::get('/student/{student_id}/view', [FacultyDash::class, 'viewStudentDetails'])->name('viewStudentDetails');
     Route::put('/assignTeacherToStudent/{student_id}/{faculty_id}', [FacultyDash::class, 'assignTeacherToStudent'])->name('assignTeacherToStudent');
-    Route::put('/assignStudentToParent/{student_id}/{user_id}', [FacultyDash::class, 'assignStudentToParent'])->name('assignStudentToParent');
+    Route::put('/assignParentToStudent/{student_id}/{user_id}', [FacultyDash::class, 'assignParentToStudent'])->name('assignParentToStudent');
     // Profile Update Routes
     Route::put('/updateProfile', [FacultyProfileController::class, 'updateProfile'])->name('updateProfile');
     Route::put('/updateFacultyPassword', [FacultyProfileController::class, 'updatePassword'])->name('updateFacultyPassword');

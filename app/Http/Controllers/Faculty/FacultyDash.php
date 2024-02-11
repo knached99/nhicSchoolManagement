@@ -7,11 +7,13 @@ use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AccountCreated;
 use App\Notifications\StudentAssigned;
+use App\Notifications\NotifyUserOfStudentAssigned;
 use App\Models\Faculty;
 use App\Models\Students;
 use App\Models\User;
@@ -89,8 +91,21 @@ class FacultyDash extends Controller
 
 public function deleteFacultyUser($faculty_id){
     try{
-        Faculty::destroy($faculty_id);
+
+        if(Auth::guard('faculty')->user()->role !== 'Admin'){
+            return response()->json(['error'=>'You do not have permission to perform this action']);
+        }
+
+        $user = Faculty::findOrFail($faculty_id);
+        if($user->profile_pic && Storage::exists('public/profile_pics/'.basename($user->profile_pic))){
+            Storage::delete('public/profile_pics/'.basename($user->profile_pic));
+        }
+        $user->delete();
         return response()->json(['success'=>'Successfully deleted that user from the system']);
+    }
+
+    catch(ModelNotFoundException $e){
+        return Inertia::render('Faculty/Dash');
     }
     catch(\Exception $e){
         return response()->json(['error'=>'Could not delete that user: '.$e->getMessage()]);
@@ -112,10 +127,47 @@ public function fetchFacultyUsers()
 public function fetchParents()
 {
     try {
-        $parents = User::select('user_id', 'name', 'email')->get();
+        $parents = User::all();
         return response()->json(['parents'=>$parents]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error getting parents: ' . $e->getMessage()]);
+    }
+}
+
+public function deleteParents()
+{
+    if(Auth::guard('faculty')->user()->role !== 'Admin'){
+        return response()->json(['errors'=>'You do not have permission to perform this action']);
+    }
+
+    try {
+        // Delete all parents and associated data
+        User::with(['students'])->delete();
+
+
+        return response()->json(['success' => 'All parents and their associated data has been deleted successfully']);
+    } catch (\Exception $e) {
+        \Log::error('Exception Encountered: '.$e->getMessage());
+        return response()->json(['errors' => $e->getMessage()]);
+    }
+}
+
+public function deleteParent($user_id){
+    try{
+        
+        if(Auth::guard('faculty')->user()->role !== 'Admin'){
+            return response()->json(['error'=>'You do not have permission to perform this action']);
+        }
+
+        User::destroy($user_id);
+        return response()->json(['success'=>'Successfully deleted that user from the system']);
+    }
+
+    catch(ModelNotFoundException $e){
+        return Inertia::render('Faculty/Dash');
+    }
+    catch(\Exception $e){
+        return response()->json(['error'=>'Could not delete that user: '.$e->getMessage()]);
     }
 }
 
@@ -156,6 +208,7 @@ public function studentBatchImport(Request $request)
 
         return response()->json(['success' => 'Students successfully imported into the system']);
     } catch (\Exception $e) {
+        \Log::error('Batch Import Error: '. $e->getMessage());
         return response()->json(['error' => $e->getMessage()]);
     }
 }
@@ -170,7 +223,6 @@ public function addStudent(Request $request){
         $validator = Validator::make($request->only([
             'first_name',
             'last_name',
-            'parent_guardian_email',
             'date_of_birth',
             'address',
             'city',
@@ -180,7 +232,6 @@ public function addStudent(Request $request){
         ]), [
             'first_name' => 'required',
             'last_name' => 'required',
-            'parent_guardian_email' => 'nullable|email',
             'date_of_birth' => 'required|date_format:Y-m-d',
             'address' => 'required',
             'city' => 'required',
@@ -207,14 +258,27 @@ public function addStudent(Request $request){
             'user_id'=>$request->user_id
         ];
         
-        // If the user has the role of Teacher and the permission to add a student, set faculty_id
-        if ($role === 'Teacher' && $permissions->contains('can_add_student')) {
+        // If the user has the role of Teacher
+        if ($role === 'Teacher') {
             $data['faculty_id'] = Auth::guard('faculty')->id();
+        }
+
+        if(isset($data['user_id'])){
+            $user = User::findOrFail($data['user_id']);
+            Notification::route('mail', $user->email)->notify(new NotifyUserOfStudentAssigned($data['user_id'], $data['first_name'], $data['last_name'], $user->name));
         }
         
         Students::create($data);
         
         return response()->json(['success'=>$request->first_name. ' '.$request->last_name. ' was added to the system']);
+    }
+    
+    catch(ValidationException $e){
+        return response()->json(['error'=>$e->getMessage()]);
+    }
+
+    catch(ModelNotFoundException $e){
+        return response()->json(['error'=>$e->getMessage()]);
     }
     catch(\Exception $e){
         return response()->json(['error'=>$e->getMessage()]);
@@ -224,6 +288,11 @@ public function addStudent(Request $request){
 public function deleteStudent($student_id)
 {
     try {
+
+        if(Auth::guard('faculty')->user()->role !== 'Admin'){
+            return response()->json(['errors'=>'You do not have permission to perform this action']);
+        }
+
         // Retrieve the student with associated data
         $student = Students::with(['attendance', 'assignments', 'grades'])->findOrFail($student_id);
 
@@ -263,13 +332,16 @@ public function deleteStudent($student_id)
 
 public function deleteAllStudents()
 {
+    if(Auth::guard('faculty')->user()->role !== 'Admin'){
+        return response()->json(['errors'=>'You do not have permission to perform this action']);
+    }
 
     try {
         // Delete all students and associated data
         Students::with(['attendance', 'assignments', 'grades'])->delete();
 
         return response()->json(['success' => 'All students and their associated data has been deleted successfully']);
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         return response()->json(['errors' => $e->getMessage()]);
     }
 }
@@ -334,7 +406,7 @@ public function showStudentsForTeacher($faculty_id)
 
 public function viewStudentDetails($student_id) {
     try {
-        $student = Students::with('faculty')->findOrFail($student_id);
+        $student = Students::with('faculty', 'user')->findOrFail($student_id);
         return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student]);
     } catch (ModelNotFoundException $e) {
         return redirect('faculty/dash');
@@ -375,7 +447,7 @@ public function viewStudentDetails($student_id) {
 
 
 
-  public function assignStudentToParent($student_id, $user_id){
+  public function assignParentToStudent($student_id, $user_id){
     try{
 
       if(!isset($student_id, $user_id)){

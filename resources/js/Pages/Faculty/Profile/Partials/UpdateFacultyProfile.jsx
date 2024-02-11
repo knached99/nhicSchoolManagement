@@ -184,9 +184,9 @@ export default function UpdateFacultyProfile({className = '' }) {
                 <div>
                   <p className="font-semibold">My Role: <span className="font-noraml">{user.role}</span></p>
                 </div>
-                <div>
+                {/* <div>
                     <p className="font-semibold">My Permissions: <span className="font-normal">{formatPermissions(user.permissions)}</span></p>
-                </div>
+                </div> */}
 
 
                 <div className="flex items-center gap-4">

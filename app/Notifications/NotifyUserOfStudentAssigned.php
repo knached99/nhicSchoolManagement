@@ -14,13 +14,14 @@ class NotifyUserOfStudentAssigned extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $student_id, string $first_name, string $last_name, string $name)
+    public function __construct(?string $student_id = null, string $first_name, string $last_name, string $name)
     {
         $this->student_id = $student_id;
         $this->first_name = $first_name;
         $this->last_name = $last_name;
         $this->name = $name;
     }
+    
 
     /**
      * Get the notification's delivery channels.
@@ -37,13 +38,21 @@ class NotifyUserOfStudentAssigned extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+    $mailMessage = (new MailMessage)
         ->subject('Your Child has been added to your account')
-        ->greeting('Hello '.$this->name)
-        ->line('Your child '.$this->first_name. ' '.$this->last_name.' has been added to your account')
-        ->line('You can now view information regarding your child and their academic performance')
-        ->action('View Student Details', url('/student/'.$this->student_id.'/view'));
+        ->greeting('Hello ' . $this->name)
+        ->line('Your child ' . $this->first_name . ' ' . $this->last_name . ' has been added to your account')
+        ->line('You can now view information regarding your child and their academic performance');
+
+    if ($this->student_id !== null) {
+        $mailMessage->action('View Student Details', url('/student/' . $this->student_id . '/view'));
+    } else {
+        $mailMessage->action('Go to Dashboard', url('/dashboard'));
     }
+
+    return $mailMessage;
+    }
+
 
     /**
      * Get the array representation of the notification.

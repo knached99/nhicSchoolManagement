@@ -20,6 +20,7 @@ import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
 import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
+import axios from 'axios';  // Add this line
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
@@ -92,7 +93,6 @@ export default function AddStudentModal({refreshData}) {
     const initialValues = {
         first_name: '',
         last_name: '',
-        parent_guardian_email: '',
         date_of_birth: null, // You can set a default date or leave it as null
         address: '',
         street_address_2: '',
@@ -107,7 +107,6 @@ export default function AddStudentModal({refreshData}) {
     const validation = Yup.object().shape({
         first_name: Yup.string().required('First Name is required'),
         last_name: Yup.string().required('Last Name is required'),
-        parent_guardian_email: Yup.string().email('Invalid email address'),
         date_of_birth:  Yup.date()
         .max(new Date(), 'Date of Birth cannot be today or a future date')
         .required('Date of Birth is required'),
@@ -118,7 +117,7 @@ export default function AddStudentModal({refreshData}) {
         zip: Yup.string()
         .matches(/^\d{5}$/, 'Must be a valid 5-digit ZIP code')
         .required('ZIP Code is required'),
-        grade: Yup.string().required('Grade is required'),
+        grade: Yup.string().required('Level is required'),
       });
 
       const addStudent = async (values, { setSubmitting }) => {
@@ -140,15 +139,15 @@ export default function AddStudentModal({refreshData}) {
             Object.keys(values).forEach((key) => {
               values[key] = '';
             });
-          } else if (response.data.errors) {
+          } else if (response.data.error) {
             // Handling validation errors
-            const errors = response.data.errors;
-            const errorMessage = Object.values(errors).flat().join('');
-            setError(errorMessage);
+            setError(response.data.error);
+            console.log(response.data.error);
             setErrorOpen(true);
           } else {
             // Handling other error cases
-            setError('Unexpected error occurred');
+            setError(response.data.error);
+            console.log(response.data.error);
             setErrorOpen(true);
           }
         } catch (error) {
@@ -348,6 +347,9 @@ export default function AddStudentModal({refreshData}) {
               name="state"
               value={values.state}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.state && Boolean(errors.state)}
+
             >
               <MenuItem value="">
                 <em>Select a State</em>
@@ -359,12 +361,36 @@ export default function AddStudentModal({refreshData}) {
               ))}
             </Select>
             {touched.state && errors.state && (
-              <FormHelperText>{errors.state}</FormHelperText>
+              <FormHelperText style={{color: 'red'}}>{errors.state}</FormHelperText>
             )}
           </FormControl>
 
             <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.zip)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth style={{margin: 5}} />
-            <Field as={TextField} value={values.grade} helperText={touched.grade && errors.grade} error={touched.grade && Boolean(errors.grade)} onBlur={handleBlur} id="grade" name="grade" placeholder="Grade" fullWidth style={{margin: 5}} />
+            <FormControl sx={{mx: 1, width: '100%'}}>
+              <InputLabel id="grade">Select Level</InputLabel>
+              <Select
+              labelId="grade"
+              id="grade"
+              name="grade"
+              value={values.grade}
+              onChange={handleChange}
+              error={touched.grade && Boolean(errors.grade)}
+              onBlur={handleBlur}
+              >
+             <MenuItem value="">
+              <em>Select Level</em>
+             </MenuItem>
+             <MenuItem value="l">Level 1</MenuItem>
+              <MenuItem value="2">Level 2</MenuItem>
+              <MenuItem value="3">Level 3</MenuItem>
+              <MenuItem value="4">Level 4</MenuItem>
+              <MenuItem value="5">Level 5</MenuItem>
+              </Select>
+              {touched.grade && errors.grade && (
+              <FormHelperText style={{color: 'red'}}>{errors.grade}</FormHelperText>
+            )}
+            </FormControl>
+            {/* <Field as={TextField} value={values.grade} helperText={touched.grade && errors.grade} error={touched.grade && Boolean(errors.grade)} onBlur={handleBlur} id="grade" name="grade" placeholder="Grade" fullWidth style={{margin: 5}} /> */}
 
         
 

@@ -50,11 +50,29 @@ export default function Student({auth, student}) {
           throw new Error('Error fetching teachers: ' + error.message);
         }
       };
+
+      const fetchParents = async () => {
+        try {
+          const response = await fetch('/fetchParents');
+          console.log(response);
+          const { parents, error } = await response.json();
+
+          if (error) {
+            throw new Error(error);
+          }
+      
+          return parents || [];
+        } catch (error) {
+          throw new Error('Error fetching parents: ' + error.message);
+        }
+      };
   
       useEffect(() => {
         const fetchData = async () => {
           try {
             const facultyUsers = await fetchTeachers();
+            const parentUsers = await fetchParents();
+            setParents(parentUsers);
             setTeachers(facultyUsers);
             setLoading(false);
           } catch (error) {
@@ -68,15 +86,25 @@ export default function Student({auth, student}) {
     
     
 
-
+      // For assigning teacher to student 
       const initialValues = {
         student_id: student.student_id,
         faculty_id: ''
       };
       
-
+// For assigning teacher to student 
     const validationSchema = Yup.object().shape({
-      faculty_id: Yup.string().required('Email is required')
+      faculty_id: Yup.string().required('Must Select Teacher')
+    });
+
+
+    const parentInitialValues = {
+      student_id: student.student_id, 
+      user_id: ''
+    };
+
+    const validateData = Yup.object().shape({
+      user_id: Yup.string().required('Must Select Parent')
     });
 
     const assignTeacherToStudent = async (values, { setSubmitting }) => {
@@ -106,6 +134,36 @@ export default function Student({auth, student}) {
         setSubmitting(false);
       }
     };
+
+
+    const assignParentToStudent = async (values, { setSubmitting }) => {
+      try {
+        const response = await axios.put(`/assignParentToStudent/${values.student_id}/${values.user_id}`, values, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+    
+        if (response.data.errors) {
+          setError(response.data.errors);
+          setErrorOpen(true);
+        } else if (response.data.success) {
+          setSuccess(response.data.success);
+          setSuccessOpen(true);
+    
+          // Reset form values
+          Object.keys(values).forEach((key) => {
+            values[key] = '';
+          });
+        }
+      } catch (error) {
+        setError(error.message || 'Unable to assign parent to student, something went wrong');
+        setErrorOpen(true);
+      } finally {
+        setSubmitting(false);
+      }
+    };
+    
     
 
     const handleCloseSuccess = () => {
@@ -217,7 +275,7 @@ export default function Student({auth, student}) {
                               style={{ width: 300 }}
                             >
                               <MenuItem value="">
-                                <em>Make a Selection</em>
+                                <em>Select Teacher</em>
                               </MenuItem>
                     
                               {teachers.map((teacher) => (
@@ -260,13 +318,133 @@ export default function Student({auth, student}) {
                             <li className="mb-2">{student.address}, {student.street_address_2 && (<p>{student.street_address_2}</p>)}{student.city}, {student.state}, {student.zip}</li>                      
                         </ul>
                     </div>
-                   {student.user_id && (
+                   {student.user_id ? (
                     <div className="flex flex-col mt-5">
                     <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Parent Bio</span>
+                    {student.user ? 
                     <ul>
+                      <li>{student.user.name}</li>
+                      <li>{student.user.email}</li>
+                      <li>{!student.user.email_verified_at ? <span className="text-red-500">Account Not Verified</span> : <span className="text-emerald-500">Account Verified</span>}</li>
                     </ul>
+                    : 
+                    'N/A' 
+                   }
                     </div>
-                   )}
+                   )
+                    :
+                    <>
+                    <span className="text-indigo-500">A parent is not yet assigned to {student.first_name} {student.last_name}</span>
+                    <Formik initialValues={parentInitialValues} validationSchema={validateData} onSubmit={assignParentToStudent}>
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      handleSubmit,
+                      handleBlur,
+                      handleChange,
+                      isValid,
+                      dirty,
+                      isSubmitting,
+                    }) => (
+                      <Form onSubmit={handleSubmit} autoComplete="off">
+                              {error && (
+                          <Box   style={{
+                            padding: '1rem',
+                            maxHeight: '80vh',
+                            overflowY: 'auto',
+                            width: '100%'
+                          }}>
+                              <Collapse in={errorOpen}>
+                                  <Alert
+                                      icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                      severity="error"
+                                      action={
+                                          <IconButton
+                                              aria-label="close"
+                                              color="inherit"
+                                              size="small"
+                                              onClick={handleCloseError}
+                                          >
+                                              <CloseIcon fontSize="inherit" />
+                                          </IconButton>
+                                      }
+                                      sx={{ mb: 2 }}
+                                  >
+                                      {error}
+                                  </Alert>
+                              </Collapse>
+                          </Box>
+                      )}
+
+                      {success && (
+                          <Box sx={{ width: '100%' }}>
+                              <Collapse in={successOpen}>
+                                  <Alert
+                                      icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                      severity="success"
+                                      action={
+                                          <IconButton
+                                              aria-label="close"
+                                              color="inherit"
+                                              size="small"
+                                              onClick={handleCloseSuccess}
+                                          >
+                                              <CloseIcon fontSize="inherit" />
+                                          </IconButton>
+                                      }
+                                      sx={{ mb: 2 }}
+                                  >
+                                      {success}
+                                  </Alert>
+                              </Collapse>
+                          </Box>
+                      )}
+                        <input type="hidden" name="student_id" id="student_id" value={student.student_id}/>
+                        <FormControl sx={{ m: 1, width: '100%' }}>
+                          <InputLabel id="user_id">Select Parent</InputLabel>
+                          <Select
+                            labelId="user_id"
+                            id="user_id"
+                            name="user_id"
+                            value={values.user_id || ''}
+                            onChange={handleChange}
+                            style={{ width: 300 }}
+                          >
+                            <MenuItem value="">
+                              <em>Select Parent</em>
+                            </MenuItem>
+                  
+                            {parents.map((parent) => (
+                              <MenuItem key={parent.user_id} value={parent.user_id}>
+                                {parent.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          style={{
+                            color: 'white',
+                            width: '100%',
+                            backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#3b82f6',
+                            padding: 15,
+                            marginTop: 10,
+                          }}
+                          disabled={isSubmitting || !isValid || !dirty}
+                        >
+                          {isSubmitting ? (
+                            <CircularProgress size={24} style={{ color: '#fff' }} />
+                          ) : (
+                            <>Assign</>
+                          )}
+                        </Button>
+                      </Form>
+                    )}
+                  </Formik>
+                  </>
+                  }
                    
                 </div>
             </div>

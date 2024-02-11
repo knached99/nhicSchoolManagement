@@ -219,7 +219,7 @@ const deleteAdminUser = async (userId) => {
                                 title={`Delete ${row.name} from the system`}
                               >
                                 <IconButton className="hover:text-red-500" onClick ={()=>deleteAdminUser(row.faculty_id)}
-                                  disabled={/* Add a condition for disabling */ row.faculty_id === auth.faculty.faculty_id || auth.faculty.role === 'Teacher' && ! auth.faculty.permissions.includes('can_delete_faculty_users')}
+                                  disabled={/* Add a condition for disabling */ row.faculty_id === auth.faculty.faculty_id || auth.faculty.role !== 'Admin'}
                                 >
                                   <DeleteOutlineOutlinedIcon />
                                 </IconButton>
