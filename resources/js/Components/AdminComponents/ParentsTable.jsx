@@ -132,8 +132,41 @@ const columns = [
   { field: 'user_id', headerName: 'Parent ID', width: 120 },
   { field: 'name', headerName: 'Name', width: 120 },
   { field: 'email', headerName: 'Email', width: 200 },
-  { field: 'created_at', headerName: 'Account Created At', width: 180 },
   {
+    field: 'email_verified_at',
+    headerName: 'Email Verification',
+    width: 200,
+    renderCell: (params) => (
+      params.row.email_verified_at === null ? (
+        <span className="py-1 px-3 no-underline rounded-full bg-red-400 text-white font-sans font-semibold text-sm border-red-100 hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2">
+          Unverified
+        </span>
+      ) : (
+        <span className="py-1 px-3 no-underline rounded-full bg-emerald-500 text-white font-sans font-normal text-sm border-green-100 hover:text-white hover:bg-green-light focus:outline-none active:shadow-none mr-2">
+          Verified
+        </span>
+      )
+    )
+  },
+  
+  {
+    field: 'created_at',
+    headerName: 'Account Created At',
+    width: 180,
+    renderCell: (params) => (
+      <span>
+        {new Date(params.row.created_at).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true,
+        })}
+      </span>
+    ),
+  },  {
     field: 'details',
     headerName: 'Details',
     width: 120,

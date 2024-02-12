@@ -371,7 +371,7 @@ public function deleteMyStudents()
 public function showAllStudents()
 {
     try {
-        $students = Students::orderBy('created_at', 'desc')->get();
+        $students = Students::with('user')->orderBy('created_at', 'desc')->get();
         return response()->json(['students'=>$students]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
@@ -381,7 +381,7 @@ public function showAllStudents()
 public function getMyStudents()
 {
     try {
-        $students = Students::where('faculty_id', Auth::guard('faculty')->id())->orderBy('created_at', 'desc')->get();
+        $students = Students::with('user')->where('faculty_id', Auth::guard('faculty')->id())->orderBy('created_at', 'desc')->get();
         return response()->json(['students'=>$students]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
@@ -392,7 +392,7 @@ public function getMyStudents()
 public function showStudentsForTeacher($faculty_id)
 {
     try {
-        $students = Students::where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
+        $students = Students::with('user')->where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
 
         return response()->json(['students' => $students]);
     } catch (\Exception $e) {

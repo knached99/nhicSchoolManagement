@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             'email'=>'khalednached@gmail.com',
             'role'=>'Admin',
             'password'=>Hash::make('MarioKart8!'),
+            'created_at'=>Date('Y-m-d H:i:s')
         ]);
     }
 }

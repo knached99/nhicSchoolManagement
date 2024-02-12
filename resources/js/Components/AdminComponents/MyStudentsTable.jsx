@@ -41,8 +41,24 @@ export default function MyStudentsTable({auth}) {
     { field: 'state', headerName: 'State', width: 120 },
     { field: 'zip', headerName: 'Zip Code', width: 120 },
     { field: 'grade', headerName: 'Level', width: 120 },
-    { field: 'created_at', headerName: 'Uploaded At', width: 180 },
     {
+      field: 'created_at',
+      headerName: 'Uploaded At',
+      width: 180,
+      renderCell: (params) => (
+        <span>
+          {new Date(params.row.created_at).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true,
+          })}
+        </span>
+      ),
+    },    {
     field: 'details',
     headerName: 'Details',
     width: 120,

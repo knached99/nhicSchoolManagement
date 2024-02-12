@@ -133,16 +133,49 @@ const columns = [
   { field: 'student_id', headerName: 'Student ID', width: 120 },
   { field: 'first_name', headerName: 'First Name', width: 120 },
   { field: 'last_name', headerName: 'Last Name', width: 120 },
-  { field: 'parent_guardian_email', headerName: 'Parent/Guardian Email', width: 200 },
-  { field: 'date_of_birth', headerName: 'Date Of Birth', width: 150 },
+  {
+    field: 'user_id',
+    headerName: 'Parent/Guardian',
+    width: 200,
+    renderCell: (params) => (
+      <div>
+        {params.row.user && params.row.user.name ? params.row.user.name : 'N/A'}
+      </div>
+    ),
+  },  { field: 'date_of_birth', headerName: 'Date Of Birth', width: 150 },
   { field: 'address', headerName: 'Address', width: 150 },
-  {field: 'street_address_2', headerName: 'Apt/Unit', width: 150},
+  {
+    field: 'street_address_2',
+    headerName: 'Street Address 2',
+    width: 140,
+    renderCell: (params) => (
+      <div>
+        {params.row.street_address_2 ? params.row.street_address_2 : 'N/A'}
+      </div>
+    ),
+  },
   { field: 'city', headerName: 'City', width: 120 },
   { field: 'state', headerName: 'State', width: 120 },
   { field: 'zip', headerName: 'Zip Code', width: 120 },
   { field: 'grade', headerName: 'Level', width: 120 },
-  { field: 'created_at', headerName: 'Uploaded At', width: 180 },
   {
+    field: 'created_at',
+    headerName: 'Uploaded At',
+    width: 180,
+    renderCell: (params) => (
+      <span>
+        {new Date(params.row.created_at).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hour12: true,
+        })}
+      </span>
+    ),
+  },  {
     field: 'details',
     headerName: 'Details',
     width: 120,

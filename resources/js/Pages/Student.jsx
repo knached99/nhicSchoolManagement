@@ -126,6 +126,9 @@ export default function Student({auth, student}) {
           Object.keys(values).forEach((key) => {
             values[key] = '';
           });
+          window.setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         }
       } catch (error) {
         setError(error.message || 'Unable to assign teacher to student, something went wrong');
@@ -154,6 +157,9 @@ export default function Student({auth, student}) {
           // Reset form values
           Object.keys(values).forEach((key) => {
             values[key] = '';
+            window.setTimeout(() => {
+              window.location.reload();
+            }, 2000);
           });
         }
       } catch (error) {
