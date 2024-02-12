@@ -30,27 +30,33 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
             try {
                 $dateOfBirth = Carbon::parse($row[3])->format('Y-m-d');
             } catch (\Exception $e) {
-                \Log::error("Error converting date: {$row[3]}. Exception: {$e->getMessage()}");
+              
+                \Log::error("Import Exception: {$e->getMessage()}");
             }
         }
     
-        return Students::firstOrNew(['parent_guardian_email' => $row[2]], [
-            'first_name' => $row[0] ?? null,
-            'last_name' => $row[1] ?? null,
-            'date_of_birth' => $dateOfBirth ?? null,
-            'address' => $row[4] ?? null,
-            'street_address_2'=>$row[5] ?? null,
-            'city' => $row[6] ?? null,
-            'state' => $row[7] ?? null,
-            'zip' => $row[8] ?? null,
-            'grade' => $row[9] ?? null, // Use null if key 8 is undefined
-            'allergies_or_special_needs'=>$row[10] ?? null,
-            'emergency_contact_person'=>$row[11] ?? null, 
-            'emergency_contact_hospital'=>$row[12] ?? null, 
-            'user_id'=>$row[13] ?? null, 
-            'faculty_id' => $role === 'Teacher' ? Auth::guard('faculty')->id() : null
-            
-        ]);
+        return Students::firstOrNew(
+            [
+                'first_name' => $row[0] ?? null,
+                'last_name' => $row[1] ?? null,
+            ],
+            [
+                'gender' => $row[2] ?? null,
+                'date_of_birth' => $dateOfBirth ?? null,
+                'address' => $row[3] ?? null,
+                'street_address_2' => $row[4] ?? null,
+                'city' => $row[5] ?? null,
+                'state' => $row[6] ?? null,
+                'zip' => $row[7] ?? null,
+                'grade' => $row[8] ?? null,
+                'allergies_or_special_needs' => $row[9] ?? null,
+                'emergency_contact_person' => $row[10] ?? null, 
+                'emergency_contact_hospital' => $row[11] ?? null, 
+                'user_id' => $row[12] ?? null, 
+                'faculty_id' => $role === 'Teacher' ? Auth::guard('faculty')->id() : null
+            ]
+        );
+        
     }
     
     
@@ -70,9 +76,10 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
     // upserts if the student already exists, will update the model 
     // instead of adding a new row 
     public function uniqueBy()
-{
-    return ['parent_guardian_email'];
-}
+    {
+        return ['first_name', 'last_name'];
+    }
+    
 
     
 

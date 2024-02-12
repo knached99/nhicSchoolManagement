@@ -29,6 +29,7 @@ export default function Login({ status }) {
     return (
         <GuestLayout>
             <Head title="Log in" />
+            <h1 className="m-3 font-black text-xl text-purple-500">Login to your account</h1>
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 

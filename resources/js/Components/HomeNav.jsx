@@ -46,7 +46,8 @@ function HomeNav() {
   };
 
   return (
-    <AppBar position="static" style={{backgroundColor: "#10b981"}}>
+    // backgroundColor: "#10b981"
+    <AppBar position="static" style={{backgroundColor: '#000'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
        
