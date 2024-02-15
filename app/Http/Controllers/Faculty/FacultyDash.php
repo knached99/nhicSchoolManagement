@@ -134,6 +134,16 @@ public function fetchParents()
     }
 }
 
+public function getVerifiedParents(){
+    try{
+        $verifiedParents = User::whereNotNull('email_verified_at')->get();
+        return response()->json(['parents'=>$verifiedParents]);
+    }
+    catch(QueryException $e){
+        return response()->json(['error' => 'Error getting parents: ' . $e->getMessage()]);
+    }
+}
+
 public function deleteParents()
 {
     if(Auth::guard('faculty')->user()->role !== 'Admin'){
@@ -192,6 +202,38 @@ public function viewFacultyUser($faculty_id){
   }
 }
 
+public function updateUserInformation(Request $request, $faculty_id){
+    try{
+        $request->only([
+            'email',
+            'phone_number', 
+            'role'
+        ]);
+
+        
+        if (!preg_match('/^\d{3}-\d{3}-\d{4}$/', $request->phone_number)) {
+            return response()->json(['errors'=>'Phone number must be a valid US number']);
+        }
+
+        $data = [
+            'email'=>$request->email, 
+            'phone'=>$request->phone_number, 
+            'role'=>$request->role
+        ]; 
+
+        Faculty::where('faculty_id', $faculty_id)->update($data);
+        return response()->json(['success'=>'Your changes have been saved']);
+    }
+    catch(\Exception $e){
+        return response()->json(['errors'=> $e->getMessage()]);
+        \Log::error('Query Exception: '.$e->getMessage());
+    }
+    catch(QueryException $e){
+        return response()->json(['errors'=> 'Something went wrong saving your changes']);
+        \Log::error('Query Exception: '.$e->getMessage());
+    }
+}
+
 public function studentBatchImport(Request $request)
 {
     try {
@@ -225,10 +267,15 @@ public function addStudent(Request $request){
             'last_name',
             'date_of_birth',
             'address',
+            'street_address_2',
             'city',
             'state',
             'zip',
-            'grade'
+            'level',
+            'gender',
+            'allergies_or_special_needs',
+            'emergency_contact_person',
+            'emergency_contact_hospital',
         ]), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -237,7 +284,8 @@ public function addStudent(Request $request){
             'city' => 'required',
             'state' => 'required',
             'zip' => 'required',
-            'grade' => 'required'
+            'level' => 'required',
+            'gender'=>'required'
         ]);
         
         if($validator->fails()){
@@ -254,7 +302,11 @@ public function addStudent(Request $request){
             'city' => $request->city,
             'state' => $request->state,
             'zip' => $request->zip,
-            'grade' => $request->grade,
+            'level' => $request->level,
+            'gender'=>$request->gender,
+            'allergies_or_special_needs'=>$request->allergies_or_special_needs,
+            'emergency_contact_person'=>$request->emergency_contact_person,
+            'emergency_contact_hospital'=>$request->emergency_contact_hospital,
             'user_id'=>$request->user_id
         ];
         
@@ -407,7 +459,7 @@ public function showStudentsForTeacher($faculty_id)
 public function viewStudentDetails($student_id) {
     try {
         $student = Students::with('faculty', 'user')->findOrFail($student_id);
-        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student]);
+        return Inertia::render('Student', ['auth' => Auth::user(), 'student' => $student]);
     } catch (ModelNotFoundException $e) {
         return redirect('faculty/dash');
     }

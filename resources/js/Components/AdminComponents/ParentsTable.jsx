@@ -134,17 +134,22 @@ const columns = [
   { field: 'email', headerName: 'Email', width: 200 },
   {
     field: 'email_verified_at',
-    headerName: 'Email Verification',
+    headerName: 'Account Status',
     width: 200,
     renderCell: (params) => (
       params.row.email_verified_at === null ? (
-        <span className="py-1 px-3 no-underline rounded-full bg-red-400 text-white font-sans font-semibold text-sm border-red-100 hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2">
-          Unverified
+        
+        <Tooltip title={`${params.row.email} is not verified, that user must verify their account to login`} arrow>
+        <span className="py-0 px-2 no-underline rounded bg-red-400 text-white font-sans font-normal text-sm border-red-100 hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2">
+          Not Verified
         </span>
+        </Tooltip>
       ) : (
-        <span className="py-1 px-3 no-underline rounded-full bg-emerald-500 text-white font-sans font-normal text-sm border-green-100 hover:text-white hover:bg-green-light focus:outline-none active:shadow-none mr-2">
+        <Tooltip title={`${params.row.email} is verified and can login to their account`} arrow>
+        <span className="py-0 px-2 no-underline rounded bg-emerald-500 text-white font-sans font-normal text-sm border-green-100 hover:text-white hover:bg-green-light focus:outline-none active:shadow-none mr-2">
           Verified
         </span>
+        </Tooltip>
       )
     )
   },

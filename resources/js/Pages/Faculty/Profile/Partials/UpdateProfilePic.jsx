@@ -13,8 +13,8 @@ import Alert from '@mui/material/Alert';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import defaultProfilePic from '../../../../../../public/assets/images/default_profile_pic.png';
 import axios from 'axios';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function UpdateProfilePic({ className = '' }) {
     const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
@@ -90,8 +90,9 @@ export default function UpdateProfilePic({ className = '' }) {
                 setSuccess(response.data.success);
                 setSuccessOpen(true);
                 setPreviewImage(null);
-                // setRefreshData(refreshData);
-                window.location.reload();
+                window.setTimeout(() => {
+                    window.location.reload();
+                  }, 2000);
             } else {
                 setErrors(`Server Error: ${response.status}`);
                 setErrorOpen(true);
@@ -178,11 +179,11 @@ export default function UpdateProfilePic({ className = '' }) {
 
                 <p className="mt-1 text-sm text-gray-600">Upload your Profile picture </p>
                 {!user.profile_pic ? (
-                    <img src={defaultProfilePic} alt="Default Profile Picture" className="w-100 h-100 p-1 mt-3 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" />
-                )
+                    <AccountCircleIcon style={{ fontSize: 100, color: 'gray' }} />
+                )          
                 : 
                 (
-                    <img src={`${profilePicPath}/${user.profile_pic}`} className="w-40 h-40 p-1 mt-3 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" alt="User Profile Pic" />
+                    <img src={`${profilePicPath}/${user.profile_pic}`} className="w-20 h-20 p-1 mt-3 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" alt="User Profile Pic" />
                 )
                 }
 

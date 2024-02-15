@@ -19,12 +19,33 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
+
+import CircularProgress from '@mui/material/CircularProgress';
+
+// ICONS 
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import CircularProgress from '@mui/material/CircularProgress';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
+import PhoneIphoneOutlinedIcon from '@mui/icons-material/PhoneIphoneOutlined';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
+import Face6OutlinedIcon from '@mui/icons-material/Face6Outlined';
+import Face3OutlinedIcon from '@mui/icons-material/Face3Outlined';
+import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined';
+import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined';
+import ContactEmergencyOutlinedIcon from '@mui/icons-material/ContactEmergencyOutlined';
+import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
+
+// Lists
+
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
+
 
 export default function Student({auth, student}) {
     const [error, setError] = useState(null);
@@ -34,6 +55,7 @@ export default function Student({auth, student}) {
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
 
     const fetchTeachers = async () => {
         try {
@@ -53,7 +75,7 @@ export default function Student({auth, student}) {
 
       const fetchParents = async () => {
         try {
-          const response = await fetch('/fetchParents');
+          const response = await fetch('/getVerifiedParents');
           console.log(response);
           const { parents, error } = await response.json();
 
@@ -106,6 +128,53 @@ export default function Student({auth, student}) {
     const validateData = Yup.object().shape({
       user_id: Yup.string().required('Must Select Parent')
     });
+
+
+    const editStudentValues = {
+      student_id: student.student_id, 
+      faculty_id: student.faculty_id, 
+      level: student.level 
+    };
+
+    const editStudentSchema = Yup.object().shape({
+      student_id: Yup.string().required('Student ID Required'),
+      faculty_id: Yup.string(), 
+      level: Yup.string(),  // Fix the typo here
+    });
+    
+
+
+    const editStudentInformation = async (values, { setSubmitting }) => {
+      try {
+        const response = await axios.put(`/editStudentInformation/${values.student_id}`, values, {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+    
+        if (response.data.errors) {
+          setError(response.data.errors);
+          setErrorOpen(true);
+        } else if (response.data.success) {
+          setSuccess(response.data.success);
+          setSuccessOpen(true);
+    
+          // Reset form values
+          Object.keys(values).forEach((key) => {
+            values[key] = '';
+          });
+          window.setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        }
+      } catch (error) {
+        setError(error.message || 'Unable to edit student information, something went wrong');
+        setErrorOpen(true);
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
 
     const assignTeacherToStudent = async (values, { setSubmitting }) => {
       try {
@@ -182,6 +251,10 @@ export default function Student({auth, student}) {
         setError(null);
     };
 
+      const handleTogglePermissionsMenu = () => {
+    setOpenPermissionsMenu(!openPermissionsMenu);
+  };
+
   return (
     <>
       <AdminLayout
@@ -199,6 +272,63 @@ export default function Student({auth, student}) {
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
                         <p className="text-gray-700 text-center font-bold mt-3">Parent/Guardian Email: <span className="font-normal">{student.parent_guardian_email}</span></p>
                         <p className="text-gray-700 text-center font-bold mt-3">Student Since: <span className="font-normal">{new Date(student.created_at).toLocaleDateString()}</span></p>
+                        {/* {auth.role === 'Admin' && (
+                          <>
+                           <button onClick={handleTogglePermissionsMenu} className="bg-slate-400 hover:bg-blue-700 text-white font-bold py-2 px-4 m-4 rounded">
+                           Edit Student
+                         </button>
+                         <Collapse in={openPermissionsMenu}>
+                          <Formik initialValues={editStudentValues} validationSchema={editStudentSchema} onSubmit={editStudentInformation}>
+                        <input type="hidden" name="student_id" id="student_id" value={student.student_id}/>
+
+                        <FormControl style={{margin: 10, width: '100%', display: 'block'}}>
+                            <InputLabel id="level">Select Level</InputLabel>
+                            <Select
+                              labelId="level"
+                              id="level"
+                              name="level"
+                           
+                              style={{ width: 300 }}
+                            >
+                              <MenuItem value="">
+                                <em>Select Level</em>
+                              </MenuItem>
+                    
+                              <MenuItem value="level 1">Level 1</MenuItem>
+                              <MenuItem value="level 2">Level 2</MenuItem>
+                              <MenuItem value="level 3">Level 3</MenuItem>
+                              <MenuItem value="level 4">Level 4</MenuItem>
+                              <MenuItem value="level 5">Level 5</MenuItem>
+                            </Select>
+                          </FormControl>
+
+
+                          <FormControl style={{margin: 10, width: '100%', display: 'block'}}>
+                            <InputLabel id="faculty_id">Select Teacher</InputLabel>
+                            <Select
+                              labelId="faculty_id"
+                              id="faculty_id"
+                              name="faculty_id"
+                           
+                              style={{ width: 300 }}
+                            >
+                              <MenuItem value="">
+                                <em>Select Teacher</em>
+                              </MenuItem>
+                    
+                              {teachers.map((teacher) => (
+                                <MenuItem key={teacher.faculty_id} value={teacher.faculty_id}>
+                                  {teacher.name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <Button fullWidth>Save Changes</Button>
+                          </Formik>
+                        </Collapse>
+                          </>
+                        )} */}
+                    
 
                         {auth.role === 'Admin' && !student.faculty_id && (
                         <div class="mt-6 flex flex-wrap gap-4 justify-center">
@@ -320,19 +450,172 @@ export default function Student({auth, student}) {
                     <hr className="my-6 border-t border-gray-300" />
                     <div className="flex flex-col">
                         <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Student Bio</span>
-                        <ul>
-                            <li className="mb-2">{student.address}, {student.street_address_2 && (<p>{student.street_address_2}</p>)}{student.city}, {student.state}, {student.zip}</li>                      
-                        </ul>
+                        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+      <nav aria-label="main mailbox folders">
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Tooltip title="Street Address" arrow>
+                <HomeOutlinedIcon/> 
+                </Tooltip>
+              </ListItemIcon>
+              <ListItemText primary={`${student.address}${student.street_address_2 ? `, ${student.street_address_2}` : ''}, ${student.city}, ${student.state}, ${student.zip}`} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+               {student.gender &&
+                student.gender === 'Male' && (
+                  <>
+                  <Tooltip title="Gender" arrow>
+                  <Face6OutlinedIcon/>
+                  </Tooltip>
+                  </>
+                )
+               }
+               {
+                student.gender === 'Female' && (
+                  <Face3OutlinedIcon/>
+                )
+               }
+              </ListItemIcon>
+              <ListItemText primary={student.gender ? student.gender : 'N/A'} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Tooltip title="Birthday" arrow>
+                <CakeOutlinedIcon/> 
+                </Tooltip>
+              </ListItemIcon>
+              <ListItemText primary={student.date_of_birth ? student.date_of_birth : 'N/A'} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+
+
+        <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Tooltip title="Level" arrow>
+                <GradeOutlinedIcon/> 
+                </Tooltip>
+              </ListItemIcon>
+              <ListItemText primary={student.level ? student.level : 'N/A'} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Tooltip title="Allergies or Special Needs" arrow>
+                <PsychologyAltOutlinedIcon/> 
+                </Tooltip>
+              </ListItemIcon>
+              <ListItemText primary={student.allergies_or_special_needs ? student.allergies_or_special_needs : 'N/A'} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Tooltip title="Emergency Contact Person" arrow>
+                <ContactEmergencyOutlinedIcon/> 
+                </Tooltip>
+              </ListItemIcon>
+              <ListItemText primary={student.emergency_contact_person ? student.emergency_contact_person : 'N/A'} />
+            </ListItemButton>
+          </ListItem>
+          <Divider />
+
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <Tooltip title="Emergency Contact Hospital" arrow>
+                <LocalHospitalOutlinedIcon/> 
+                </Tooltip>
+              </ListItemIcon>
+              <ListItemText primary={student.emergency_contact_hospital ? student.emergency_contact_hospital : 'N/A'} />
+            </ListItemButton>
+          </ListItem>
+          </List>
+
+        
+      </nav>
+      <Divider />
+      </Box>
+
                     </div>
                    {student.user_id ? (
                     <div className="flex flex-col mt-5">
                     <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Parent Bio</span>
                     {student.user ? 
-                    <ul>
-                      <li>{student.user.name}</li>
-                      <li>{student.user.email}</li>
-                      <li>{!student.user.email_verified_at ? <span className="text-red-500">Account Not Verified</span> : <span className="text-emerald-500">Account Verified</span>}</li>
-                    </ul>
+   
+                    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                    <nav aria-label="main mailbox folders">
+                      <List>
+
+                      <ListItem disablePadding>
+                          <ListItemButton>
+                            <ListItemIcon>
+                              <Tooltip title="Parent's Name" arrow>
+                              <PersonOutlineOutlinedIcon/> 
+                              </Tooltip>
+                            </ListItemIcon>
+                            <ListItemText primary={student.user.name ? student.user.name : 'N/A'} />
+                          </ListItemButton>
+                        </ListItem>
+                        <Divider/>
+
+                                    
+                        <ListItem disablePadding>
+                          <ListItemButton>
+                            <ListItemIcon>
+                              <Tooltip title="Parent's Address" arrow>
+                              <HomeOutlinedIcon/> 
+                              </Tooltip>
+                            </ListItemIcon>
+                            <ListItemText primary={`${student.address}${student.street_address_2 ? `, ${student.street_address_2}` : ''}, ${student.city}, ${student.state}, ${student.zip}`} />
+                          </ListItemButton>
+                        </ListItem>
+                        <Divider/>
+                        
+
+                        <ListItem disablePadding>
+                          <ListItemButton>
+                            <ListItemIcon>
+                              <Tooltip title="Parent's Number" arrow>
+                              <PhoneIphoneOutlinedIcon/> 
+                              </Tooltip>
+                            </ListItemIcon>
+                            <ListItemText primary={student.user.phone ? student.user.phone : 'N/A'} />
+                          </ListItemButton>
+                        </ListItem>
+                        <Divider/>
+
+                        <ListItem disablePadding>
+                          <ListItemButton>
+                            <ListItemIcon>
+                              <Tooltip title="Parent's Email" arrow>
+                              <MailOutlineOutlinedIcon/> 
+                              </Tooltip>
+                            </ListItemIcon>
+                            <ListItemText primary={student.user.email ? student.user.email : 'N/A'} />
+                          </ListItemButton>
+                        </ListItem>
+                    
+                        </List>
+                        </nav>
+                        </Box>
                     : 
                     'N/A' 
                    }
@@ -478,7 +761,7 @@ export default function Student({auth, student}) {
     <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-          Average Grade
+          Average level
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
           <p class="font-bold text-2xl text-center">100/100</p>

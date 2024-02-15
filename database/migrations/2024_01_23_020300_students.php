@@ -15,14 +15,13 @@ return new class extends Migration
         $table->id('student_id'); 
         $table->string('first_name')->nullable();
         $table->string('last_name')->nullable();
-        $table->string('parent_guardian_email')->nullable();
         $table->date('date_of_birth')->nullable(); // Change the type to date
         $table->string('address')->nullable();
         $table->string('street_address_2')->nullable();
         $table->string('city')->nullable();
         $table->string('state')->nullable();
         $table->string('zip')->nullable();
-        $table->integer('grade')->nullable();  // levels 
+        $table->string('level')->nullable();
         $table->string('gender')->nullable();
         $table->longText('allergies_or_special_needs')->nullable(); 
         $table->string('emergency_contact_person')->nullable();

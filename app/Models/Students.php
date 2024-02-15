@@ -27,7 +27,11 @@ class Students extends Model
         'city',
         'state',
         'zip',
-        'grade',
+        'level',
+        'gender', 
+        'allergies_or_special_needs',
+        'emergency_contact_person',
+        'emergency_contact_hospital',
         'user_id',
         'faculty_id'
     ];

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Link, Head } from '@inertiajs/react';
-import defaultProfilePic from '../../../../public/assets/images/default_profile_pic.png';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CircularProgress from '@mui/material/CircularProgress';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -190,7 +190,27 @@ const deleteAdminUser = async (userId) => {
                     rows.map((row, index) => (
                       <TableRow key={row.faculty_id}>
                         <TableCell>{row.faculty_id}</TableCell>
-                        <TableCell><img src={`${row.profile_pic ? profilePicPath + '/' + row.profile_pic : defaultProfilePic}`} class="inline-block h-10 w-10 rounded-full ring-2 ring-white" alt="Profile Picture"/> {row.name}  </TableCell>
+                        <TableCell>
+                        {row.profile_pic ? (
+                          <>
+                            <img
+                              src={`${profilePicPath }/${row.profile_pic}`}
+                              className="inline-block h-10 w-10 rounded-full ring-2 ring-white mr-2"
+                              alt="Profile Picture"
+                            />
+                            {row.name}
+                          </>
+                        ) : (
+                          <>
+                            <AccountCircleIcon style={{fontSize: 40, color: 'gray'}} />
+                            {row.name}
+                          </>
+                        )}
+                      </TableCell>
+
+                         
+                      
+                          
                         <TableCell>{row.email}</TableCell>
                         <TableCell>
                           {row.phone ? row.phone : 'N/A'}

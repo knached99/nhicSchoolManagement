@@ -1,12 +1,44 @@
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect} from 'react';
+import { useForm, usePage } from '@inertiajs/react';
+import * as Yup from 'yup';
+import { Formik, Form, Field } from 'formik';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import Collapse from '@mui/material/Collapse';
+import Alert from '@mui/material/Alert';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import axios from 'axios';
+import MenuItem from '@mui/material/MenuItem';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import FormHelperText  from '@mui/material/FormHelperText';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import defaultProfilePic from '../../../../../public/assets/images/default_profile_pic.png';
 import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 export default function ViewProfile({auth, user, students}) {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [errorOpen, setErrorOpen] = useState(true);
+  const [successOpen, setSuccessOpen] = useState(true);
+  const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
+
+
+  const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
 
   //   const formatPermissions = (permissions) => {
   //     if (!permissions || !Array.isArray(permissions)) {
@@ -17,6 +49,63 @@ export default function ViewProfile({auth, user, students}) {
   //     return permissions.map(permission => permission.replace(/_/g, ' ')).join(', ');
   // };
 
+  const initialValues={
+    email: user.email,
+    phone_number: user.phone,
+    role: user.role,
+  };
+
+  const validation = Yup.object().shape({
+    email: Yup.string().email('Invalid email format'),
+    phone_number: Yup.string().matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format'),
+    role: Yup.string(),
+  });
+
+
+  const updateUserInformation = async (values, { setSubmitting }) => {
+    try {
+      const response = await axios.put(`/updateUserInformation/${user.faculty_id}`, values, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.data.errors) {
+        setError(response.data.errors);
+        setErrorOpen(true);
+      } else if (response.data.success) {
+        setSuccess(response.data.success);
+        setSuccessOpen(true);
+        Object.keys(values).forEach((key) => {
+          values[key] = '';
+        });
+        window.setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    } catch (error) {
+      setError(error.message || 'An unexpected error occurred');
+      setErrorOpen(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCloseSuccess = () => {
+    setSuccessOpen(false);
+    setSuccess(null);
+};
+
+const handleCloseError = () => {
+    setErrorOpen(false);
+    setError(null);
+};
+
+  const handleTogglePermissionsMenu = () => {
+    setOpenPermissionsMenu(!openPermissionsMenu);
+  };
+    
+  
 
 
   return (
@@ -31,10 +120,24 @@ export default function ViewProfile({auth, user, students}) {
             <div className="col-span-4 sm:col-span-3">
                 <div className="bg-white shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
-            
-                        <AccountCircleIcon style={{fontSize: 100, color: 'gray'}}/>
+                    {user.profile_pic ? (
+                    <>
+                      <img
+                        src={`${profilePicPath}/${user.profile_pic}`}
+                        className="inline-block h-20 w-20 rounded-full ring-2 ring-white mr-2"
+                        alt="Profile Picture"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <AccountCircleIcon style={{ fontSize: 100, color: 'gray' }} />
+                      {user.name}
+                    </>
+                  )}
+
+                       
                         <h1 className="text-xl font-bold">{user.name}</h1>
-                        <p className="text-gray-700 text-center font-bold"><MailOutlineOutlinedIcon/> <span className="font-normal">{user.email}</span></p>
+                        <p className="text-gray-700 text-center font-bold"><MailOutlineOutlinedIcon/> <span className="font-semibold">{user.email}</span></p>
 
                     </div>
                     <hr className="my-6 border-t border-gray-300" />
@@ -45,6 +148,162 @@ export default function ViewProfile({auth, user, students}) {
                         <li className="mb-2"><SmartphoneOutlinedIcon/> {user.phone ?? 'N/A'}</li>
                         <li className="mb-2"><WorkOutlineOutlinedIcon/> {user.role}</li>  
                         </ul>
+
+                        {auth.role === 'Admin' && 
+                        <>
+                           <button onClick={handleTogglePermissionsMenu} className="bg-slate-400 hover:bg-blue-700 text-white font-bold py-2 px-4 m-4 rounded">
+                           Edit User
+                         </button>
+
+                         <Collapse in={openPermissionsMenu}>
+                           <Formik initialValues={initialValues} validationSchema={validation} onSubmit={updateUserInformation}>
+                           {({ values, errors, touched, handleSubmit, handleBlur, handleChange, isValid, dirty, isSubmitting, setFieldValue }) => (
+                               <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+                                     
+                                     {error && (
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+                                       <div>
+                                       <Field
+                                        id="email"
+                                        name="email"
+                                        helperText={touched.email && errors.email}
+                                        error={touched.email && Boolean(errors.email)}
+                                        value={values.email}
+                                        onBlur={handleBlur}
+                                        component={TextField}
+                                        style={{ margin: 10 }}
+                                        fullWidth
+                                        onChange={handleChange}
+                                      />
+
+
+                                       </div>
+
+                                       <div>
+                                       <Field
+                                       id="phone_number"
+                                       name="phone_number"
+                                       helperText={touched.phone_number && errors.phone_number}
+                                       error={touched.phone_number && Boolean(errors.phone_number)}
+                                       value={values.phone_number}
+                                       onBlur={handleBlur}
+                                       component={TextField}
+                                       style={{ margin: 10 }}
+                                       fullWidth
+                                       onChange={handleChange}
+                                   />
+                                       </div>
+
+                                       <div>
+                                       <FormControl sx={{ m: 1, width: '100%', }}>
+                                      <InputLabel id="role">Select Role</InputLabel>
+                                      <Select
+                                      labelId="role"
+                                      id="role"
+                                      name="role"
+                                      value={values.role}
+                                      onChange={handleChange}
+                                    >
+                                      <MenuItem value="">
+                                        <em>Make a Selection</em>
+                                      </MenuItem>
+                                      <MenuItem value="Admin">Admin</MenuItem>
+                                      <MenuItem value="Teacher">Teacher</MenuItem>
+                                      <MenuItem value="Assistant Teacher">Assistant Teacher</MenuItem>
+                                      {values.role && (
+                                        <MenuItem value={values.role} disabled>
+                                          {values.role}
+                                        </MenuItem>
+                                      )}
+                                    </Select>
+
+                                      {touched.role && errors.role && (
+                                          <FormHelperText>{errors.role}</FormHelperText>
+                                      )}
+                                  </FormControl>
+                                     
+                                       </div>
+               
+                                       <div className="flex items-center gap-4">
+                                       <Button
+                                       type="submit"
+                                       variant="contained"
+                                       style={{
+                                           color: 'white',
+                                           width: '100%',
+                                           backgroundColor: isSubmitting ? '#l66534' : '#3d5afe',
+                                           padding: 15,
+                                           marginTop: 10,
+                                       }}
+                                       disabled={isSubmitting}
+                                   >
+                                       {isSubmitting ? (
+                                           <CircularProgress size={24} style={{ color: '#fff' }} />
+                                       ) : (
+                                           <>Save</>
+                                       )}
+                                   </Button>
+               
+               
+                                       </div>
+                                   </form>
+                               )}
+                           </Formik>
+                           </Collapse>
+                           </>
+                        }
+                        
+                     
                     </div>
               
                    

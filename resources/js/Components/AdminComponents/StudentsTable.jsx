@@ -157,7 +157,7 @@ const columns = [
   { field: 'city', headerName: 'City', width: 120 },
   { field: 'state', headerName: 'State', width: 120 },
   { field: 'zip', headerName: 'Zip Code', width: 120 },
-  { field: 'grade', headerName: 'Level', width: 120 },
+  { field: 'level', headerName: 'Level', width: 120 },
   {
     field: 'created_at',
     headerName: 'Uploaded At',

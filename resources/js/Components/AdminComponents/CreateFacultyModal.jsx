@@ -87,7 +87,7 @@ export default function CreateFacultyModal() {
             });
         }
     } catch (error) {
-        setError(error.message || 'An error occurred');
+        setError(error.message || 'An unexpected error occurred');
         setErrorOpen(true);
     } finally {
         setSubmitting(false);

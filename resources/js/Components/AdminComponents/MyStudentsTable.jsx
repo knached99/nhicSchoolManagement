@@ -40,7 +40,7 @@ export default function MyStudentsTable({auth}) {
     { field: 'city', headerName: 'City', width: 120 },
     { field: 'state', headerName: 'State', width: 120 },
     { field: 'zip', headerName: 'Zip Code', width: 120 },
-    { field: 'grade', headerName: 'Level', width: 120 },
+    { field: 'level', headerName: 'Level', width: 120 },
     {
       field: 'created_at',
       headerName: 'Uploaded At',
@@ -294,7 +294,7 @@ const deleteMyStudents = async () => {
             <CircularProgress color="secondary" />
           </div>
         ) : rows.length === 0 ? (
-          <div className="text-slate-500 text-xl text-center p-3 m-3">You have not uploaded your students' information</div>
+          <div className="text-slate-500 text-xl text-center p-3 m-3">You have not been any students yet, check back here later</div>
         ) : (
           <Paper sx={{ width: '100%', backgroundColor: '#fff' }}>
             <div style={{ height: 400, width: '100%' }}>

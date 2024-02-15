@@ -26,6 +26,8 @@
         "@mui/material": "^5.15.6",
         "@mui/styled-engine-sc": "^6.0.0-alpha.13",
         "@mui/x-data-grid": "^6.19.4",
+        "@mui/x-date-pickers": "^6.19.4",
+        "dayjs": "^1.11.10",
         "formik": "^2.4.5",
         "react-router-dom": "^6.21.3",
         "styled-components": "^6.1.8",

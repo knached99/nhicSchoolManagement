@@ -21,21 +21,82 @@ import CloseIcon from '@mui/icons-material/Close';
 import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
 import axios from 'axios';  // Add this line
+import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
+import { styled } from '@mui/system';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90%', // Set to a percentage for responsiveness
+  maxWidth: 400, // Set a maximum width
+  maxHeight: '80vh', // Set a maximum height (80% of the viewport height)
+  overflowY: 'auto', // Enable vertical scrolling when content exceeds the height
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+
+  const indigo = {
+    100: '#e0e7ff',
+    200: '#c7d2fe',
+    400: '#818cf8',
+    500: '#6366f1',
+    600: '#4f46e5',
+    900: '#312e81',
   };
 
+  const grey = {
+    50: '#F3F6F9',
+    100: '#E5EAF2',
+    200: '#DAE2ED',
+    300: '#C7D0DD',
+    400: '#B0B8C4',
+    500: '#9DA8B7',
+    600: '#6B7A90',
+    700: '#434D5B',
+    800: '#303740',
+    900: '#1C2025',
+  };
+
+
+
+  const Textarea = styled(BaseTextareaAutosize)(
+    ({ theme }) => `
+    box-sizing: border-box;
+    width: 320px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px;
+    border-radius: 12px 12px 0 12px;
+    color: ${theme.palette.mode === 'dark' ? grey[300] : grey[900]};
+    background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
+    border: 1px solid ${theme.palette.mode === 'dark' ? grey[700] : grey[200]};
+    box-shadow: 0px 2px 2px ${theme.palette.mode === 'dark' ? grey[900] : grey[50]};
+
+    &:hover {
+      border-color: ${indigo[400]};
+    }
+
+    &:focus {
+      outline: 0;
+      border-color: ${indigo[400]};
+      box-shadow: 0 0 0 3px ${theme.palette.mode === 'dark' ? indigo[600] : indigo[200]};
+    }
+
+    // firefox
+    &:focus-visible {
+      outline: 0;
+    }
+  `,
+  );
   
 export default function AddStudentModal({refreshData}) {
     const [open, setOpen] = useState(false);
@@ -99,7 +160,11 @@ export default function AddStudentModal({refreshData}) {
         city: '',
         state: '',
         zip: '',
-        grade: '',
+        level: '',
+        gender: '',
+        allergies_or_special_needs: '',
+        emergency_contact_person: '',
+        emergency_contact_hospital: '',
         user_id: '',
         // Add other fields as needed
       };
@@ -117,7 +182,11 @@ export default function AddStudentModal({refreshData}) {
         zip: Yup.string()
         .matches(/^\d{5}$/, 'Must be a valid 5-digit ZIP code')
         .required('ZIP Code is required'),
-        grade: Yup.string().required('Level is required'),
+        level: Yup.string().required('Level is required'),
+        gender: Yup.string().required('Gender is required'),
+        allergies_or_special_needs: Yup.string(),
+        emergency_contact_person: Yup.string(),
+        emergency_contact_hospital: Yup.string()
       });
 
       const addStudent = async (values, { setSubmitting }) => {
@@ -307,16 +376,16 @@ export default function AddStudentModal({refreshData}) {
             isSubmitting,
           }) => (
             <Form onSubmit={handleSubmit} autoComplete="off">
-            <Field as={TextField} value={values.first_name} helperText={touched.first_name && errors.first_name} error={touched.first_name && Boolean(errors.first_name)} onBlur={handleBlur} id="first_name" name="first_name" placeholder="First Name" fullWidth style={{margin: 5}} />
-            <Field as={TextField} value={values.last_name} helperText={touched.last_name && errors.last_name} error={touched.last_name && Boolean(errors.last_name)} onBlur={handleBlur} id="last_name" name="last_name" placeholder="Last Name" fullWidth style={{margin: 5}} />
+            <Field as={TextField} value={values.first_name} helperText={touched.first_name && errors.first_name} error={touched.first_name && Boolean(errors.first_name)} onBlur={handleBlur} id="first_name" name="first_name" placeholder="First Name" fullWidth style={{margin: 10}} />
+            <Field as={TextField} value={values.last_name} helperText={touched.last_name && errors.last_name} error={touched.last_name && Boolean(errors.last_name)} onBlur={handleBlur} id="last_name" name="last_name" placeholder="Last Name" fullWidth style={{margin: 10}} />
 
-            {/* <Field as={TextField} value={values.parent_guardian_email} helperText={touched.parent_guardian_email && errors.parent_guardian_email} error={touched.parent_guardian_email && Boolean(errors.parent_guardian_email)} onBlur={handleBlur} id="parent_guardian_email" name="parent_guardian_email" placeholder="Parent/Guardian Email" fullWidth style={{margin: 5}} /> */}
+            {/* <Field as={TextField} value={values.parent_guardian_email} helperText={touched.parent_guardian_email && errors.parent_guardian_email} error={touched.parent_guardian_email && Boolean(errors.parent_guardian_email)} onBlur={handleBlur} id="parent_guardian_email" name="parent_guardian_email" placeholder="Parent/Guardian Email" fullWidth style={{margin: 10}} /> */}
              <InputLabel>Date Of Birth</InputLabel>
-            <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 5}} />
-            <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth style={{margin: 5}} />
-            <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth style={{margin: 5}} />
+            <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 10}} />
+            <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth style={{margin: 10}} />
+            <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth style={{margin: 10}} />
             {loading ? <CircularProgress color="primary" /> : 
-            <FormControl sx={{ m: 1, width: '100%' }}>
+            <FormControl sx={{ mx: 1, mt:3, mb:3,  width: '100%'}}>
                             <InputLabel id="user_id">Select Parent</InputLabel>
                             <Select
                               labelId="user_id"
@@ -338,8 +407,8 @@ export default function AddStudentModal({refreshData}) {
                             </Select>
             </FormControl>
             }
-            <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{margin: 5}} />
-            <FormControl sx={{ m: 1, width: '100%' }}>
+            <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{margin: 10}} />
+            <FormControl sx={{mx: 1, mt:3, mb:3, width: '100%' }}>
             <InputLabel id="state">Select State</InputLabel>
             <Select
               labelId="state"
@@ -365,16 +434,16 @@ export default function AddStudentModal({refreshData}) {
             )}
           </FormControl>
 
-            <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.zip)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth style={{margin: 5}} />
-            <FormControl sx={{mx: 1, width: '100%'}}>
-              <InputLabel id="grade">Select Level</InputLabel>
+            <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.zip)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth style={{margin: 10}} />
+            <FormControl sx={{mx: 1, mt:3, mb:3,  width: '100%'}}>
+              <InputLabel id="level">Select Level</InputLabel>
               <Select
-              labelId="grade"
-              id="grade"
-              name="grade"
-              value={values.grade}
+              labelId="level"
+              id="level"
+              name="level"
+              value={values.level}
               onChange={handleChange}
-              error={touched.grade && Boolean(errors.grade)}
+              error={touched.level && Boolean(errors.level)}
               onBlur={handleBlur}
               >
              <MenuItem value="">
@@ -386,13 +455,50 @@ export default function AddStudentModal({refreshData}) {
               <MenuItem value="4">Level 4</MenuItem>
               <MenuItem value="5">Level 5</MenuItem>
               </Select>
-              {touched.grade && errors.grade && (
-              <FormHelperText style={{color: 'red'}}>{errors.grade}</FormHelperText>
+              {touched.level && errors.level && (
+              <FormHelperText style={{color: 'red'}}>{errors.level}</FormHelperText>
             )}
             </FormControl>
-            {/* <Field as={TextField} value={values.grade} helperText={touched.grade && errors.grade} error={touched.grade && Boolean(errors.grade)} onBlur={handleBlur} id="grade" name="grade" placeholder="Grade" fullWidth style={{margin: 5}} /> */}
+              
+            <FormControl sx={{mx: 1, mt:3, mb:3, width: '100%'}}>
+              <InputLabel id="gender">Select Gender</InputLabel>
+              <Select
+              labelId="gender"
+              id="gender"
+              name="gender"
+              value={values.gender}
+              onChange={handleChange}
+              error={touched.gender && Boolean(errors.gender)}
+              onBlur={handleBlur}
+              >
+             <MenuItem value="">
+              <em>Select Gender</em>
+             </MenuItem>
+             <MenuItem value="Male">Male</MenuItem>
+              <MenuItem value="Female">Female</MenuItem>
+              </Select>
+              {touched.gender && errors.gender && (
+              <FormHelperText style={{color: 'red'}}>{errors.gender}</FormHelperText>
+            )}
+            </FormControl>
 
-        
+            
+            <Field as={Textarea} 
+            value={values.allergies_or_special_needs}
+             helperText={touched.allergies_or_special_needs && errors.allergies_or_special_needs} 
+             error={touched.zip && Boolean(errors.allergies_or_special_needs)} 
+             onBlur={handleBlur} 
+             id="allergies_or_special_needs" 
+             ame="allergies_or_special_needs" 
+             placeholder="Allergies or Special Needs" 
+             fullWidth 
+             style={{margin: 10}} 
+            />
+
+          <Field as={TextField} value={values.emergency_contact_person} helperText={touched.emergency_contact_person && errors.emergency_contact_person} error={touched.emergency_contact_person && Boolean(errors.emergency_contact_person)} onBlur={handleBlur} id="emergency_contact_personp" name="emergency_contact_person" placeholder="emergency contact person" fullWidth style={{margin: 10}} />
+          <Field as={TextField} value={values.emergency_contact_hospital} helperText={touched.emergency_contact_hospital && errors.emergency_contact_hospital} error={touched.emergency_contact_hospital && Boolean(errors.emergency_contact_hospital)} onBlur={handleBlur} id="emergency_contact_hospital" name="emergency_contact_hospital" placeholder="emergency contact hospital" fullWidth style={{margin: 10}} />
+
+
 
         <Button
                                         type="submit"
