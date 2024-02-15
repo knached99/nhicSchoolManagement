@@ -19,7 +19,7 @@ export default function AdminLayout({ user, header, children }) {
     const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
     return (
         <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
+            {/* <nav className="bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -54,23 +54,6 @@ export default function AdminLayout({ user, header, children }) {
                                 )
                             )}
 
-                                {/* {user.role==="Admin" || user.permissions.includes('can_batch_import_students') && 
-                                <>
-                                <ImportStudentsModal />
-                                </>
-                                } */}
-                                {/* {user.role === 'Admin' && (
-                                <>
-                                    <CreateFacultyModal />
-                                    <ImportStudentsModal />
-                                </>
-                                )} */}
-                                {/* {user.role === "Admin" || user.permissions.includes('can_create_faculty_users')
-                                &&
-                                <>
-                                
-                                </>
-                                } */}
                                 
                             </div>
                         </div>
@@ -162,15 +145,18 @@ export default function AdminLayout({ user, header, children }) {
                         </div>
                     </div>
                 </div>
-            </nav>
+            </nav> */}
 
-            {header && (
+            {/* {header && (
                 <header className="bg-white shadow">
                     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
                 </header>
-            )}
+            )} */}
             
             {/* <SideBar/> */}
+            
+            <SideBar auth={user}/>
+
             <main>{children}</main>
         </div>
         

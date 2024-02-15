@@ -111,8 +111,8 @@ export default function CreateFacultyModal() {
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
     <Tooltip title="Create Faculty User" TransitionComponent={Zoom}>
-        <IconButton onClick={handleOpen} className="hover:text-emerald-500">
-            <AddCircleOutlineIcon/>
+        <IconButton onClick={handleOpen} className="hover:text-slate-100">
+            <AddCircleOutlineIcon style={{color: '#fff'}}/>
         </IconButton>
     </Tooltip>
       <Modal

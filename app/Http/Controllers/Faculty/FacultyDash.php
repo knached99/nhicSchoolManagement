@@ -459,7 +459,7 @@ public function showStudentsForTeacher($faculty_id)
 public function viewStudentDetails($student_id) {
     try {
         $student = Students::with('faculty', 'user')->findOrFail($student_id);
-        return Inertia::render('Student', ['auth' => Auth::user(), 'student' => $student]);
+        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student]);
     } catch (ModelNotFoundException $e) {
         return redirect('faculty/dash');
     }

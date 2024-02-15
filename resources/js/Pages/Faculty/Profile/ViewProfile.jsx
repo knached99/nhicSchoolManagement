@@ -22,11 +22,16 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
+// Icons 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+// Table 
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
+
 export default function ViewProfile({auth, user, students}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -151,9 +156,15 @@ const handleCloseError = () => {
 
                         {auth.role === 'Admin' && 
                         <>
-                           <button onClick={handleTogglePermissionsMenu} className="bg-slate-400 hover:bg-blue-700 text-white font-bold py-2 px-4 m-4 rounded">
-                           Edit User
-                         </button>
+                           <button
+                              onClick={handleTogglePermissionsMenu}
+                              className={`${
+                                openPermissionsMenu ? 'bg-blue-700' : 'bg-slate-400 hover:bg-blue-700'
+                              } text-white font-bold py-2 px-4 m-4 rounded`}
+                            >
+                              Edit User {openPermissionsMenu ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
+                            </button>
+
 
                          <Collapse in={openPermissionsMenu}>
                            <Formik initialValues={initialValues} validationSchema={validation} onSubmit={updateUserInformation}>

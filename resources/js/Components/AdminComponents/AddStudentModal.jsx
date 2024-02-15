@@ -23,6 +23,11 @@ import Alert from '@mui/material/Alert';
 import axios from 'axios';  // Add this line
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
@@ -381,6 +386,20 @@ export default function AddStudentModal({refreshData}) {
 
             {/* <Field as={TextField} value={values.parent_guardian_email} helperText={touched.parent_guardian_email && errors.parent_guardian_email} error={touched.parent_guardian_email && Boolean(errors.parent_guardian_email)} onBlur={handleBlur} id="parent_guardian_email" name="parent_guardian_email" placeholder="Parent/Guardian Email" fullWidth style={{margin: 10}} /> */}
              <InputLabel>Date Of Birth</InputLabel>
+             {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer
+                components={[
+                'DatePicker',
+                'MobileDatePicker',
+                'DesktopDatePicker',
+                'StaticDatePicker',
+                ]}
+            >
+         <DemoItem label="Date Of Birth">
+         <DatePicker style={{margin: 5}} value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} id="date_of_birth" name="date_of_birth" onBlur={handleBlur} onChange={handleChange} />
+        </DemoItem>
+            </DemoContainer>
+            </LocalizationProvider> */}
             <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 10}} />
             <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth style={{margin: 10}} />
             <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth style={{margin: 10}} />

@@ -20,6 +20,12 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import GridViewIcon from '@mui/icons-material/GridView';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import CreateFacultyModal from '@/Components/AdminComponents/CreateFacultyModal';
+import ImportStudentsModal from '@/Components/AdminComponents/ImportStudentsModal';
+import NavLink from '@/Components/NavLink';
+import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 
 const drawerWidth = 240;
 
@@ -68,7 +74,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function SideBar() {
+export default function SideBar({auth}) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
@@ -83,21 +89,39 @@ export default function SideBar() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} style={{backgroundColor: 'white'}}>
-        <Toolbar>
-          <IconButton
-            color="black"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: 'none' }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            
-          </Typography>
-        </Toolbar>
+      <AppBar position="fixed" open={open} style={{backgroundColor: '#6366f1'}}>
+      <Toolbar className="flex items-center justify-between">
+  <div className="flex items-center">
+    <IconButton
+      color="black"
+      aria-label="open drawer"
+      onClick={handleDrawerOpen}
+      edge="start"
+      sx={{ mr: 2, ...(open && { display: 'none' }) }}
+    >
+      <MenuIcon style={{ color: '#fff' }} />
+    </IconButton>
+    <Typography variant="h6" noWrap component="div">
+      {auth.name}
+    </Typography>
+  </div>
+
+  <div className="flex items-center">
+    {auth.role === 'Admin' && (
+      <>
+        <div className="mr-3 inline-block">
+          <ImportStudentsModal />
+        </div>
+        <CreateFacultyModal />
+      </>
+    )}
+
+    <ResponsiveNavLink method="post" href={route('faculty.logout')} as="button" className="text-white">
+      <LogoutOutlinedIcon/> Logout
+    </ResponsiveNavLink>
+  </div>
+</Toolbar>
+
       </AppBar>
       <Drawer
         sx={{
@@ -117,42 +141,33 @@ export default function SideBar() {
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
+        <h6 className="font-normal text-indigo-500 text-start m-3 text-xl">My Role: {auth.role}</h6>   
+        <Divider />
+
         <Divider />
         <List>
-            <ListItem disablePadding>
-                <Link href="dash">
-                <ListItemButton>
-                    <ListItemIcon>
-                        <GridViewIcon/>
-                    </ListItemIcon>
-                    <ListItemText primary="Home"/>
-                </ListItemButton>
-                </Link>
-            </ListItem>
-          {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
+        <ListItem key="dash" disablePadding style={{
+       backgroundColor: route().current('faculty.dash') ? '#6366f1' : '', color: route().current('faculty.dash') ? '#fff' : '#000'}}>
+              <ListItemButton component={Link} to={route('faculty.dash')}>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <GridViewIcon style={{color: route().current('faculty.dash') ? '#fff' : '#000'}}/>
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary="Home" />
               </ListItemButton>
             </ListItem>
-          ))} */}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
+
+            <ListItem key="profile" disablePadding style={{
+       backgroundColor: route().current('faculty.profile') ? '#6366f1' : '', color: route().current('faculty.profile') ? '#fff' : '#000'}}>
+              <ListItemButton component={Link} to={route('faculty.profile')}>
                 <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <AccountCircleOutlinedIcon style={{color: route().current('faculty.profile') ? '#fff' : '#000'}}/>
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <ListItemText primary="My Profile" />
               </ListItemButton>
             </ListItem>
-          ))}
+
         </List>
+        <p className="text-start m-3 font-semibold">App Version 1.0</p>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />

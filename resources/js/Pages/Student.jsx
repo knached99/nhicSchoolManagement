@@ -56,11 +56,10 @@ export default function Student({auth, student}) {
     const [successOpen, setSuccessOpen] = useState(true);
     const [loading, setLoading] = useState(true);
     const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
-
+   
     const fetchTeachers = async () => {
         try {
           const response = await fetch('/fetchTeachers');
-          console.log(response);
           const { teachers, error } = await response.json();
 
           if (error) {
@@ -76,7 +75,6 @@ export default function Student({auth, student}) {
       const fetchParents = async () => {
         try {
           const response = await fetch('/getVerifiedParents');
-          console.log(response);
           const { parents, error } = await response.json();
 
           if (error) {
@@ -272,62 +270,7 @@ export default function Student({auth, student}) {
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
                         <p className="text-gray-700 text-center font-bold mt-3">Parent/Guardian Email: <span className="font-normal">{student.parent_guardian_email}</span></p>
                         <p className="text-gray-700 text-center font-bold mt-3">Student Since: <span className="font-normal">{new Date(student.created_at).toLocaleDateString()}</span></p>
-                        {/* {auth.role === 'Admin' && (
-                          <>
-                           <button onClick={handleTogglePermissionsMenu} className="bg-slate-400 hover:bg-blue-700 text-white font-bold py-2 px-4 m-4 rounded">
-                           Edit Student
-                         </button>
-                         <Collapse in={openPermissionsMenu}>
-                          <Formik initialValues={editStudentValues} validationSchema={editStudentSchema} onSubmit={editStudentInformation}>
-                        <input type="hidden" name="student_id" id="student_id" value={student.student_id}/>
-
-                        <FormControl style={{margin: 10, width: '100%', display: 'block'}}>
-                            <InputLabel id="level">Select Level</InputLabel>
-                            <Select
-                              labelId="level"
-                              id="level"
-                              name="level"
-                           
-                              style={{ width: 300 }}
-                            >
-                              <MenuItem value="">
-                                <em>Select Level</em>
-                              </MenuItem>
-                    
-                              <MenuItem value="level 1">Level 1</MenuItem>
-                              <MenuItem value="level 2">Level 2</MenuItem>
-                              <MenuItem value="level 3">Level 3</MenuItem>
-                              <MenuItem value="level 4">Level 4</MenuItem>
-                              <MenuItem value="level 5">Level 5</MenuItem>
-                            </Select>
-                          </FormControl>
-
-
-                          <FormControl style={{margin: 10, width: '100%', display: 'block'}}>
-                            <InputLabel id="faculty_id">Select Teacher</InputLabel>
-                            <Select
-                              labelId="faculty_id"
-                              id="faculty_id"
-                              name="faculty_id"
-                           
-                              style={{ width: 300 }}
-                            >
-                              <MenuItem value="">
-                                <em>Select Teacher</em>
-                              </MenuItem>
-                    
-                              {teachers.map((teacher) => (
-                                <MenuItem key={teacher.faculty_id} value={teacher.faculty_id}>
-                                  {teacher.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                          <Button fullWidth>Save Changes</Button>
-                          </Formik>
-                        </Collapse>
-                          </>
-                        )} */}
+                        
                     
 
                         {auth.role === 'Admin' && !student.faculty_id && (
