@@ -140,13 +140,13 @@ const columns = [
       params.row.email_verified_at === null ? (
         
         <Tooltip title={`${params.row.email} is not verified, that user must verify their account to login`} arrow>
-        <span className="py-0 px-2 no-underline rounded bg-red-400 text-white font-sans font-normal text-sm border-red-100 hover:text-white hover:bg-blue-light focus:outline-none active:shadow-none mr-2">
+        <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
           Not Verified
         </span>
         </Tooltip>
       ) : (
         <Tooltip title={`${params.row.email} is verified and can login to their account`} arrow>
-        <span className="py-0 px-2 no-underline rounded bg-emerald-500 text-white font-sans font-normal text-sm border-green-100 hover:text-white hover:bg-green-light focus:outline-none active:shadow-none mr-2">
+       <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20"> 
           Verified
         </span>
         </Tooltip>

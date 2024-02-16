@@ -43,16 +43,16 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
             [
                 'gender' => $row[2] ?? null,
                 'date_of_birth' => $dateOfBirth ?? null,
-                'address' => $row[3] ?? null,
-                'street_address_2' => $row[4] ?? null,
-                'city' => $row[5] ?? null,
-                'state' => $row[6] ?? null,
-                'zip' => $row[7] ?? null,
-                'grade' => $row[8] ?? null,
-                'allergies_or_special_needs' => $row[9] ?? null,
-                'emergency_contact_person' => $row[10] ?? null, 
-                'emergency_contact_hospital' => $row[11] ?? null, 
-                'user_id' => $row[12] ?? null, 
+                'address' => $row[4] ?? null,
+                'street_address_2' => $row[5] ?? null,
+                'city' => $row[6] ?? null,
+                'state' => $row[7] ?? null,
+                'zip' => $row[8] ?? null,
+                'grade' => $row[9] ?? null,
+                'allergies_or_special_needs' => $row[10] ?? null,
+                'emergency_contact_person' => $row[11] ?? null, 
+                'emergency_contact_hospital' => $row[12] ?? null, 
+                'user_id' => $row[13] ?? null, 
                 'faculty_id' => $role === 'Teacher' ? Auth::guard('faculty')->id() : null
             ]
         );

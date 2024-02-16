@@ -21,7 +21,6 @@ import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
 
 import CircularProgress from '@mui/material/CircularProgress';
-
 // ICONS 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -37,6 +36,7 @@ import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined
 import ContactEmergencyOutlinedIcon from '@mui/icons-material/ContactEmergencyOutlined';
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
 
+
 // Lists
 
 import List from '@mui/material/List';
@@ -45,7 +45,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
-
 
 export default function Student({auth, student}) {
     const [error, setError] = useState(null);
@@ -253,6 +252,12 @@ export default function Student({auth, student}) {
     setOpenPermissionsMenu(!openPermissionsMenu);
   };
 
+
+  
+
+
+
+
   return (
     <>
       <AdminLayout
@@ -268,7 +273,6 @@ export default function Student({auth, student}) {
             
                         <AccountCircleIcon style={{fontSize: 100, color: 'gray'}}/>
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
-                        <p className="text-gray-700 text-center font-bold mt-3">Parent/Guardian Email: <span className="font-normal">{student.parent_guardian_email}</span></p>
                         <p className="text-gray-700 text-center font-bold mt-3">Student Since: <span className="font-normal">{new Date(student.created_at).toLocaleDateString()}</span></p>
                         
                     
@@ -422,7 +426,11 @@ export default function Student({auth, student}) {
                }
                {
                 student.gender === 'Female' && (
+                  <>
+                  <Tooltip title="Gender" arrow>
                   <Face3OutlinedIcon/>
+                  </Tooltip>
+                  </> 
                 )
                }
               </ListItemIcon>
@@ -704,7 +712,7 @@ export default function Student({auth, student}) {
     <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-          Average level
+          Average Grade
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
           <p class="font-bold text-2xl text-center">100/100</p>

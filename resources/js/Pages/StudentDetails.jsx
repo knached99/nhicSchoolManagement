@@ -133,6 +133,10 @@ export default function StudentDetails({auth, student}) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [errorOpen, setErrorOpen] = useState(true);
+    const [successOpen, setSuccessOpen] = useState(true);
 
     const states = [
         { abbreviation: 'AL', name: 'Alabama' },
@@ -195,7 +199,7 @@ export default function StudentDetails({auth, student}) {
         state: student.state,
         zip: student.zip,
         gender: student.gender,
-        date_of_birthday: student.date_of_birth, 
+        date_of_birth: student.date_of_birth, 
         allergies_or_special_needs: student.allergies_or_special_needs,
         emergency_contact_person: student.emergency_contact_person,
         emergency_contact_hospital: student.emergency_contact_hospital
@@ -207,7 +211,8 @@ export default function StudentDetails({auth, student}) {
         city: Yup.string().nullable(),
         state: Yup.string().nullable(),
         zip: Yup.string().nullable().matches(/^\d{5}$/, 'Must be a valid 5-digit ZIP code'),
-        gender: Yup.string(), 
+        gender: Yup.string().nullable(), 
+        date_of_birth: Yup.string().nullable(),
         allergies_or_special_needs: Yup.string().nullable(),
         emergency_contact_person: Yup.string().nullable(),
         emergency_contact_hospital: Yup.string().nullable()
@@ -246,6 +251,16 @@ export default function StudentDetails({auth, student}) {
             setSubmitting(false);
         }
     };
+
+      const handleCloseSuccess = () => {
+      setSuccessOpen(false);
+      setSuccess(null);
+  };
+
+  const handleCloseError = () => {
+      setErrorOpen(false);
+      setError(null);
+  };
 
   return (
     <>
@@ -298,6 +313,54 @@ export default function StudentDetails({auth, student}) {
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
               Edit and save the new information
             </Typography>
+              {error && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={updateStudentInformation}>
             {({
                         values,
@@ -363,7 +426,7 @@ export default function StudentDetails({auth, student}) {
             )}
             </FormControl>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer
                 components={[
                 'DatePicker',
@@ -376,12 +439,13 @@ export default function StudentDetails({auth, student}) {
          <DatePicker style={{margin: 5}} value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} id="date_of_birth" name="date_of_birth" onBlur={handleBlur} onChange={handleChange} defaultValue={dayjs(student.date_of_birth)} />
         </DemoItem>
             </DemoContainer>
-            </LocalizationProvider>
+            </LocalizationProvider> */}
+            <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 10}} />
 
             <Field as={Textarea } value={values.allergies_or_special_needs} helperText={touched.allergies_or_special_needs && errors.allergies_or_special_needs} error={touched.allergies_or_special_needs && Boolean(errors.allergies_or_special_needs)} onBlur={handleBlur} onChange={handleChange} id="allergies_or_special_needs" name="allergies_or_special_needs" placeholder="Allergies or Special Needs" style={{margin: 10}} fullWidth/>
             <Field as={TextField} value={values.emergency_contact_person} helperText={touched.emergency_contact_person && errors.emergency_contact_person} error={touched.emergency_contact_person && Boolean(errors.emergency_contact_person)} onBlur={handleBlur} onChange={handleChange} id="emergency_contact_person" name="emergency_contact_person" placeholder="Emergency Contact Person" style={{margin: 10}} fullWidth/>
             <Field as={TextField} value={values.emergency_contact_hospital} helperText={touched.emergency_contact_hospital && errors.emergency_contact_hospital} error={touched.emergency_contact_hospital && Boolean(errors.emergency_contact_hospital)} onBlur={handleBlur} onChange={handleChange} id="emergency_contact_hospital" name="emergency_contact_hospital" placeholder="Emergency Contact Hospital" style={{margin: 10}} fullWidth/>
-            <Button fullWidth style={{margin:5}}>Save Changes</Button>
+            <Button type="submit" fullWidth style={{margin:5}}>Save Changes</Button>
 
         </Form>
             )}
@@ -418,7 +482,12 @@ export default function StudentDetails({auth, student}) {
                }
                {
                 student.gender === 'Female' && (
+                  <>
+                  <Tooltip title="Gender" arrow>
                   <Face3OutlinedIcon/>
+                  </Tooltip>
+                  </>
+                  
                 )
                }
               </ListItemIcon>
@@ -522,7 +591,7 @@ export default function StudentDetails({auth, student}) {
     <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-          Average level
+          Average Grade
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
           <p class="font-bold text-2xl text-center">100/100</p>

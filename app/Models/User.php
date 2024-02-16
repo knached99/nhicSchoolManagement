@@ -8,10 +8,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+// Full Text Search using Scout
+use Laravel\Scout\Attributes\SearchUsingFullText;
+use Laravel\Scout\Attributes\SearchUsingPrefix;
+use Laravel\Scout\Searchable; 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +24,31 @@ class User extends Authenticatable implements MustVerifyEmail
 
     protected $primaryKey= 'user_id';
     
+          
+    /**
+ * Get the indexable data array for the model.
+ *
+ * @return array<string, mixed>
+ */
+
+
+ #[SearchUsingPrefix(['name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip'])]
+ #[SearchUsingFullText(['name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip'])]
+ public function toSearchableArray(): array
+{
+    return [
+        'name' => $this->name,
+        'email' => $this->email,
+        'phone' => $this->phone,
+        'address' => $this->address,
+        'address_2' => $this->address_2,
+        'city'=>$this->city, 
+        'state' => $this->state,
+        'zip' => $this->zip,
+    ];
+}
+
+
     protected $fillable = [
         'name',
         'email',

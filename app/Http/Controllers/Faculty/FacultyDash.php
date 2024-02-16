@@ -24,9 +24,12 @@ use Illuminate\Database\QueryException;
 use App\Imports\StudentsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Scout\Searchable;
 
 class FacultyDash extends Controller
 {
+    use Searchable;
+
     public function loadDashboard()
     {
         return Inertia::render('Faculty/Dash', [
@@ -524,12 +527,34 @@ public function viewStudentDetails($student_id) {
     }
   }
 
+  // AutoComplete Search  
 
-    /**
-     * Different Roles 
-     * Teacher -> Has ability to manage students (adding students, grades, attendance, export student data)
-     * Admin -> Has ability to see everything and manage users 
-     */
+  public function autocompleteSearch(Request $request)
+  {
+      try {
+          $query = $request->input('query');
+  
+          // Use Scout's search method for full-text search
+          $facultyResults = Faculty::search($query)->get(['faculty_id', 'name', 'email', 'phone', 'role', 'room_number'])->toArray();
+          $studentResults = Students::search($query)->get(['student_id', 'first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital'])->toArray();
+          $userResults = User::search($query)->get(['id', 'name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip'])->toArray();
+  
+          // You can customize the result structure based on your needs
+          $results = [
+              'faculty' => $facultyResults,
+              'students' => $studentResults,
+              'users' => $userResults,
+          ];
+  
+          \Log::info(['Search Results' => $results]);
+          return response()->json(['results' => $results]);
+      } catch (\Exception $e) {
+          \Log::error('Search Error: ' . $e->getMessage());
+          return response()->json(['error' => 'An error occurred during the search.']);
+      }
+  }
+  
+  
 }
 
 ?>

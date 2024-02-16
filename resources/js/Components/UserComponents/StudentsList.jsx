@@ -70,6 +70,7 @@ const viewStudentDetails = (student_id) => {
     <Container maxWidth="lg">
         
     <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
+        <h1 className="text-xl font-black text-indigo-500 text-center">My Students</h1>
     {loading && (
     <Box sx={{ width: '100%' }}>
         <LinearProgress />
@@ -79,7 +80,22 @@ const viewStudentDetails = (student_id) => {
     <h6 className="text-indigo-500 font-semibold">No Information To Display</h6>
 ) : (
     rows.map((row) => (
-        <ListItem key={row.student_id} alignItems="flex-start">
+        <>
+         <ListItem
+        key={row.student_id}
+        alignItems="flex-start"
+        style={{
+          cursor: 'pointer',
+          transition: 'box-shadow 0.3s', // Add a smooth transition effect
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+        onClick={() => viewStudentDetails(row.student_id)}
+      >
             <ListItemAvatar>
                 {row.gender === 'Male' ? <Face6OutlinedIcon /> : <Face3OutlinedIcon />}
             </ListItemAvatar>
@@ -95,16 +111,15 @@ const viewStudentDetails = (student_id) => {
                         >
                             <span className="block">{row.date_of_birth}</span>
                             <span className="block">{`${row.address} ${row.street_address_2 ? row.street_address_2 : ''}, ${row.city} ${row.state}, ${row.zip}`}</span>
-                            <div className="float-end">
-                                <Button onClick={() => viewStudentDetails(row.student_id)}>
-                                    More Details
-                                </Button>
-                            </div>
+                         
                         </Typography>
                     </>
                 }
             />
+          
         </ListItem>
+        <Divider/> 
+        </>
     ))
 )}
 
