@@ -15,6 +15,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import Button from '@mui/material/Button';
 import Zoom from '@mui/material/Zoom';
+import Skeleton from '@mui/material/Skeleton';
 
 
 export default function MyStudentsTable({auth}) {
@@ -290,9 +291,11 @@ const deleteMyStudents = async () => {
 
         {/* Table Section */}
         {loading ? (
-          <div className="flex items-center justify-center h-40">
-            <CircularProgress color="secondary" />
-          </div>
+          <Box sx={{ width: '100%' }}>
+          <Skeleton />
+          <Skeleton animation="wave" />
+          <Skeleton animation={true} />
+        </Box>
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">You have not been any students yet, check back here later</div>
         ) : (

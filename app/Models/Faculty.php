@@ -5,13 +5,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 // Full Text Search using Scout
-use Laravel\Scout\Attributes\SearchUsingFullText;
-use Laravel\Scout\Attributes\SearchUsingPrefix;
-use Laravel\Scout\Searchable;
+// use Laravel\Scout\Attributes\SearchUsingFullText;
+// use Laravel\Scout\Attributes\SearchUsingPrefix;
+// use Laravel\Scout\Searchable;
 
 class Faculty extends Authenticatable
 {
-    use HasFactory, Notifiable, Searchable;
+    use HasFactory, Notifiable;
     
     protected $table = "faculty";
     protected $primaryKey = "faculty_id";
@@ -62,17 +62,17 @@ class Faculty extends Authenticatable
  *
  * @return array<string, mixed>
  */
-#[SearchUsingPrefix(['name', 'email', 'phone', 'role', 'room_number'])]
-#[SearchUsingFullText(['name', 'email', 'phone', 'role', 'room_number'])]
-public function toSearchableArray(): array
-{
-    return [
-        'name' => $this->name,
-        'email' => $this->email,
-        'phone' => $this->phone,
-        'role' => $this->role,
-        'room_number' => $this->room_number
-    ];
-}
+// #[SearchUsingPrefix(['name', 'email', 'phone', 'role', 'room_number'])]
+// #[SearchUsingFullText(['name', 'email', 'phone', 'role', 'room_number'])]
+// public function toSearchableArray(): array
+// {
+//     return [
+//         'name' => $this->name,
+//         'email' => $this->email,
+//         'phone' => $this->phone,
+//         'role' => $this->role,
+//         'room_number' => $this->room_number
+//     ];
+// }
 }
 ?>

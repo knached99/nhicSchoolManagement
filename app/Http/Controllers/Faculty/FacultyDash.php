@@ -534,19 +534,44 @@ public function viewStudentDetails($student_id) {
       try {
           $query = $request->input('query');
   
-          // Use Scout's search method for full-text search
-          $facultyResults = Faculty::search($query)->get(['faculty_id', 'name', 'email', 'phone', 'role', 'room_number'])->toArray();
-          $studentResults = Students::search($query)->get(['student_id', 'first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital'])->toArray();
-          $userResults = User::search($query)->get(['id', 'name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip'])->toArray();
+          // Perform a regular search using WHERE LIKE for Faculty
+          $facultyResults = Faculty::where('name', 'LIKE', "%$query%")
+              ->orWhere('email', 'LIKE', "%$query%")
+              ->orWhere('phone', 'LIKE', "%$query%")
+              ->orWhere('role', 'LIKE', "%$query%")
+              ->orWhere('room_number', 'LIKE', "%$query%")
+              ->select('faculty_id', 'name', 'email', 'phone', 'role', 'room_number')
+              ->get()
+              ->toArray();
   
-          // You can customize the result structure based on your needs
-          $results = [
-              'faculty' => $facultyResults,
-              'students' => $studentResults,
-              'users' => $userResults,
-          ];
+          // Perform a refined search using specific columns for Students
+          $studentResults = Students::where('first_name', 'LIKE', "%$query%")
+              ->orWhere('last_name', 'LIKE', "%$query%")
+              ->orWhere('address', 'LIKE', "%$query%")
+              ->orWhere('city', 'LIKE', "%$query%")
+              ->orWhere('state', 'LIKE', "%$query%")
+              ->orWhere('zip', 'LIKE', "%$query%")
+              ->orWhere('level', 'LIKE', "%$query%")
+              ->orWhere('gender', 'LIKE', "%$query%")
+              ->orWhere('allergies_or_special_needs', 'LIKE', "%$query%")
+              ->orWhere('emergency_contact_person', 'LIKE', "%$query%")
+              ->orWhere('emergency_contact_hospital', 'LIKE', "%$query%")
+              ->select('student_id', 'first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital')
+              ->get()
+              ->toArray();
   
-          \Log::info(['Search Results' => $results]);
+          // Perform a regular search using WHERE LIKE for Users
+          $userResults = User::where('name', 'LIKE', "%$query%")
+              ->orWhere('email', 'LIKE', "%$query%")
+              ->orWhere('phone', 'LIKE', "%$query%")
+              ->select('user_id', 'name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip')
+              ->get()
+              ->toArray();
+  
+          // Merge the results and remove duplicates
+          $results = array_unique(array_merge($facultyResults, $studentResults, $userResults), SORT_REGULAR);
+            \Log::info(['Search Query: ', $query]);
+            \Log::info([$results]);
           return response()->json(['results' => $results]);
       } catch (\Exception $e) {
           \Log::error('Search Error: ' . $e->getMessage());

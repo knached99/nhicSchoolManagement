@@ -22,6 +22,10 @@ import Box from '@mui/material/Box';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import Tooltip from '@mui/material/Tooltip';
+import Skeleton from '@mui/material/Skeleton';
+
+
+
 const columns = [
   { id: 'id', label: 'ID', minWidth: 50 },
   { id: 'name', label: 'Name', minWidth: 80 },
@@ -167,9 +171,11 @@ const deleteAdminUser = async (userId) => {
 
         {/* Table Section */}
         {loading ? (
-          <div className="flex items-center justify-center h-40">
-            <CircularProgress color="secondary" />
-          </div>
+          <Box sx={{ width: 300 }}>
+          <Skeleton />
+          <Skeleton animation="wave" />
+          <Skeleton animation={false} />
+        </Box>
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">
             No faculty users created yet

@@ -14,6 +14,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import Skeleton from '@mui/material/Skeleton';
 
 
 export default function ParentsTable({auth}) {
@@ -277,9 +278,11 @@ const columns = [
 
         {/* Table Section */}
         {loading ? (
-          <div className="flex items-center justify-center h-40">
-            <CircularProgress color="secondary" />
-          </div>
+          <Box sx={{ width: '100%' }}>
+          <Skeleton />
+          <Skeleton animation="wave" />
+          <Skeleton animation={true} />
+        </Box>
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">No Parents in the system</div>
         ) : (
