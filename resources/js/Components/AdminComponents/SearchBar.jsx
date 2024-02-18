@@ -82,9 +82,6 @@ export default function SearchBar() {
   return (
     <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
       <div>
-        <div>
-          <SearchIcon />
-        </div>
         <InputBase
           placeholder="Search…"
           id="search"
@@ -92,6 +89,7 @@ export default function SearchBar() {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           inputProps={{ 'aria-label': 'search' }}
+          style={{backgroundColor: '#818cf8', color: '#fff', outline: 'none', padding: 5, margin: 10}}
         />
       </div>
       {loading &&  <CircularProgress /> }
@@ -102,7 +100,7 @@ export default function SearchBar() {
         bgcolor: 'background.paper',
         position: 'relative',
         overflow: 'auto',
-        maxHeight: 300,
+        maxHeight: 100,
         '& ul': { padding: 0 },
       }}
       subheader={<li />}
