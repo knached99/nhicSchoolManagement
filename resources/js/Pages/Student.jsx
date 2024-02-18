@@ -1,4 +1,6 @@
-import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout'
+import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
+import { Head } from '@inertiajs/react';
+
 import React, {useState, useEffect} from 'react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Box from '@mui/material/Box';
@@ -87,6 +89,7 @@ export default function Student({auth, student}) {
       };
   
       useEffect(() => {
+     
         const fetchData = async () => {
           try {
             const facultyUsers = await fetchTeachers();
@@ -255,7 +258,21 @@ export default function Student({auth, student}) {
 
   
 
+  if(auth.role==='Teacher' || auth.role==='Assistant Teacher' && auth.faculty_id !==student.faculty_id){
+    return (
+      <>
+      <Head title="Unauthorized"/>
+       <AdminLayout
+        user={auth}
+        header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">Not Authorized</h2>}
+      >
+       <h1 className="text-center font-normal text-2xl">You are not authorized to view this page. This student is not assigned to you. </h1>
+      </AdminLayout>
+            
 
+      </>
+    );
+  }
 
 
   return (

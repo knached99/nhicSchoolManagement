@@ -10,6 +10,7 @@ import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import TextField from '@mui/material/TextField';
+
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import MenuItem from '@mui/material/MenuItem';
@@ -25,16 +26,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Zoom from '@mui/material/Zoom';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
- boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-p: 4,
-};
 
 
 export default function CreateFacultyModal() {
@@ -107,6 +98,22 @@ export default function CreateFacultyModal() {
       setOpenPermissionsMenu(!openPermissionsMenu);
     };
       
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '90%', // Set to a percentage for responsiveness
+        maxWidth: 400, // Set a maximum width
+        maxHeight: '80vh', // Set a maximum height (80% of the viewport height)
+        overflowY: 'auto', // Enable vertical scrolling when content exceeds the height
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">

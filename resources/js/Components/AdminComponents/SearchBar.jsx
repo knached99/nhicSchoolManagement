@@ -4,6 +4,9 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
+import Tooltip from '@mui/material/Tooltip';
+
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -32,7 +35,10 @@ export default function SearchBar() {
 
   const autoCompleteSearch = async () => {
     try {
-      console.log('Searching...');
+      if(searchQuery.length === 0){
+
+      }
+      else{
       setLoading(true);
       const response = await axios.get(`/search?query=${searchQuery}`, {
         headers: {
@@ -46,8 +52,10 @@ export default function SearchBar() {
         setSearchResults([]);
       } else {
         setSearchResults(response.data.results);
+        setError(null);
         console.log(response.data.results);
       }
+    }
     } catch (error) {
       console.log(error.message);
       setError(error.message || 'Unable to complete search, something went wrong');
@@ -55,9 +63,14 @@ export default function SearchBar() {
     } finally {
       setLoading(false);
     }
+    
   };
   
-
+  const clearResults = () => {
+    setSearchResults([]);
+    setError(null);
+  };
+  
  
 
   const handleKeyDown = (e) => {
@@ -89,9 +102,18 @@ export default function SearchBar() {
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           inputProps={{ 'aria-label': 'search' }}
-          style={{backgroundColor: '#818cf8', color: '#fff', outline: 'none', padding: 5, margin: 10}}
+          style={{backgroundColor: '#818cf8', width: '100%', color: '#fff', outline: 'none', padding: 5, margin: 10}}
         />
+        {searchResults.length > 0 && 
+         <Tooltip title="clear search results" arrow>
+         <IconButton onClick={clearResults}>
+           <ClearOutlinedIcon style={{color: '#eee'}}/>
+         </IconButton>
+         </Tooltip>
+        }
+       
       </div>
+      {error && <span className="text-red-500">{error}</span>}
       {loading &&  <CircularProgress /> }
   
 
@@ -103,7 +125,7 @@ export default function SearchBar() {
         bgcolor: 'background.paper',
         position: 'relative',
         overflow: 'auto',
-        maxHeight: 100,
+        maxHeight: 200,
         '& ul': { padding: 0 },
       }}
       subheader={<li />}

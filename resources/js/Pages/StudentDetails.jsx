@@ -61,15 +61,18 @@ import { styled } from '@mui/system';
 
 
 const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
-    borderRadius: 1,
-    p: 4,
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: '90%', // Set to a percentage for responsiveness
+  maxWidth: 400, // Set a maximum width
+  maxHeight: '80vh', // Set a maximum height (80% of the viewport height)
+  overflowY: 'auto', // Enable vertical scrolling when content exceeds the height
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
 };
 
 const blue = {
