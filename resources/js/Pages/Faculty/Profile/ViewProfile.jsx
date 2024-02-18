@@ -42,6 +42,12 @@ export default function ViewProfile({auth, user, students}) {
   const [successOpen, setSuccessOpen] = useState(true);
   const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
 
+  useEffect(()=>{
+    if(user.faculty_id === auth.faculty_id){
+      window.location.href='/faculty/dash';
+    }
+  })
+
 
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
 

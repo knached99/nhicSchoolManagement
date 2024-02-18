@@ -18,7 +18,8 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 export default function UpdateFacultyProfile({className = '' }) {
     const user = usePage().props.auth.faculty;
     const { data, setData } = useForm({
-        email: user.email
+        email: user.email,
+        phone: user.phone
     });
 
     const [errors, setErrors] = useState();
@@ -28,10 +29,14 @@ export default function UpdateFacultyProfile({className = '' }) {
     const [refreshData, setRefreshData] = useState(false); // handle state for refreshed data 
 
     const initialValues = {
-        email: ''
+        email: '',
+        phone_number: ''
     };
     const validationSchema = Yup.object().shape({
-        email: Yup.string().required('email is required').email('Must be a valid email')
+        email: Yup.string().required('email is required').email('Must be a valid email'),
+        phone_number: Yup.string()
+      .matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format')
+      .required('Phone number is required'),
     });
 
     const updateProfile = async (values, { setSubmitting }) => {
@@ -179,6 +184,9 @@ export default function UpdateFacultyProfile({className = '' }) {
 
                 <div>
                 <Field style={{margin: 10}} fullWidth placeholder="Email" as={TextField}  value={values.email || data.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/>
+                </div>
+                <div>
+                <Field style={{margin: 10}} fullWidth placeholder="Phone Number" as={TextField}  value={values.phone_number || data.phone} helperText={touched.phone_number && errors.phone_number} error={touched.phone_number && Boolean(errors.phone_number)} onBlur={handleBlur} id="phone_number" name="phone_number"/>
                 </div>
 
                 <div>

@@ -540,7 +540,7 @@ public function viewStudentDetails($student_id) {
               ->orWhere('phone', 'LIKE', "%$query%")
               ->orWhere('role', 'LIKE', "%$query%")
               ->orWhere('room_number', 'LIKE', "%$query%")
-              ->select('faculty_id', 'name', 'email', 'phone', 'role', 'room_number')
+              ->select('faculty_id', 'name', 'email', 'phone', 'role', 'room_number', 'profile_pic')
               ->get()
               ->toArray();
   
@@ -548,6 +548,7 @@ public function viewStudentDetails($student_id) {
           $studentResults = Students::where('first_name', 'LIKE', "%$query%")
               ->orWhere('last_name', 'LIKE', "%$query%")
               ->orWhere('address', 'LIKE', "%$query%")
+              ->orWhere('street_address_2', 'LIKE', "%$query%")
               ->orWhere('city', 'LIKE', "%$query%")
               ->orWhere('state', 'LIKE', "%$query%")
               ->orWhere('zip', 'LIKE', "%$query%")
@@ -564,14 +565,19 @@ public function viewStudentDetails($student_id) {
           $userResults = User::where('name', 'LIKE', "%$query%")
               ->orWhere('email', 'LIKE', "%$query%")
               ->orWhere('phone', 'LIKE', "%$query%")
+              ->orWhere('address', 'LIKE', "%$query%")
+              ->orWhere('address_2', 'LIKE', "%$query%")
+              ->orWhere('city', 'LIKE', "%$query%")
+              ->orWhere('state', 'LIKE', "%$query%")
+              ->orWhere('zip', 'LIKE', "%$query%")
               ->select('user_id', 'name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip')
               ->get()
               ->toArray();
   
           // Merge the results and remove duplicates
           $results = array_unique(array_merge($facultyResults, $studentResults, $userResults), SORT_REGULAR);
-            \Log::info(['Search Query: ', $query]);
-            \Log::info([$results]);
+            // \Log::info(['Search Query: ', $query]);
+            // \Log::info([$results]);
           return response()->json(['results' => $results]);
       } catch (\Exception $e) {
           \Log::error('Search Error: ' . $e->getMessage());

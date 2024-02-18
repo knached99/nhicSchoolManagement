@@ -9,16 +9,26 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Image;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class FacultyProfileController extends Controller {
 
     public function updateProfile(Request $request){
         try{
             $validated = $request->validate([
-                'email'=>['required', 'email', 'unique:faculty'],
+                'email' => [
+                    'required',
+                    'email',
+                    Rule::unique('faculty')->ignore(auth()->user()->email, 'email'),
+                ],
+                'phone_number'=> [
+                    'required',
+                    'regex|/^\d{3}-\d{3}-\d{4}$/'
+                ],
             ]);
             $request->user('faculty')->update([
                 'email'=>$validated['email'],
+                'phone'=>$validated['phone_number']
             ]);
             return response()->json(['success'=>'Your information has been saved']);
         }
