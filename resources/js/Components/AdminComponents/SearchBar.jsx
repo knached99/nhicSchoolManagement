@@ -93,6 +93,9 @@ export default function SearchBar() {
         />
       </div>
       {loading &&  <CircularProgress /> }
+  
+
+
       {searchResults.length > 0 &&
       <List   sx={{
         width: '100%',
