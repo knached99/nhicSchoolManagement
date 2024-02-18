@@ -574,115 +574,126 @@ export default function Student({auth, student}) {
                    )
                     :
                     <>
-                    <span className="text-indigo-500">A parent is not yet assigned to {student.first_name} {student.last_name}</span>
-                    <Formik initialValues={parentInitialValues} validationSchema={validateData} onSubmit={assignParentToStudent}>
-                    {({
-                      values,
-                      errors,
-                      touched,
-                      handleSubmit,
-                      handleBlur,
-                      handleChange,
-                      isValid,
-                      dirty,
-                      isSubmitting,
-                    }) => (
-                      <Form onSubmit={handleSubmit} autoComplete="off">
-                              {error && (
-                          <Box   style={{
-                            padding: '1rem',
-                            maxHeight: '80vh',
-                            overflowY: 'auto',
-                            width: '100%'
-                          }}>
-                              <Collapse in={errorOpen}>
-                                  <Alert
-                                      icon={<ErrorOutlineIcon fontSize="inherit" />}
-                                      severity="error"
-                                      action={
-                                          <IconButton
-                                              aria-label="close"
-                                              color="inherit"
-                                              size="small"
-                                              onClick={handleCloseError}
-                                          >
-                                              <CloseIcon fontSize="inherit" />
-                                          </IconButton>
-                                      }
-                                      sx={{ mb: 2 }}
-                                  >
-                                      {error}
-                                  </Alert>
-                              </Collapse>
-                          </Box>
-                      )}
+                   {auth.role === 'Admin' && !student.faculty_id &&  (
+          <>
+            <span className="text-indigo-500">
+              A parent is not yet assigned to {student.first_name} {student.last_name}
+            </span>
 
-                      {success && (
-                          <Box sx={{ width: '100%' }}>
-                              <Collapse in={successOpen}>
-                                  <Alert
-                                      icon={<CheckCircleOutlineIcon fontSize="inherit" />}
-                                      severity="success"
-                                      action={
-                                          <IconButton
-                                              aria-label="close"
-                                              color="inherit"
-                                              size="small"
-                                              onClick={handleCloseSuccess}
-                                          >
-                                              <CloseIcon fontSize="inherit" />
-                                          </IconButton>
-                                      }
-                                      sx={{ mb: 2 }}
-                                  >
-                                      {success}
-                                  </Alert>
-                              </Collapse>
-                          </Box>
-                      )}
-                        <input type="hidden" name="student_id" id="student_id" value={student.student_id}/>
-                        <FormControl sx={{ m: 1, width: '100%' }}>
-                          <InputLabel id="user_id">Select Parent</InputLabel>
-                          <Select
-                            labelId="user_id"
-                            id="user_id"
-                            name="user_id"
-                            value={values.user_id || ''}
-                            onChange={handleChange}
-                            style={{ width: 300 }}
-                          >
-                            <MenuItem value="">
-                              <em>Select Parent</em>
-                            </MenuItem>
-                  
-                            {parents.map((parent) => (
-                              <MenuItem key={parent.user_id} value={parent.user_id}>
-                                {parent.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          style={{
-                            color: 'white',
-                            width: '100%',
-                            backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#3b82f6',
-                            padding: 15,
-                            marginTop: 10,
-                          }}
-                          disabled={isSubmitting || !isValid || !dirty}
+            <Formik
+              initialValues={parentInitialValues}
+              validationSchema={validateData}
+              onSubmit={assignParentToStudent}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleSubmit,
+                handleBlur,
+                handleChange,
+                isValid,
+                dirty,
+                isSubmitting,
+              }) => (
+                <Form onSubmit={handleSubmit} autoComplete="off">
+                  {error && (
+                    <Box
+                      style={{
+                        padding: '1rem',
+                        maxHeight: '80vh',
+                        overflowY: 'auto',
+                        width: '100%',
+                      }}
+                    >
+                      <Collapse in={errorOpen}>
+                        <Alert
+                          icon={<ErrorOutlineIcon fontSize="inherit" />}
+                          severity="error"
+                          action={
+                            <IconButton
+                              aria-label="close"
+                              color="inherit"
+                              size="small"
+                              onClick={handleCloseError}
+                            >
+                              <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                          }
+                          sx={{ mb: 2 }}
                         >
-                          {isSubmitting ? (
-                            <CircularProgress size={24} style={{ color: '#fff' }} />
-                          ) : (
-                            <>Assign</>
-                          )}
-                        </Button>
-                      </Form>
-                    )}
-                  </Formik>
+                          {error}
+                        </Alert>
+                      </Collapse>
+                    </Box>
+                  )}
+
+                  {success && (
+                    <Box sx={{ width: '100%' }}>
+                      <Collapse in={successOpen}>
+                        <Alert
+                          icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                          severity="success"
+                          action={
+                            <IconButton
+                              aria-label="close"
+                              color="inherit"
+                              size="small"
+                              onClick={handleCloseSuccess}
+                            >
+                              <CloseIcon fontSize="inherit" />
+                            </IconButton>
+                          }
+                          sx={{ mb: 2 }}
+                        >
+                          {success}
+                        </Alert>
+                      </Collapse>
+                    </Box>
+                  )}
+
+                  <input type="hidden" name="student_id" id="student_id" value={student.student_id} />
+                  <FormControl sx={{ m: 1, width: '100%' }}>
+                    <InputLabel id="user_id">Select Parent</InputLabel>
+                    <Select
+                      labelId="user_id"
+                      id="user_id"
+                      name="user_id"
+                      value={values.user_id || ''}
+                      onChange={handleChange}
+                      style={{ width: 300 }}
+                    >
+                      <MenuItem value="">
+                        <em>Select Parent</em>
+                      </MenuItem>
+
+                      {parents.map((parent) => (
+                        <MenuItem key={parent.user_id} value={parent.user_id}>
+                          {parent.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    style={{
+                      color: 'white',
+                      width: '100%',
+                      backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#3b82f6',
+                      padding: 15,
+                      marginTop: 10,
+                    }}
+                    disabled={isSubmitting || !isValid || !dirty}
+                  >
+                    {isSubmitting ? <CircularProgress size={24} style={{ color: '#fff' }} /> : <>Assign</>}
+                  </Button>
+                </Form>
+              )}
+            </Formik>
+          </>
+        )}
+
                   </>
                   }
                    
