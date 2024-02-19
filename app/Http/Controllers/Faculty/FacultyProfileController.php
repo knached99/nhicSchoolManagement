@@ -84,6 +84,9 @@ class FacultyProfileController extends Controller {
             // Save the original image to storage without resizing
             $saveImage = Storage::putFileAs('public/profile_pics', $file, $fileName);
     
+            // Strip Exif data
+            $this->stripExifData(storage_path('app/public/profile_pics/' . $fileName));
+    
             $user->profile_pic = $fileName;
             $savePfpToDb = $user->save();
     
@@ -98,6 +101,32 @@ class FacultyProfileController extends Controller {
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
+    
+
+    private function stripExifData($filePath)
+{
+    // Read Exif data
+    $exif = exif_read_data($filePath);
+
+    // Remove Exif data
+    if ($exif !== false) {
+        foreach ($exif as $key => $section) {
+            if (is_array($section)) {
+                foreach ($section as $name => $val) {
+                    // Remove all sections and entries except for 'COMPUTED' entries
+                    if ($key !== 'COMPUTED') {
+                        unset($exif[$key][$name]);
+                    }
+                }
+            }
+        }
+
+        // Save the image without Exif data
+        $image = imagecreatefromjpeg($filePath);
+        imagejpeg($image, $filePath);
+        imagedestroy($image);
+    }
+}
 
 
 }
