@@ -297,7 +297,7 @@ const deleteMyStudents = async () => {
           <Skeleton animation={true} />
         </Box>
         ) : rows.length === 0 ? (
-          <div className="text-slate-500 text-xl text-center p-3 m-3">You have not been any students yet, check back here later</div>
+          <div className="text-slate-500 text-xl text-center p-3 m-3">You have not been assigned any students yet, check back here later</div>
         ) : (
           <Paper sx={{ width: '100%', backgroundColor: '#fff' }}>
             <div style={{ height: 400, width: '100%' }}>
