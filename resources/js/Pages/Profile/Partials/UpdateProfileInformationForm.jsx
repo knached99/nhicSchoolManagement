@@ -4,13 +4,19 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
-
+import states from '@/constants/states';
 export default function UpdateProfileInformation({className = '' }) {
     const user = usePage().props.auth.user;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
         email: user.email,
+        phone: user.phone,
+        address: user.address,
+        address_2: user.address_2,
+        city: user.city, 
+        state: user.state, 
+        zip: user.zip 
     });
 
     const submit = (e) => {
@@ -35,12 +41,13 @@ export default function UpdateProfileInformation({className = '' }) {
 
                     <TextInput
                         id="name"
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full p-3 cursor-not-allowed"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
                         required
                         isFocused
                         autoComplete="name"
+                        readOnly
                     />
 
                     <InputError className="mt-2" message={errors.name} />
@@ -52,14 +59,108 @@ export default function UpdateProfileInformation({className = '' }) {
                     <TextInput
                         id="email"
                         type="email"
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full p-3 border-1 border-slate-400"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
+                        placeholder="Email"
                         required
                         autoComplete="username"
                     />
 
                     <InputError className="mt-2" message={errors.email} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="phone" value="Phone" />
+
+                    <TextInput
+                        id="phone"
+                        type="phone"
+                        className="mt-1 block w-full p-3 border-1 border-slate-400"
+                        value={data.phone}
+                        onChange={(e) => setData('phone', e.target.value)}
+                        placeholder="Phone"
+                    />
+
+                    <InputError className="mt-2" message={errors.phone} />
+                </div>
+
+
+                <div>
+                    <InputLabel htmlFor="address" value="Street Address" />
+
+                    <TextInput
+                        id="address"
+                        type="address"
+                        className="mt-1 p-3 block w-full border-1 border-slate-400"
+                        value={data.address}
+                        placeholder="Street Address"
+                        onChange={(e) => setData('address', e.target.value)}
+                    />
+
+                    <InputError className="mt-2" message={errors.address} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="address_2" value="Apartment/Unit Number" />
+
+                    <TextInput
+                        id="address_2"
+                        type="address"
+                        className="mt-1 p-3 block w-full border-1 border-slate-400"
+                        value={data.address_2}
+                        placeholder="Apartment/Unit Number"
+                        onChange={(e) => setData('address_2', e.target.value)}
+                    />
+
+                    <InputError className="mt-2" message={errors.address_2} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="city" value="City" />
+
+                    <TextInput
+                        id="city"
+                        type="city"
+                        className="mt-1 p-3 block w-full border-1 border-slate-400"
+                        value={data.city}
+                        placeholder="City"
+                        onChange={(e) => setData('city', e.target.value)}
+                    />
+
+                    <InputError className="mt-2" message={errors.city} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="state" value="State"/>
+                    <select 
+                    id="state"
+                    name="state"
+                    className="mt-1 p-3 block w-full border-1 border-slate-400"
+                    onChange={(e)=>setData('state', e.target.value)}
+                    >
+                    <option value={data.state} selected>{data.state}</option>
+                    {states.map((state) => (
+                        <option key={state.abbreviation} value={state.abbreviation}>
+                        {state.name}
+                        </option>
+                    ))}
+                    </select>
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="zip" value="Zip" />
+
+                    <TextInput
+                        id="zip"
+                        type="zip"
+                        className="mt-1 p-3 block w-full border-1 border-slate-400"
+                        value={data.zip}
+                        placeholder="Zip"
+                        onChange={(e) => setData('zip', e.target.value)}
+                    />
+
+                    <InputError className="mt-2" message={errors.zip} />
                 </div>
 
                 {/* {mustVerifyEmail && user.email_verified_at === null && (

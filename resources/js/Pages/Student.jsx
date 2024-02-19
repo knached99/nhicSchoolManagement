@@ -552,7 +552,7 @@ export default function Student({auth, student}) {
                               <HomeOutlinedIcon/> 
                               </Tooltip>
                             </ListItemIcon>
-                            <ListItemText primary={`${student.address}${student.street_address_2 ? `, ${student.street_address_2}` : ''}, ${student.city}, ${student.state}, ${student.zip}`} />
+                            <ListItemText primary={`${student.user.address && student.user.address} ${student.user.address_2 ? `, ${student.user.address_2}` : ''}, ${student.user.city && student.user.city}, ${student.user.state && student.user.state}, ${student.user.zip && student.user.zip}`} />
                           </ListItemButton>
                         </ListItem>
                         <Divider/>
@@ -591,7 +591,7 @@ export default function Student({auth, student}) {
                    )
                     :
                     <>
-                   {auth.role === 'Admin' && !student.faculty_id &&  (
+                   {auth.role === 'Admin' &&  (
           <>
             <span className="text-indigo-500">
               A parent is not yet assigned to {student.first_name} {student.last_name}

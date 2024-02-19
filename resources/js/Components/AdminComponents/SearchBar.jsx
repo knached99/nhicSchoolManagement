@@ -94,7 +94,17 @@ export default function SearchBar() {
   
   return (
     <form onSubmit={(e) => e.preventDefault()} autoComplete="off">
+       
       <div>
+        <div className="inline-block">
+      {searchResults.length > 0 && 
+          <Tooltip title="clear search results" arrow>
+         <IconButton onClick={clearResults}>
+         <ClearOutlinedIcon style={{ color: '#eee' }} />
+       </IconButton>
+          </Tooltip>
+         }
+         </div>
         <InputBase
           placeholder="Search…"
           id="search"
@@ -103,20 +113,15 @@ export default function SearchBar() {
           onKeyDown={handleKeyDown}
           inputProps={{ 'aria-label': 'search' }}
           style={{backgroundColor: '#818cf8', width: '100%', color: '#fff', outline: 'none', padding: 5, margin: 10}}
-        />
-        {searchResults.length > 0 && 
-         <Tooltip title="clear search results" arrow>
-         <IconButton onClick={clearResults}>
-           <ClearOutlinedIcon style={{color: '#eee'}}/>
-         </IconButton>
-         </Tooltip>
-        }
+        /> 
        
+    
       </div>
       {error && <span className="text-red-500">{error}</span>}
       {loading &&  <CircularProgress /> }
   
-
+       
+     
 
       {searchResults.length > 0 &&
       <List   sx={{

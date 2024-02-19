@@ -32,6 +32,8 @@ import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import SearchBar from '@/Components/AdminComponents/SearchBar';
+import ApplicationLogo from '../ApplicationLogo';
+import Avatar from '@mui/material/Avatar';
 
 
 const drawerWidth = 240;
@@ -96,7 +98,34 @@ export default function SideBar({auth}) {
     setOpen(false);
   };
 
-
+  function stringToColor(string) {
+    let hash = 0;
+    let i;
+  
+    /* eslint-disable no-bitwise */
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+  
+    let color = '#';
+  
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+    /* eslint-enable no-bitwise */
+  
+    return color;
+  }
+  
+  function stringAvatar(name) {
+    return {
+      sx: {
+        bgcolor: stringToColor(name),
+      },
+      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    };
+  }
   
 
   return (
@@ -142,7 +171,8 @@ export default function SideBar({auth}) {
     <Dropdown>
       <Dropdown.Trigger>
       <span className="inline-flex rounded-md m-3 hover:cursor-pointer">
-      {!auth.profile_pic ? auth.name : <img src={`${profilePicPath}/${auth.profile_pic}`} className="inline-block h-10 w-10 rounded-full ring-2 ring-white hover:ring-black"/> }
+        {!auth.profile_pic ? <Avatar {...stringAvatar(auth.name)} sx={{width: 56, height: 56}}/> : <Avatar alt="Profile Picture" src={`${profilePicPath}/${auth.profile_pic}`} sx={{width: 56, height: 56}}/> }
+      {/* {!auth.profile_pic ? auth.name : <img src={`${profilePicPath}/${auth.profile_pic}`} className="inline-block h-10 w-10 rounded-full ring-2 ring-white hover:ring-black"/> } */}
 
    
   </span>
@@ -176,7 +206,8 @@ export default function SideBar({auth}) {
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
-        <h6 className="font-normal text-indigo-500 text-start m-3 text-xl">My Role: {auth.role}</h6>   
+        <ApplicationLogo/>
+        {/* <h6 className="font-normal text-indigo-500 text-start m-3 text-xl">My Role: {auth.role}</h6>    */}
         <Divider />
 
         <Divider />

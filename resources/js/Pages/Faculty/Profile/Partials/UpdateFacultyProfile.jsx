@@ -30,14 +30,14 @@ export default function UpdateFacultyProfile({className = '' }) {
 
     const initialValues = {
         email: '',
-        phone_number: ''
+        phone: ''
     };
-    const validationSchema = Yup.object().shape({
-        email: Yup.string().required('email is required').email('Must be a valid email'),
-        phone_number: Yup.string()
-      .matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format')
-      .required('Phone number is required'),
-    });
+    // const validationSchema = Yup.object().shape({
+    //     email: Yup.string().required('email is required').email('Must be a valid email'),
+    //     phone: Yup.string()
+    //   .matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format')
+    //   .required('Phone number is required'),
+    // });
 
     const updateProfile = async (values, { setSubmitting }) => {
         try {
@@ -52,7 +52,7 @@ export default function UpdateFacultyProfile({className = '' }) {
             } else if (response.data.success) {
                 setSuccess(response.data.success);
                 setSuccessOpen(true);
-                setData('email', values.email); // Update local form data
+                setData('email', values.email, 'phone', values.phone); // Update local form data
                 Object.keys(values).forEach((key) => {
                     values[key] = '';
                 });
@@ -164,7 +164,7 @@ export default function UpdateFacultyProfile({className = '' }) {
                     Update your account's profile information and email address.
                 </p>
             </header>
-            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={updateProfile}>
+            <Formik initialValues={initialValues} onSubmit={updateProfile}>
             {({
                 values,
                 errors,
@@ -186,7 +186,7 @@ export default function UpdateFacultyProfile({className = '' }) {
                 <Field style={{margin: 10}} fullWidth placeholder="Email" as={TextField}  value={values.email || data.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/>
                 </div>
                 <div>
-                <Field style={{margin: 10}} fullWidth placeholder="Phone Number" as={TextField}  value={values.phone_number || data.phone} helperText={touched.phone_number && errors.phone_number} error={touched.phone_number && Boolean(errors.phone_number)} onBlur={handleBlur} id="phone_number" name="phone_number"/>
+                <Field style={{margin: 10}} fullWidth placeholder="Phone Number" as={TextField}  value={values.phone || data.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone"/>
                 </div>
 
                 <div>
@@ -204,11 +204,11 @@ export default function UpdateFacultyProfile({className = '' }) {
                     style={{
                         color: 'white',
                         width: '100%',
-                        backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#3d5afe',
+                        backgroundColor: isSubmitting ? '#l66534' : '#3d5afe',
                         padding: 15,
                         marginTop: 10,
                     }}
-                    disabled={isSubmitting || !isValid || !dirty}
+                    disabled={isSubmitting}
                 >
                     {isSubmitting ? (
                         <CircularProgress size={24} style={{ color: '#fff' }} />

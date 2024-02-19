@@ -19,16 +19,16 @@ class FacultyProfileController extends Controller {
                 'email' => [
                     'required',
                     'email',
-                    Rule::unique('faculty')->ignore(auth()->user()->email, 'email'),
+                    Rule::unique('faculty')->ignore(Auth()->guard('faculty')->user()->email, 'email'),
                 ],
-                'phone_number'=> [
+                'phone'=> [
                     'required',
-                    'regex|/^\d{3}-\d{3}-\d{4}$/'
+                    'regex:/^\d{3}-\d{3}-\d{4}$/'
                 ],
             ]);
             $request->user('faculty')->update([
                 'email'=>$validated['email'],
-                'phone'=>$validated['phone_number']
+                'phone'=>$validated['phone']
             ]);
             return response()->json(['success'=>'Your information has been saved']);
         }
