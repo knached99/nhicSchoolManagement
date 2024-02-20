@@ -4,6 +4,7 @@ import AdminsTable from '@/Components/AdminComponents/AdminsTable';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import ParentsTable from '@/Components/AdminComponents/ParentsTable';
 import MyStudentsTable from '@/Components/AdminComponents/MyStudentsTable';
+import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 export default function Dash({ auth }) {
   // Check if auth object is defined before accessing its properties
   const userName = auth && auth.faculty ? auth.faculty.name : 'Guest';
@@ -35,6 +36,7 @@ export default function Dash({ auth }) {
         auth.faculty.role === 'Teacher' && (
           <>
           <MyStudentsTable auth={auth} />
+          <MyAttendanceTable auth={auth} />
           </>
         )
       )}

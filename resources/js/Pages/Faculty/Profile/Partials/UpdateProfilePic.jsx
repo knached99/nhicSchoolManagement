@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import axios from 'axios';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Avatar from '@mui/material/Avatar';
 
 export default function UpdateProfilePic({ className = '' }) {
     const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
@@ -84,7 +84,6 @@ export default function UpdateProfilePic({ className = '' }) {
                 },
             });
     
-            console.log('Response from server:', response);
     
             if (response.status === 200) {
                 setSuccess(response.data.success);
@@ -94,11 +93,11 @@ export default function UpdateProfilePic({ className = '' }) {
                     window.location.reload();
                   }, 2000);
             } else {
-                setErrors(`Server Error: ${response.status}`);
+                setErrors(`Server Error: ${response.data.errors}`);
                 setErrorOpen(true);
             }
         } catch (error) {
-            console.error('Error uploading photo:', error);
+            setErrors(error.message);
     
             if (error.response) {
                 // The request was made and the server responded with a status code
@@ -107,13 +106,14 @@ export default function UpdateProfilePic({ className = '' }) {
                 console.error('Server response data:', error.response.data);
     
                 setErrors(`Server Error: ${error.response.status}`);
+                setErrorOpen(true);
+
             } else if (error.request) {
                 // The request was made but no response was received
                 console.error('No response received from server');
                 setErrors('No response received from server');
             } else {
                 // Something happened in setting up the request that triggered an Error
-                console.error('Error setting up the request:', error.message);
                 setErrors('An error occurred while uploading the photo.');
             }
     
@@ -123,7 +123,35 @@ export default function UpdateProfilePic({ className = '' }) {
         }
     };
     
-    
+    function stringToColor(string) {
+        let hash = 0;
+        let i;
+      
+        /* eslint-disable no-bitwise */
+        for (i = 0; i < string.length; i += 1) {
+          hash = string.charCodeAt(i) + ((hash << 5) - hash);
+        }
+      
+        let color = '#';
+      
+        for (i = 0; i < 3; i += 1) {
+          const value = (hash >> (i * 8)) & 0xff;
+          color += `00${value.toString(16)}`.slice(-2);
+        }
+        /* eslint-enable no-bitwise */
+      
+        return color;
+      }
+      
+      function stringAvatar(name) {
+        return {
+          sx: {
+            bgcolor: stringToColor(name),
+          },
+          children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+        };
+      }
+
 
     return (
         <section className={className}>
@@ -179,11 +207,12 @@ export default function UpdateProfilePic({ className = '' }) {
 
                 <p className="mt-1 text-sm text-gray-600">Upload your Profile picture </p>
                 {!user.profile_pic ? (
-                    <AccountCircleIcon style={{ fontSize: 100, color: 'gray' }} />
-                )          
+                 <Avatar  sx={{ width: 56, height: 56 }} {...stringAvatar(user.name)} />
+
+                 )          
                 : 
                 (
-                    <img src={`${profilePicPath}/${user.profile_pic}`} className="w-20 h-20 p-1 mt-3 rounded-full ring-2 ring-gray-300 dark:ring-gray-500" alt="User Profile Pic" />
+                    <img src={`${profilePicPath}/${user.profile_pic}`} className="w-40 h-40 p-1 mt-3 rounded-full" alt="User Profile Pic" />
                 )
                 }
 

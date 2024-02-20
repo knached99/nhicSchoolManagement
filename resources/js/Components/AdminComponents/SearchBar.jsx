@@ -21,10 +21,9 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListSubheader from '@mui/material/ListSubheader';
 import Avatar from '@mui/material/Avatar';
 const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function SearchBar() {
+export default function SearchBar({auth}) {
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [studentsData, setStudentsData] = useState([]);
@@ -85,11 +84,45 @@ export default function SearchBar() {
   };
 
   const viewFacultyDetails = (user_id) => {
+    if(auth.faculty_id !==user_id){
     window.location.href = `/faculty/profile/${user_id}/view`;
+    }
+    else{
+      window.location.href='/faculty/profile';
+    }
   }
 
   const viewStudentDetails = (student_id) => {
     window.location.href = `/student/${student_id}/view`;
+  }
+
+  function stringToColor(string) {
+    let hash = 0;
+    let i;
+  
+    /* eslint-disable no-bitwise */
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+  
+    let color = '#';
+  
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+    /* eslint-enable no-bitwise */
+  
+    return color;
+  }
+  
+  function stringAvatar(name) {
+    return {
+      sx: {
+        bgcolor: stringToColor(name),
+      },
+      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    };
   }
   
   return (
@@ -146,14 +179,19 @@ export default function SearchBar() {
         viewStudentDetails(result.student_id);
       }
     }}>
-      <ListItemAvatar>
-        {result.faculty_id && result.profile_pic!==null ? (
+   <ListItemAvatar>
+  {result.faculty_id && result.profile_pic !== null ? (
+    // Displaying Faculty avatar
+    <Avatar alt="Faculty Profile Pic" src={`${profilePicPath}/${result.profile_pic}`} />
+  ) : result.student_id && result.profile_pic !== null ? (
+    // Displaying Student avatar
+  <Avatar sx={{ width: 50, height: 50 }} {...stringAvatar(`${result.first_name} ${result.last_name}`)} />
+  ) : (
+    // Default avatar for other cases
+    <Avatar sx={{ width: 50, height: 50 }} {...stringAvatar(result.name)} />
+  )}
+</ListItemAvatar>
 
-          <Avatar alt="Faculty Profile Pic" src={`${profilePicPath}/${result.profile_pic}`} />
-        ) : (
-          <AccountCircleIcon style={{color: '#000', fontSize: 30}}/>
-        )}
-      </ListItemAvatar>
       {result.user_id && (
         <ListItemText primary={
           <>
@@ -224,8 +262,10 @@ export default function SearchBar() {
    
       )}
     </ListItem>
+
     </ListItemButton>
   ))}
+  
 </List>
 }
 

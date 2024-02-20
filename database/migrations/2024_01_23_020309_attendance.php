@@ -11,15 +11,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attendance', function (Blueprint $table) {
-            $table->id();
+            $table->id('attendance_id');
             $table->unsignedBigInteger('student_id'); // Foreign key to link to students table
-            $table->date('attendance_date');
+            $table->unsignedBigInteger('faculty_id');
             $table->boolean('is_present')->nullable(); // 0 -> not present 1 -> present
             $table->string('reason_for_abscence')->nullable(); 
             $table->timestamps();
 
             // Foreign key constraint
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');
+            $table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('cascade');
+
         });
     }
 

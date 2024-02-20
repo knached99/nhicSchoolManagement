@@ -23,7 +23,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
 // Icons 
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Avatar from '@mui/material/Avatar';
 import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
@@ -31,6 +31,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 // Table 
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
+import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 
 export default function ViewProfile({auth, user, students}) {
   const [open, setOpen] = useState(false);
@@ -41,12 +42,6 @@ export default function ViewProfile({auth, user, students}) {
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
   const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
-
-  useEffect(()=>{
-    if(user.faculty_id === auth.faculty_id){
-      window.location.href='/faculty/dash';
-    }
-  })
 
 
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
@@ -116,6 +111,35 @@ const handleCloseError = () => {
     setOpenPermissionsMenu(!openPermissionsMenu);
   };
     
+
+  function stringToColor(string) {
+    let hash = 0;
+    let i;
+  
+    /* eslint-disable no-bitwise */
+    for (i = 0; i < string.length; i += 1) {
+      hash = string.charCodeAt(i) + ((hash << 5) - hash);
+    }
+  
+    let color = '#';
+  
+    for (i = 0; i < 3; i += 1) {
+      const value = (hash >> (i * 8)) & 0xff;
+      color += `00${value.toString(16)}`.slice(-2);
+    }
+    /* eslint-enable no-bitwise */
+  
+    return color;
+  }
+  
+  function stringAvatar(name) {
+    return {
+      sx: {
+        bgcolor: stringToColor(name),
+      },
+      children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
+    };
+  }
   
 
 
@@ -133,16 +157,12 @@ const handleCloseError = () => {
                     <div className="flex flex-col items-center">
                     {user.profile_pic ? (
                     <>
-                      <img
-                        src={`${profilePicPath}/${user.profile_pic}`}
-                        className="inline-block h-20 w-20 rounded-full ring-2 ring-white mr-2"
-                        alt="Profile Picture"
-                      />
+                    <Avatar alt="Profile Picture" src={`${profilePicPath}/${user.profile_pic}`} sx={{ width: 100, height: 100 }} />
+                  
                     </>
                   ) : (
                     <>
-                      <AccountCircleIcon style={{ fontSize: 100, color: 'gray' }} />
-                      {user.name}
+                    <Avatar sx={{width: 50, height: 50}} {...stringAvatar(user.name)} />
                     </>
                   )}
 
@@ -378,6 +398,7 @@ const handleCloseError = () => {
 </div>
                     <h2 className="text-xl font-bold mt-6 mb-4">Students</h2>
                     <StudentsTable auth={auth} path={`/showStudentsForTeacher/${user.faculty_id}`}/>
+                    <MyAttendanceTable/>
 
                     {/* <div className="mb-6">
                         <div className="flex justify-between flex-wrap gap-2 w-full">

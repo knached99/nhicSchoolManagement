@@ -143,7 +143,20 @@ const columns = [
         {params.row.user && params.row.user.name ? params.row.user.name : 'N/A'}
       </div>
     ),
-  },  { field: 'date_of_birth', headerName: 'Date Of Birth', width: 150 },
+  }, 
+  
+  {
+    field: 'faculty_id',
+    headerName: 'Teacher',
+    width: 200,
+    renderCell: (params) => (
+      <div>
+      {params.row.faculty && params.row.faculty.name ? params.row.faculty.name : 'Unassigned'}
+      </div>
+    ),
+  }, 
+  
+  { field: 'date_of_birth', headerName: 'Date Of Birth', width: 150 },
   { field: 'address', headerName: 'Address', width: 150 },
   {
     field: 'street_address_2',
@@ -182,7 +195,7 @@ const columns = [
     width: 120,
     renderCell: (params) => (
       <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
-        <IconButton className="hover:text-emerald-500" onClick={() => viewStudentDetails(params.row.student_id)}>
+        <IconButton disabled={auth.role === 'Teacher' || auth.role === 'Assistant Teacher'} className="hover:text-emerald-500" onClick={() => viewStudentDetails(params.row.student_id)}>
           <VisibilityOutlinedIcon />
         </IconButton>
       </Tooltip>
@@ -195,7 +208,7 @@ const columns = [
     width: 120, 
     renderCell: (params) => (
       <Tooltip title={`Delete ${params.row.first_name} ${params.row.last_name} from the system`}>
-        <IconButton disabled={!auth.role==='Admin'} className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
+        <IconButton disabled={auth.role === 'Teacher' || auth.role === 'Assistant Teacher'} className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
           <DeleteOutlineOutlinedIcon/>
         </IconButton>
       </Tooltip>

@@ -144,7 +144,7 @@ export default function SideBar({auth}) {
       <MenuIcon style={{ color: '#fff' }} />
     </IconButton>
     <Typography variant="h6" noWrap component="div">
-    <SearchBar/>
+    <SearchBar auth={auth}/>
 
 
 {loading && (

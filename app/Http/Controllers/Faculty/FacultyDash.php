@@ -17,6 +17,9 @@ use App\Notifications\NotifyUserOfStudentAssigned;
 use App\Models\Faculty;
 use App\Models\Students;
 use App\Models\User;
+use App\Models\Attendance;
+use Carbon\Carbon;
+
 use Illuminate\Notifications\NotificationException; 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -426,7 +429,8 @@ public function deleteMyStudents()
 public function showAllStudents()
 {
     try {
-        $students = Students::with('user')->orderBy('created_at', 'desc')->get();
+        $students = Students::with('user', 'faculty')->orderBy('created_at', 'desc')->get();
+        
         return response()->json(['students'=>$students]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
@@ -436,7 +440,7 @@ public function showAllStudents()
 public function getMyStudents()
 {
     try {
-        $students = Students::with('user')->where('faculty_id', Auth::guard('faculty')->id())->orderBy('created_at', 'desc')->get();
+        $students = Students::with('user', 'faculty')->where('faculty_id', Auth::guard('faculty')->id())->orderBy('created_at', 'desc')->get();
         return response()->json(['students'=>$students]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
@@ -447,7 +451,7 @@ public function getMyStudents()
 public function showStudentsForTeacher($faculty_id)
 {
     try {
-        $students = Students::with('user')->where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
+        $students = Students::with('user', 'faculty')->where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
 
         return response()->json(['students' => $students]);
     } catch (\Exception $e) {
@@ -526,6 +530,52 @@ public function viewStudentDetails($student_id) {
         return response()->json(['error'=>'Unable to assign parent to this student: '. $e->getMessage()]);
     }
   }
+
+  public function getAttendance($faculty_id)
+{
+    try {
+        $todayDate = Carbon::now()->toDateString();
+
+        $attendance = Attendance::where('faculty_id', $faculty_id)
+            ->whereDate('created_at', $todayDate)
+            ->get();
+
+        return response()->json(['attendance' => $attendance]);
+    } catch (QueryException $e) {
+        \Log::error($e->getMessage());
+        return response()->json(['error' => 'Cannot get attendance data']);
+    }
+}
+
+  // Submit Attendance
+  public function submitAttendance(Request $request, $faculty_id)
+  {
+      try {
+          $request->validate([
+              'attendanceData' => 'required|array'
+          ]);
+  
+          foreach ($request->attendanceData as $attendanceRecord) {
+              $conditions = [
+                  'student_id' => $attendanceRecord['student_id'],
+                  'faculty_id' => $faculty_id,
+              ];
+  
+              $values = [
+                  'is_present' => $attendanceRecord['is_present'],
+                //  'reason_for_absence' => $attendanceRecord['reason_for_absence'] ?? null,
+              ];
+  
+              Attendance::updateOrCreate($conditions, $values);
+          }
+  
+          return response()->json(['success' => 'Attendance data submitted']);
+      } catch (\Exception $e) {
+          \Log::error($e->getMessage());
+          return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()]);
+      }
+  }
+  
 
   // AutoComplete Search  
 

@@ -30,6 +30,7 @@ export default function MyStudentsTable({auth}) {
   window.location.href = `/student/${student_id}/view`;
 }
 
+
   const columns = [
     { field: 'student_id', headerName: 'Student ID', width: 120 },
     { field: 'first_name', headerName: 'First Name', width: 120 },
@@ -65,7 +66,7 @@ export default function MyStudentsTable({auth}) {
     width: 120,
     renderCell: (params) => (
       <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
-        <IconButton className="hover:text-emerald-500" onClick={() => viewStudentDetails(params.row.student_id)}>
+        <IconButton className="hover:text-emerald-500" disabled={auth.faculty.faculty_id !== params.row.faculty_id} onClick={() => viewStudentDetails(params.row.student_id)}>
           <VisibilityOutlinedIcon />
         </IconButton>
       </Tooltip>
@@ -110,7 +111,7 @@ export default function MyStudentsTable({auth}) {
         if (error) {
           setError(error);
         } else if (students) {
-          setRows(students.map(row => ({ ...row, id: row.student_id })));
+          setRows(students.map(row => ({ ...row, id: row.student_id, })));
         } else {
           setError('Unexpected response format from the server');
         }
