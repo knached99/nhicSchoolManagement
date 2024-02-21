@@ -157,6 +157,7 @@ export default function UpdateProfilePic({ className = '' }) {
         <section className={className}>
             <header>
                 <h2 className="text-lg font-medium text-gray-900">Profile Picture</h2>
+
                 {errors && (
                     <Box style={{ padding: '1rem', maxHeight: '80vh', overflowY: 'auto', width: '100%' }}>
                         <Collapse in={errorOpen}>
@@ -250,6 +251,8 @@ export default function UpdateProfilePic({ className = '' }) {
                         fullWidth
                         onChange={(e) => handlePhotoChange(e, setFieldValue)}
                     />
+                    <span className="text-slate-500">Supported Types: (jpg, jpeg, and png)</span>
+
 
 
 

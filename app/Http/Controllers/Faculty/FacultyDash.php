@@ -448,6 +448,16 @@ public function getMyStudents()
 }
 
 
+public function getStudentsForTeacher($faculty_id){
+    try {
+        $students = Students::with('user', 'faculty')->where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
+        return response()->json(['students'=>$students]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
+    }
+}
+
+
 public function showStudentsForTeacher($faculty_id)
 {
     try {
@@ -547,34 +557,50 @@ public function viewStudentDetails($student_id) {
     }
 }
 
-  // Submit Attendance
-  public function submitAttendance(Request $request, $faculty_id)
-  {
-      try {
-          $request->validate([
-              'attendanceData' => 'required|array'
-          ]);
-  
-          foreach ($request->attendanceData as $attendanceRecord) {
-              $conditions = [
-                  'student_id' => $attendanceRecord['student_id'],
-                  'faculty_id' => $faculty_id,
-              ];
-  
-              $values = [
-                  'is_present' => $attendanceRecord['is_present'],
-                //  'reason_for_absence' => $attendanceRecord['reason_for_absence'] ?? null,
-              ];
-  
-              Attendance::updateOrCreate($conditions, $values);
-          }
-  
-          return response()->json(['success' => 'Attendance data submitted']);
-      } catch (\Exception $e) {
-          \Log::error($e->getMessage());
-          return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()]);
-      }
-  }
+// Submit Attendance
+public function submitAttendance(Request $request, $faculty_id)
+{
+    try {
+        $request->validate([
+            'attendanceData' => 'required|array'
+        ]);
+
+        $currentDate = now()->startOfDay(); // Get the current date at midnight
+
+        foreach ($request->attendanceData as $attendanceRecord) {
+            $conditions = [
+                'student_id' => $attendanceRecord['student_id'],
+                'faculty_id' => $faculty_id,
+                'created_at' => $currentDate,
+            ];
+
+            $values = [
+                'is_present' => $attendanceRecord['is_present'],
+                // 'reason_for_absence' => $attendanceRecord['reason_for_absence'] ?? null,
+            ];
+
+            Attendance::updateOrCreate($conditions, $values);
+        }
+
+        return response()->json(['success' => 'Attendance data submitted']);
+    } catch (\Exception $e) {
+        \Log::error($e->getMessage());
+        return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()]);
+    }
+}
+
+public function getAttendanceHistoryBystudentID($studentId){
+    try{
+        $attendanceHistory = Attendance::select('is_present', 'created_at')->where('student_id', $studentId)->get();
+
+        return response()->json(['attendanceHistory' => $attendanceHistory]);
+    }
+    catch(QueryException $e){
+        \Log::error($e->getMessage());
+        return response()->json(['errors'=>'Cannot get attendance history']);
+    }
+}
+
   
 
   // AutoComplete Search  

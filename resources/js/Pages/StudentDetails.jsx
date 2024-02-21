@@ -193,7 +193,7 @@ export default function StudentDetails({auth, student}) {
                 });
                 window.setTimeout(() => {
                     window.location.reload();
-                }, 2000);
+                }, 1000);
             }
         }
         catch(error){

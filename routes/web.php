@@ -70,8 +70,11 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::delete('/deleteParent/{user_id}', [FacultyDash::class, 'deleteParent'])->name('deleteParent');
     Route::get('/showAllStudents', [FacultyDash::class, 'showAllStudents'])->name('showAllStudents');
     Route::get('/getMyStudents', [FacultyDash::class, 'getMyStudents'])->name('getMyStudents');
+    Route::get('/getStudentsForTeacher/{faculty_id}', [FacultyDash::class, 'getStudentsForTeacher'])->name('getStudentsForTeacher');
     Route::get('/showStudentsForTeacher/{faculty_id}', [FacultyDash::class, 'showStudentsForTeacher'])->name('showStudentsForTeacher');
-    Route::get('/student/{student_id}/view', [FacultyDash::class, 'viewStudentDetails'])->name('viewStudentDetails');
+    Route::get('/student/{student_id}/view', [FacultyDash::class, 'viewStudentDetails'])->name('studentDetails');
+    Route::get('/getAttendanceHistoryBystudentID/{student_id}', [FacultyDash::class, 'getAttendanceHistoryBystudentID'])
+    ->name('getAttendanceHistoryBystudentID');
     Route::put('/assignTeacherToStudent/{student_id}/{faculty_id}', [FacultyDash::class, 'assignTeacherToStudent'])->name('assignTeacherToStudent');
     Route::put('/assignParentToStudent/{student_id}/{user_id}', [FacultyDash::class, 'assignParentToStudent'])->name('assignParentToStudent');
     Route::put('/updateUserInformation/{faculty_id}', [FacultyDash::class, 'updateUserInformation'])->name('updateUserInformation');

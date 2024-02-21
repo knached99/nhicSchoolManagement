@@ -37,7 +37,7 @@ import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined';
 import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined';
 import ContactEmergencyOutlinedIcon from '@mui/icons-material/ContactEmergencyOutlined';
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
-
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 
 // Lists
 
@@ -47,6 +47,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
+
+// components 
+import AttendanceHistory from '@/Components/AdminComponents/AttendanceHistory';
 
 export default function Student({auth, student}) {
     const [error, setError] = useState(null);
@@ -165,7 +168,7 @@ export default function Student({auth, student}) {
           });
           window.setTimeout(() => {
             window.location.reload();
-          }, 2000);
+          }, 1000);
         }
       } catch (error) {
         setError(error.message || 'Unable to edit student information, something went wrong');
@@ -314,8 +317,12 @@ export default function Student({auth, student}) {
     <div className="container mx-auto py-8">
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
             <div className="col-span-4 sm:col-span-3">
+            
                 <div className="bg-white shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
+                    <a href="/faculty/dash" class="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
+                    <ArrowBackOutlinedIcon/>  Back
+                  </a>
             
                     <Avatar sx={{ width: 100, height: 100 }} {...stringAvatar(`${student.first_name} ${student.last_name}`)} />
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
@@ -796,6 +803,7 @@ export default function Student({auth, student}) {
   
 </div>
                     <h2 className="text-xl font-bold mt-6 mb-4">Student Metrics</h2>
+                    <AttendanceHistory studentID={student.student_id}/>
                     {/* <div className="mb-6">
                         <div className="flex justify-between flex-wrap gap-2 w-full">
                             <span className="text-gray-700 font-bold">Web Developer</span>

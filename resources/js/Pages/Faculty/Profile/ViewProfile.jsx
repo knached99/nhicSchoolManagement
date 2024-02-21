@@ -398,7 +398,7 @@ const handleCloseError = () => {
 </div>
                     <h2 className="text-xl font-bold mt-6 mb-4">Students</h2>
                     <StudentsTable auth={auth} path={`/showStudentsForTeacher/${user.faculty_id}`}/>
-                    <MyAttendanceTable/>
+                    <MyAttendanceTable auth={auth} facultyID={user.faculty_id}/>
 
                     {/* <div className="mb-6">
                         <div className="flex justify-between flex-wrap gap-2 w-full">

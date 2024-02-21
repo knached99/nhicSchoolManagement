@@ -352,29 +352,7 @@ export default function AddStudentModal({refreshData}) {
             <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 10}} />
             <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth style={{margin: 10}} />
             <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth style={{margin: 10}} />
-            {loading ? <CircularProgress color="primary" /> : 
-            <FormControl sx={{ mx: 1, mt:3, mb:3,  width: '100%'}}>
-                            <InputLabel id="user_id">Select Parent</InputLabel>
-                            <Select
-                              labelId="user_id"
-                              id="user_id"
-                              name="user_id"
-                              value={values.user_id || ''}
-                              onChange={handleChange}
-                              style={{ width: 300 }}
-                            >
-                              <MenuItem value="">
-                                <em>Make a Selection</em>
-                              </MenuItem>
-                    
-                              {parents.map((parent) => (
-                                <MenuItem key={parent.user_id} value={parent.user_id}>
-                                  {parent.name} - {parent.email}
-                                </MenuItem>
-                              ))}
-                            </Select>
-            </FormControl>
-            }
+           
             <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{margin: 10}} />
             <FormControl sx={{mx: 1, mt:3, mb:3, width: '100%' }}>
             <InputLabel id="state">Select State</InputLabel>
@@ -449,6 +427,30 @@ export default function AddStudentModal({refreshData}) {
               <FormHelperText style={{color: 'red'}}>{errors.gender}</FormHelperText>
             )}
             </FormControl>
+
+            {loading ? <CircularProgress color="primary" /> : 
+            <FormControl sx={{ mx: 1, mt:3, mb:3,  width: '100%'}}>
+                            <InputLabel id="user_id">Select Parent</InputLabel>
+                            <Select
+                              labelId="user_id"
+                              id="user_id"
+                              name="user_id"
+                              value={values.user_id || ''}
+                              onChange={handleChange}
+                              style={{ width: 300 }}
+                            >
+                              <MenuItem value="">
+                                <em>Make a Selection</em>
+                              </MenuItem>
+                    
+                              {parents.map((parent) => (
+                                <MenuItem key={parent.user_id} value={parent.user_id}>
+                                  {parent.name} - {parent.email}
+                                </MenuItem>
+                              ))}
+                            </Select>
+            </FormControl>
+            }
 
             
             <Field as={Textarea} 
