@@ -147,6 +147,7 @@ export default function SideBar({auth}) {
     <Typography variant="h6" noWrap component="div">
     {/* <SearchBar auth={auth}/> */}
     <AutoCompleteSearch auth={auth}/>
+    {/* <MaterialAutoComplete/> */}
 
 
 {loading && (

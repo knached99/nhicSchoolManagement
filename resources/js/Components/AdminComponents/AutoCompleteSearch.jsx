@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { AutoComplete } from 'primereact/autocomplete';
 import axios from 'axios';
 import Avatar from '@mui/material/Avatar';
-import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 
 
 const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
@@ -118,7 +117,7 @@ const AutoCompleteSearch = ({ auth }) => {
   onChange={(e) => setSearchQuery(e.target.value)}
   field="search"
   placeholder="Search for people..."
-  forceSelection 
+ 
 
   itemTemplate={(item) => (
     <div className="inline-block" onClick={() => handleItemClick(item)}>

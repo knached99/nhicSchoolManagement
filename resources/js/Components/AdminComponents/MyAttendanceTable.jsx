@@ -136,8 +136,7 @@ const handleAttendanceSubmission = async () => {
           ) : (
             // Display radio buttons if no existing attendance data
             params.row.is_present === undefined ? (
-              <>
-              {auth === facultyID && 
+              <>              
                 <>
                   <FormControlLabel
                     control={
@@ -162,7 +161,7 @@ const handleAttendanceSubmission = async () => {
                     label="Absent"
                   />
                 </>
-              }
+              
             </>
             
             ) : (
