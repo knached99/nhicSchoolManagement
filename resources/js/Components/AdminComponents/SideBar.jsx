@@ -32,6 +32,7 @@ import InputBase from '@mui/material/InputBase';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import SearchBar from '@/Components/AdminComponents/SearchBar';
+import AutoCompleteSearch from '@/Components/AdminComponents/AutoCompleteSearch';
 import ApplicationLogo from '../ApplicationLogo';
 import Avatar from '@mui/material/Avatar';
 
@@ -144,7 +145,8 @@ export default function SideBar({auth}) {
       <MenuIcon style={{ color: '#fff' }} />
     </IconButton>
     <Typography variant="h6" noWrap component="div">
-    <SearchBar auth={auth}/>
+    {/* <SearchBar auth={auth}/> */}
+    <AutoCompleteSearch auth={auth}/>
 
 
 {loading && (

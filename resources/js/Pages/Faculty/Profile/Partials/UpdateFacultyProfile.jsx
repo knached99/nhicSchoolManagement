@@ -14,6 +14,7 @@ import Alert from '@mui/material/Alert';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { InputMask } from "primereact/inputmask";
 
 export default function UpdateFacultyProfile({className = '' }) {
     const user = usePage().props.auth.faculty;
@@ -186,7 +187,8 @@ export default function UpdateFacultyProfile({className = '' }) {
                 <Field style={{margin: 10}} fullWidth placeholder="Email" as={TextField}  value={values.email || data.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/>
                 </div>
                 <div>
-                <Field style={{margin: 10}} fullWidth placeholder="Phone Number" as={TextField}  value={values.phone || data.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone"/>
+                <InputMask style={{width: '100%'}} mask="(999) 999-9999" placeholder="(999) 999-9999" value={values.phone || data.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} name="phone"></InputMask>
+                {/* <Field style={{margin: 10}} fullWidth placeholder="Phone Number" as={TextField}  value={values.phone || data.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone"/> */}
                 </div>
 
                 <div>

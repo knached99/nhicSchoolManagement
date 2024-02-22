@@ -59,6 +59,7 @@ export default function Student({auth, student}) {
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
     const [loading, setLoading] = useState(true);
+    const [loadingParents, setLoadingParents] = useState(true);
     const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
    
     const fetchTeachers = async () => {
@@ -100,9 +101,11 @@ export default function Student({auth, student}) {
             setParents(parentUsers);
             setTeachers(facultyUsers);
             setLoading(false);
+            setLoadingParents(false);
           } catch (error) {
             setError(error.message);
             setLoading(false);
+            setLoadingParents(false);
           }
         };
     
@@ -629,9 +632,13 @@ export default function Student({auth, student}) {
                     <>
                    {auth.role === 'Admin' &&  (
           <>
+           
+            {loadingParents ? <CircularProgress color="primary"/>
+            :
+            <>
             <span className="text-indigo-500">
-              A parent is not yet assigned to {student.first_name} {student.last_name}
-            </span>
+            A parent is not yet assigned to {student.first_name} {student.last_name}
+          </span>
 
             <Formik
               initialValues={parentInitialValues}
@@ -744,6 +751,9 @@ export default function Student({auth, student}) {
                 </Form>
               )}
             </Formik>
+            </>
+            }
+            
           </>
         )}
 

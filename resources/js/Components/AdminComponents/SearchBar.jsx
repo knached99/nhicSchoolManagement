@@ -137,7 +137,10 @@ export default function SearchBar({auth}) {
        </IconButton>
           </Tooltip>
          }
+
          </div>
+         {loading ?  <CircularProgress style={{color: '#fff'}}/> 
+          :
         <InputBase
           placeholder="Search…"
           id="search"
@@ -147,11 +150,11 @@ export default function SearchBar({auth}) {
           inputProps={{ 'aria-label': 'search' }}
           style={{backgroundColor: '#818cf8', width: '100%', color: '#fff', outline: 'none', padding: 5, margin: 10}}
         /> 
+      }
        
     
       </div>
       {error && <span className="text-red-500">{error}</span>}
-      {loading &&  <CircularProgress /> }
   
        
      
