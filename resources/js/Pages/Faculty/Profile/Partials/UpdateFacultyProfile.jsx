@@ -18,10 +18,10 @@ import { InputMask } from "primereact/inputmask";
 
 export default function UpdateFacultyProfile({className = '' }) {
     const user = usePage().props.auth.faculty;
-    const { data, setData } = useForm({
-        email: user.email,
-        phone: user.phone
-    });
+    // const { data, setData } = useForm({
+    //     email: user.email,
+    //     phone: user.phone
+    // });
 
     const [errors, setErrors] = useState();
     const [success, setSuccess] = useState();
@@ -30,15 +30,15 @@ export default function UpdateFacultyProfile({className = '' }) {
     const [refreshData, setRefreshData] = useState(false); // handle state for refreshed data 
 
     const initialValues = {
-        email: '',
-        phone: ''
+        email: user.email,
+        phone: user.phone 
     };
-    // const validationSchema = Yup.object().shape({
-    //     email: Yup.string().required('email is required').email('Must be a valid email'),
-    //     phone: Yup.string()
-    //   .matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format')
-    //   .required('Phone number is required'),
-    // });
+    const validationSchema = Yup.object().shape({
+        email: Yup.string().required('email is required').email('Must be a valid email'),
+        phone: Yup.string()
+      .matches(/^\(\d{3}\) \d{3}-\d{4}$/, 'Invalid US phone number format')
+      .required('Phone number is required'),
+    });
 
     const updateProfile = async (values, { setSubmitting }) => {
         try {
@@ -53,7 +53,8 @@ export default function UpdateFacultyProfile({className = '' }) {
             } else if (response.data.success) {
                 setSuccess(response.data.success);
                 setSuccessOpen(true);
-                setData('email', values.email, 'phone', values.phone); // Update local form data
+                window.location.reload();
+                //setData('email', values.email, 'phone', values.phone); // Update local form data
                 Object.keys(values).forEach((key) => {
                     values[key] = '';
                 });
@@ -73,14 +74,14 @@ export default function UpdateFacultyProfile({className = '' }) {
         const fetchData = async () => {
             // Fetch updated data from the server and update local state
             const updatedData = await axios.get('/fetchFacultyData');
-            setData(updatedData);
+          //setData(updatedData);
         };
 
         if (refreshData) {
             fetchData();
             setRefreshData(false); // Reset the flag
         }
-    }, [refreshData, setData]);
+    }, [refreshData]);
 
     const handleCloseSuccess = () => {
         setSuccessOpen(false);
@@ -165,7 +166,7 @@ export default function UpdateFacultyProfile({className = '' }) {
                     Update your account's profile information and email address.
                 </p>
             </header>
-            <Formik initialValues={initialValues} onSubmit={updateProfile}>
+            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={updateProfile}>
             {({
                 values,
                 errors,
@@ -179,24 +180,23 @@ export default function UpdateFacultyProfile({className = '' }) {
             }) => (
                 <Form onSubmit={handleSubmit} className="mt-6 space-y-6">
                 <div>
-                    <p className="font-bold">Name: {user.name}</p>
-     
+                    <h1 className="text-xl font-black">{user.name}</h1> 
+                    <p className="font-semibold">My Role: {user.role}</p>
                 </div>
 
                 <div>
-                <Field style={{margin: 10}} fullWidth placeholder="Email" as={TextField}  value={values.email || data.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/>
-                </div>
-                <div>
-                <InputMask style={{width: '100%'}} mask="(999) 999-9999" placeholder="(999) 999-9999" value={values.phone || data.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} name="phone"></InputMask>
-                {/* <Field style={{margin: 10}} fullWidth placeholder="Phone Number" as={TextField}  value={values.phone || data.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone"/> */}
-                </div>
+                {/* <InputMask style={{width: '100%'}} mask="email" placeholder="Email" value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} name="email"></InputMask> */}
 
-                <div>
-                  <p className="font-semibold">My Role: <span className="font-noraml">{user.role}</span></p>
+                <Field style={{margin: 10}} fullWidth placeholder="Email" as={TextField}  value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/>
                 </div>
-                {/* <div>
-                    <p className="font-semibold">My Permissions: <span className="font-normal">{formatPermissions(user.permissions)}</span></p>
-                </div> */}
+                <div>
+                <InputMask  style={{
+                    width: '100%',
+                    ...(touched.phone && errors.phone && { border: '1px solid #ef4444' }),
+                }} mask="(999) 999-9999" placeholder="(999) 999-9999" value={values.phone} onChange={handleChange} onBlur={handleBlur} name="phone"></InputMask>
+                <span className="text-red-500">{touched.phone && errors.phone}</span>
+                {/* <Field style={{margin: 10}} fullWidth placeholder="Phone Number" as={TextField}  value={values.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone"/> */}
+                </div>
 
 
                 <div className="flex items-center gap-4">

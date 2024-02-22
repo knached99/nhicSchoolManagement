@@ -23,7 +23,8 @@ class FacultyProfileController extends Controller {
                 ],
                 'phone'=> [
                     'required',
-                    'regex:/^\d{3}-\d{3}-\d{4}$/'
+                    'regex:/^\(\d{3}\) \d{3}-\d{4}$/',
+                    Rule::unique('faculty')->ignore(Auth()->guard('faculty')->user()->phone, 'phone'),
                 ],
             ]);
             $request->user('faculty')->update([

@@ -5,6 +5,11 @@ import TextInput from '@/Components/TextInput';
 import { Link, useForm, usePage } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 import states from '@/constants/states';
+import { InputMask } from 'primereact/inputmask';
+import { CascadeSelect } from 'primereact/cascadeselect';
+import { InputText } from 'primereact/inputtext';
+        
+
 export default function UpdateProfileInformation({className = '' }) {
     const user = usePage().props.auth.user;
 
@@ -39,7 +44,7 @@ export default function UpdateProfileInformation({className = '' }) {
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
 
-                    <TextInput
+                    <InputText
                         id="name"
                         className="mt-1 block w-full p-3 cursor-not-allowed"
                         value={data.name}
@@ -56,7 +61,7 @@ export default function UpdateProfileInformation({className = '' }) {
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
 
-                    <TextInput
+                    <InputText
                         id="email"
                         type="email"
                         className="mt-1 block w-full p-3 border-1 border-slate-400"
@@ -72,15 +77,17 @@ export default function UpdateProfileInformation({className = '' }) {
 
                 <div>
                     <InputLabel htmlFor="phone" value="Phone" />
+                    <InputMask style={{width: '100%'}} name="phone" id="phone" value={data.phone} onChange={(e)=>setData('phone', e.target.value)} mask="(999) 999-9999" placeholder="(999) 999-9999"></InputMask>
 
-                    <TextInput
+
+                    {/* <InputText
                         id="phone"
                         type="phone"
                         className="mt-1 block w-full p-3 border-1 border-slate-400"
                         value={data.phone}
                         onChange={(e) => setData('phone', e.target.value)}
                         placeholder="Phone"
-                    />
+                    /> */}
 
                     <InputError className="mt-2" message={errors.phone} />
                 </div>
@@ -88,15 +95,23 @@ export default function UpdateProfileInformation({className = '' }) {
 
                 <div>
                     <InputLabel htmlFor="address" value="Street Address" />
+                    <InputText
+                        id="address"
+                        name="address"
+                        style={{ width: '100%' }}
+                        placeholder="Street Address"
+                        value={data.address}
+                        onChange={(e) => setData('address', e.target.value)}
+                    />
 
-                    <TextInput
+                    {/* <InputText
                         id="address"
                         type="address"
                         className="mt-1 p-3 block w-full border-1 border-slate-400"
                         value={data.address}
                         placeholder="Street Address"
                         onChange={(e) => setData('address', e.target.value)}
-                    />
+                    /> */}
 
                     <InputError className="mt-2" message={errors.address} />
                 </div>
@@ -104,7 +119,7 @@ export default function UpdateProfileInformation({className = '' }) {
                 <div>
                     <InputLabel htmlFor="address_2" value="Apartment/Unit Number" />
 
-                    <TextInput
+                    <InputText
                         id="address_2"
                         type="address"
                         className="mt-1 p-3 block w-full border-1 border-slate-400"
@@ -119,7 +134,7 @@ export default function UpdateProfileInformation({className = '' }) {
                 <div>
                     <InputLabel htmlFor="city" value="City" />
 
-                    <TextInput
+                    <InputText
                         id="city"
                         type="city"
                         className="mt-1 p-3 block w-full border-1 border-slate-400"
@@ -132,6 +147,7 @@ export default function UpdateProfileInformation({className = '' }) {
                 </div>
 
                 <div>
+
                     <InputLabel htmlFor="state" value="State"/>
                     <select 
                     id="state"
@@ -151,7 +167,7 @@ export default function UpdateProfileInformation({className = '' }) {
                 <div>
                     <InputLabel htmlFor="zip" value="Zip" />
 
-                    <TextInput
+                    <InputText
                         id="zip"
                         type="zip"
                         className="mt-1 p-3 block w-full border-1 border-slate-400"
