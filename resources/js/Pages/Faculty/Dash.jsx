@@ -36,7 +36,7 @@ export default function Dash({ auth }) {
         auth.faculty.role === 'Teacher' && (
           <>
           <MyStudentsTable auth={auth} />
-          <MyAttendanceTable facultyID={auth.faculty.faculty_id} />
+          <MyAttendanceTable auth={auth && auth.faculty && auth.faculty.faculty_id} />
           </>
         )
       )}

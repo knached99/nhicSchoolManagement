@@ -20,6 +20,7 @@ import Radio from '@mui/material/Radio';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 export default function MyAttendanceTable({auth, facultyID}) {
+
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
@@ -53,7 +54,7 @@ const handleAttendanceSubmission = async () => {
     try {
       console.log("Rows before submission:", rows);
   
-      const response = await axios.post(`/submitAttendance/${facultyID}`, {
+      const response = await axios.post(`/submitAttendance/${facultyID ? facultyID : auth}`, {
         attendanceData: rows.map(row => ({
           student_id: row.student_id,
           is_present: row.is_present,
@@ -81,7 +82,7 @@ const handleAttendanceSubmission = async () => {
     const fetchCombinedData = async () => {
       try {
         // Fetch students
-        const studentsResponse = await fetch(`/getStudentsForTeacher/${facultyID}}`);
+        const studentsResponse = await fetch(`/getStudentsForTeacher/${facultyID ? facultyID : auth}}`);
         const { students: studentData, error: studentError } = await studentsResponse.json();
 
         if (studentError) {
@@ -91,7 +92,7 @@ const handleAttendanceSubmission = async () => {
         }
 
         // Fetch attendance data
-        const attendanceResponse = await fetch(`/getAttendance/${facultyID}`);
+        const attendanceResponse = await fetch(`/getAttendance/${facultyID ? facultyID : auth}`);
         const { attendance: fetchedAttendanceData, error: attendanceError } = await attendanceResponse.json();
 
         if (attendanceError) {
@@ -135,7 +136,7 @@ const handleAttendanceSubmission = async () => {
             <div>{params.attendanceData.is_present === 1 ? 'Present' : 'Absent'}</div>
           ) : (
             // Display radio buttons if no existing attendance data
-            params.row.is_present === undefined ? (
+            params.row.is_present === undefined  && auth === params.row.faculty_id ? (
               <>              
                 <>
                   <FormControlLabel
@@ -166,7 +167,7 @@ const handleAttendanceSubmission = async () => {
             
             ) : (
               // Display "Present" or "Absent" based on the value in the row
-              <div>{params.row.is_present === 1 ? 'Present' : 'Absent'}</div>
+              <div>{params.row.is_present ===1 &&  'Present' || params.row.is_present ===0 && 'Absent' || params.row.is_present === undefined && 'N/A'}</div>
             )
           )}
         </div>
@@ -240,7 +241,7 @@ const handleAttendanceSubmission = async () => {
         pageSize={10}
       />
       </Paper>
-      {!isAttendanceTaken && 
+      {!isAttendanceTaken && rows.every(row => row.faculty_id === auth) ? (
       <Button
       variant="contained"
       color="primary"
@@ -249,6 +250,8 @@ const handleAttendanceSubmission = async () => {
     >
       Submit Attendance
     </Button>
+      ) :
+      null
       }
       
     </div>
