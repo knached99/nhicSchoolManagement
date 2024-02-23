@@ -86,7 +86,14 @@ const VirtuosoTableComponents = {
     return (
         <>
         <TableCell key="created_at" align="left">
-          {new Date(row.created_at).toLocaleString()}
+        {new Date(row.created_at).toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    })}
         </TableCell>
         <TableCell key="is_present" align="left">
           {row.is_present === 1 ? <span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-md font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">Present</span> : <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-inset ring-red-700/10">Absent</span>}

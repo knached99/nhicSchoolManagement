@@ -329,9 +329,13 @@ export default function Student({auth, student}) {
             
                     <Avatar sx={{ width: 100, height: 100 }} {...stringAvatar(`${student.first_name} ${student.last_name}`)} />
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
-                        <p className="text-gray-700 text-center font-bold mt-3">Student Since: <span className="font-normal">{new Date(student.created_at).toLocaleDateString()}</span></p>
-                        
-                    
+                        <p className="text-gray-700 text-center font-bold mt-3">
+                        Student Since: 
+                        <span className="font-normal ml-1">
+                          {new Date(student.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        </span>
+                      </p>
+                                  
 
                         {auth.role === 'Admin' && !student.faculty_id && (
                         <div class="mt-6 flex flex-wrap gap-4 justify-center">
