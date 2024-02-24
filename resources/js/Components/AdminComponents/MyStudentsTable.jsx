@@ -309,7 +309,6 @@ const deleteMyStudents = async () => {
                 pageSize={5}
                 pagination
                 rowsPerPageOptions={[5, 10, 20]}
-                checkboxSelection
               />
             </div>
           </Paper>

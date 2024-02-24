@@ -106,12 +106,18 @@ const VirtuosoTableComponents = {
  
     <Paper style={{ height: 400, width: '100%' }}>
      <h1 className="text-center text-lg font-semibold">Attendance History</h1>
-    <TableVirtuoso
+     {rows && rows.length > 0 ? (
+      <TableVirtuoso
       data={rows}
       components={VirtuosoTableComponents}
       fixedHeaderContent={fixedHeaderContent}
       itemContent={rowContent}
     />
+     )
+    : 
+    <p className="text-slate-700 text-lg text-center m-10">No Attendance History</p>
+    }
+    
   </Paper>
   )
 }

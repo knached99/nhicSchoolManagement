@@ -1,5 +1,5 @@
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 
 import React, {useState, useEffect} from 'react'
 import Avatar from '@mui/material/Avatar';
@@ -323,9 +323,9 @@ export default function Student({auth, student}) {
             
                 <div className="bg-white shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
-                    <a href="/faculty/dash" class="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
+                    <Link href="/faculty/dash" class="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
                     <ArrowBackOutlinedIcon/>  Back
-                  </a>
+                  </Link>
             
                     <Avatar sx={{ width: 100, height: 100 }} {...stringAvatar(`${student.first_name} ${student.last_name}`)} />
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>

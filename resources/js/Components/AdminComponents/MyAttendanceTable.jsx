@@ -239,6 +239,8 @@ const handleAttendanceSubmission = async () => {
         loading={loading}
         autoHeight
         pageSize={10}
+         pagination
+        rowsPerPageOptions={[5, 10, 20]}
       />
       </Paper>
       {!isAttendanceTaken && rows.every(row => row.faculty_id === auth) ? (
