@@ -14,7 +14,7 @@ class StudentAssigned extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(string $student_id, string $first_name, string $last_name, string $name)
+    public function __construct(?string $student_id = null, string $first_name, string $last_name, string $name)
     {
         $this->student_id = $student_id;
         $this->first_name = $first_name;
@@ -36,13 +36,21 @@ class StudentAssigned extends Notification
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
-    {
-        return (new MailMessage)
-                    ->subject('New Student Assigned To You')
-                    ->greeting('Hello '.$this->name)
-                    ->line('You\'ve been assigned to '.$this->first_name. ' '.$this->last_name.' as their teacher')
-                    ->action('View Student Details', url('/student/'.$this->student_id.'/view'));
+{
+    $mailMessage = (new MailMessage)
+        ->subject('New Student Assigned To You')
+        ->greeting('Hello ' . $this->name)
+        ->line('You\'ve been assigned to ' . $this->first_name . ' ' . $this->last_name . ' as their teacher');
+
+    if ($this->student_id !== null) {
+        $mailMessage->action('View Student Details', url('/student/' . $this->student_id . '/view'));
+    } else {
+        $mailMessage->action('My Dashboard', '/faculty/dash');
     }
+
+    return $mailMessage;
+}
+
 
     /**
      * Get the array representation of the notification.

@@ -22,6 +22,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
+import { InputMask } from 'primereact/inputmask';
+
+
 // Icons 
 import Avatar from '@mui/material/Avatar';
 import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
@@ -63,7 +66,7 @@ export default function ViewProfile({auth, user, students}) {
 
   const validation = Yup.object().shape({
     email: Yup.string().email('Invalid email format'),
-    phone_number: Yup.string().matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format'),
+    phone_number: Yup.string().matches(/^\(\d{3}\) \d{3}-\d{4}$/, 'Invalid US phone number format'),
     role: Yup.string(),
   });
 
@@ -267,7 +270,7 @@ const handleCloseError = () => {
                                        </div>
 
                                        <div>
-                                       <Field
+                                       {/* <Field
                                        id="phone_number"
                                        name="phone_number"
                                        helperText={touched.phone_number && errors.phone_number}
@@ -278,7 +281,21 @@ const handleCloseError = () => {
                                        style={{ margin: 10 }}
                                        fullWidth
                                        onChange={handleChange}
-                                   />
+                                   /> */}
+                                               <InputMask
+             id="phone_number" 
+             name="phone_number" 
+             value={values.phone_number} 
+             style={{
+                width: '100%',
+                ...(touched.phone_number && errors.phone_number && { border: '1px solid #ef4444' }),
+            }}
+             onChange={handleChange} 
+             onBlur={handleBlur}  
+             mask="(999) 999-9999" 
+             placeholder="(999) 999-9999">
+             </InputMask>
+             <span className="text-red-500">{touched.phone_number && errors.phone_number}</span>
                                        </div>
 
                                        <div>

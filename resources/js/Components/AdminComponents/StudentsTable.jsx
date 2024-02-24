@@ -15,7 +15,6 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import Skeleton from '@mui/material/Skeleton';
 
 
 export default function StudentsTable({auth, path}) {
@@ -303,11 +302,8 @@ const columns = [
 
         {/* Table Section */}
         {loading ? (
-        <Box sx={{ width: '100%' }}>
-         <Skeleton />
-         <Skeleton animation="wave" />
-         <Skeleton animation={true} />
-       </Box>
+        <CircularProgress color="primary"/>
+
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">No Students in the system</div>
         ) : (
@@ -319,7 +315,6 @@ const columns = [
                 pageSize={5}
                 pagination
                 rowsPerPageOptions={[5, 10, 20]}
-                checkboxSelection
               />
             </div>
           </Paper>

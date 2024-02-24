@@ -47,7 +47,7 @@ class NotifyUserOfStudentAssigned extends Notification
     if ($this->student_id !== null) {
         $mailMessage->action('View Student Details', url('/student/' . $this->student_id . '/view'));
     } else {
-        $mailMessage->action('Go to Dashboard', url('/dashboard'));
+        $mailMessage->action('My Dashboard', url('/dashboard'));
     }
 
     return $mailMessage;

@@ -11,6 +11,8 @@ import Alert from '@mui/material/Alert';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import TextField from '@mui/material/TextField';
 
+import { InputMask } from 'primereact/inputmask';
+        
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import MenuItem from '@mui/material/MenuItem';
@@ -42,7 +44,7 @@ export default function CreateFacultyModal() {
   const initialValues = {
     name: '',
     email: '',
-    phone_number: '',
+    phone: '',
     role: '',
     permissions: [],
   };
@@ -51,8 +53,8 @@ export default function CreateFacultyModal() {
   const validation = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     email: Yup.string().email('Invalid email format').required('Email is required'),
-    phone_number: Yup.string()
-      .matches(/^\d{3}-\d{3}-\d{4}$/, 'Invalid US phone number format')
+    phone: Yup.string()
+      .matches(/^\(\d{3}\) \d{3}-\d{4}$/, 'Invalid US phone number format')
       .required('Phone number is required'),
     role: Yup.string().required('Role is required'),
   });
@@ -119,7 +121,7 @@ export default function CreateFacultyModal() {
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
     <Tooltip title="Create Faculty User" TransitionComponent={Zoom}>
         <IconButton onClick={handleOpen} className="hover:text-slate-100">
-            <AddCircleOutlineIcon style={{color: '#fff'}}/>
+            <AddCircleOutlineIcon style={{color: '#fff', fontSize: 35}}/>
         </IconButton>
     </Tooltip>
       <Modal
@@ -222,7 +224,23 @@ export default function CreateFacultyModal() {
             <Form onSubmit={handleSubmit} autoComplete="off">
             <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}} />
             <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}} />
-            <Field as={TextField} onChange={handleChange} value={values.phone_number} helperText={touched.phone_number && errors.phone_number} error={touched.phone_number && Boolean(errors.phone_number)} onBlur={handleBlur} id="phone_number" name="phone_number" placeholder="Phone Number" fullWidth style={{margin: 5}} />
+            <InputMask
+             id="phone" 
+             name="phone" 
+             value={values.phone} 
+             style={{
+                width: '100%',
+                ...(touched.phone && errors.phone && { border: '1px solid #ef4444' }),
+            }}
+             onChange={handleChange} 
+             onBlur={handleBlur}  
+             mask="(999) 999-9999" 
+             placeholder="(999) 999-9999">
+             </InputMask>
+             <span className="text-red-500">{touched.phone && errors.phone}</span>
+
+
+            {/* <Field as={TextField} onChange={handleChange} value={values.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone" placeholder="Phone Number" fullWidth style={{margin: 5}} /> */}
             <FormControl sx={{ m: 1, width: '100%', }}>
             <InputLabel id="role">Select Role</InputLabel>
             <Select

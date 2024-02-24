@@ -24,8 +24,13 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->rememberToken();
             $table->timestamps();
+            // $table->index('name');
+            // $table->index('email');
+            // $table->index('phone');
+            // $table->index('role');
+            // $table->index('room_number');
     
-        });
+        }); 
         
     }
 

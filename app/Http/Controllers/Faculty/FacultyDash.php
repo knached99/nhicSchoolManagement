@@ -56,7 +56,7 @@ class FacultyDash extends Controller
         $rules = [
             'name' => 'required',
             'email' => 'required|email|unique:faculty',
-            'phone_number' => 'required|regex:/^\d{3}-\d{3}-\d{4}$/',
+            'phone' => 'required|regex:/^\(\d{3}\) \d{3}-\d{4}$/|unique:faculty',
             'role' => 'required'
         ];
     
@@ -64,19 +64,21 @@ class FacultyDash extends Controller
             'name.required' => 'Name is required',
             'email.required' => 'Email is required',
             'email.email' => 'That is not a valid email',
-            'phone_number.required' => 'Phone Number is required',
-            'phone_number.regex' => 'Phone number must be a valid US number',
+            'email.unique'=>'That email is already taken',
+            'phone.required' => 'Phone Number is required',
+            'phone.regex' => 'Phone number must be a valid US number',
+            'phone.unique'=>'That number is already taken',
             'role.required' => 'Role is required'
         ];
     
         try {
-            $this->validate($request, $rules, $messages);
+        $this->validate($request, $rules, $messages);
     
             $password = Str::random(10);
             $data = [
                 'name' => $request->name,
                 'email' => $request->email,
-                'phone' => $request->phone_number,
+                'phone' => $request->phone,
                 'password' => Hash::make($password),
                 'role' => $request->role,
                 'permissions' => ($request->role === 'Admin') ? null : $request->input('permissions', []),
@@ -87,11 +89,14 @@ class FacultyDash extends Controller
     
             return response()->json(['success' => 'Account created for ' . $data['name'] . ' and instructions have been emailed to ' . $data['email']]);
         } catch (ValidationException $e) {
+            \Log::error(['Validation Exception: '. $e->getMessage()]);
             return response()->json(['errors' =>$e->getMessage()]);
         } catch (QueryException $e) {
+            \Log::error(['Query Exception: '. $e->getMessage()]);
             return response()->json(['errors' => 'Something went wrong creating that account']);
         } catch (NotificationException $e) {
-            return response()->json(['errors' => 'Account created but unable to send email notification: ' . $e->getMessage()]);
+            \Log::error(['Notification Exception: '.$e->getMessage()]);
+            return response()->json(['errors' => 'Account created but unable to send email notification. Have user reset their password']);
         }
     }
 
@@ -217,7 +222,7 @@ public function updateUserInformation(Request $request, $faculty_id){
         ]);
 
         
-        if (!preg_match('/^\d{3}-\d{3}-\d{4}$/', $request->phone_number)) {
+        if (!preg_match('/^\(\d{3}\) \d{3}-\d{4}$/', $request->phone_number)) {
             return response()->json(['errors'=>'Phone number must be a valid US number']);
         }
 
@@ -313,17 +318,24 @@ public function addStudent(Request $request){
             'allergies_or_special_needs'=>$request->allergies_or_special_needs,
             'emergency_contact_person'=>$request->emergency_contact_person,
             'emergency_contact_hospital'=>$request->emergency_contact_hospital,
-            'user_id'=>$request->user_id
+            'user_id'=>$request->user_id,
+            'faculty_id'=>$request->faculty_id
         ];
         
         // If the user has the role of Teacher
-        if ($role === 'Teacher') {
-            $data['faculty_id'] = Auth::guard('faculty')->id();
-        }
+        // if ($role === 'Teacher') {
+        //     $data['faculty_id'] = Auth::guard('faculty')->id();
+        // }
 
         if(isset($data['user_id'])){
             $user = User::findOrFail($data['user_id']);
-            Notification::route('mail', $user->email)->notify(new NotifyUserOfStudentAssigned($data['user_id'], $data['first_name'], $data['last_name'], $user->name));
+        Notification::route('mail', $user->email)->notify(new NotifyUserOfStudentAssigned(null, $data['first_name'], $data['last_name'], $user->name));
+        }
+
+        if(isset($data['faculty_id'])){
+            $teacher = Faculty::findOrFail($data['faculty_id']);
+            Notification::route('mail', $teacher->email)->notify(new StudentAssigned(null, $data['first_name'], $data['last_name'], $teacher->name));
+
         }
         
         Students::create($data);
@@ -609,8 +621,15 @@ public function getAttendanceHistoryBystudentID($studentId){
   {
       try {
           $query = $request->input('query');
+
+          // Appears that the MYISAM DB engine is the only one that supports full text search 
   
-          // Perform a regular search using WHERE LIKE for Faculty
+        //   $facultyResults = Faculty::search($query)->get();
+        //   $studentResults = Students::search($query)->get();
+        //   $userResults = User::search($query)->get();
+
+          //Perform a regular search using WHERE LIKE for Faculty
+
           $facultyResults = Faculty::where('name', 'LIKE', "%$query%")
               ->orWhere('email', 'LIKE', "%$query%")
               ->orWhere('phone', 'LIKE', "%$query%")
@@ -652,8 +671,7 @@ public function getAttendanceHistoryBystudentID($studentId){
   
           // Merge the results and remove duplicates
           $results = array_unique(array_merge($facultyResults, $studentResults, $userResults), SORT_REGULAR);
-            // \Log::info(['Search Query: ', $query]);
-            // \Log::info([$results]);
+
           return response()->json(['results' => $results]);
       } catch (\Exception $e) {
           \Log::error('Search Error: ' . $e->getMessage());

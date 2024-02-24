@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use Laravel\Scout\Attributes\SearchUsingFullText;
 // use Laravel\Scout\Attributes\SearchUsingPrefix;
 // use Laravel\Scout\Searchable; 
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -25,11 +26,11 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $primaryKey= 'user_id';
     
           
-    /**
- * Get the indexable data array for the model.
- *
- * @return array<string, mixed>
- */
+//     /**
+//  * Get the indexable data array for the model.
+//  *
+//  * @return array<string, mixed>
+//  */
 
 
 //  #[SearchUsingPrefix(['name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip'])]

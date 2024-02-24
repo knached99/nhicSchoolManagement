@@ -57,11 +57,11 @@ class Faculty extends Authenticatable
     }
 
     
-    /**
- * Get the indexable data array for the model.
- *
- * @return array<string, mixed>
- */
+//     /**
+//  * Get the indexable data array for the model.
+//  *
+//  * @return array<string, mixed>
+//  */
 // #[SearchUsingPrefix(['name', 'email', 'phone', 'role', 'room_number'])]
 // #[SearchUsingFullText(['name', 'email', 'phone', 'role', 'room_number'])]
 // public function toSearchableArray(): array

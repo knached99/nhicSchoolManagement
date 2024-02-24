@@ -26,6 +26,13 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            // $table->index('name');
+            // $table->index('email');
+            // $table->index('address');
+            // $table->index('address_2');
+            // $table->index('city');
+            // $table->index('state');
+            // $table->index('zip');
         });
     }
 

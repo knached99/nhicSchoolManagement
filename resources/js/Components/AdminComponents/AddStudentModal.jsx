@@ -112,38 +112,42 @@ export default function AddStudentModal({refreshData}) {
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
     const [parents, setParents] = useState([]);
+    const [teachers, setTeachers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const fetchParents = async () => {
-      try {
-        const response = await fetch('/fetchParents');
-        console.log(response);
-        const { parents, error } = await response.json();
 
-        if (error) {
-          throw new Error(error);
+    const fetchData = async () => {
+      try {
+        // Fetch parents
+        const parentsResponse = await fetch('/fetchParents');
+        const { parents, error: parentsError } = await parentsResponse.json();
+    
+        if (parentsError) {
+          throw new Error(parentsError);
         }
     
-        return parents || [];
+        // Fetch teachers
+        const teachersResponse = await fetch('/fetchTeachers');
+        const { teachers, error: teachersError } = await teachersResponse.json();
+    
+        if (teachersError) {
+          throw new Error(teachersError);
+        }
+    
+        // Now you have both parents and teachers data
+        setParents(parents || []);
+        setTeachers(teachers || []);
+        setLoading(false);
       } catch (error) {
-        throw new Error('Error fetching parents: ' + error.message);
+        setError('Error fetching data: ' + error.message);
+        setLoading(false);
       }
     };
-
+    
     useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const parents = await fetchParents();
-          setParents(parents);
-          setLoading(false);
-        } catch (error) {
-          setError(error.message);
-          setLoading(false);
-        }
-      };
-  
       fetchData();
     }, []);
-  
+
+    
 
     const handleCloseSuccess = () => {
       setSuccessOpen(false);
@@ -171,7 +175,7 @@ export default function AddStudentModal({refreshData}) {
         emergency_contact_person: '',
         emergency_contact_hospital: '',
         user_id: '',
-        // Add other fields as needed
+        faculty_id: '',
       };
     
     const validation = Yup.object().shape({
@@ -446,6 +450,31 @@ export default function AddStudentModal({refreshData}) {
                               {parents.map((parent) => (
                                 <MenuItem key={parent.user_id} value={parent.user_id}>
                                   {parent.name} - {parent.email}
+                                </MenuItem>
+                              ))}
+                            </Select>
+            </FormControl>
+            }
+
+
+            {loading ? <CircularProgress color="primary" /> : 
+            <FormControl sx={{ mx: 1, mt:3, mb:3,  width: '100%'}}>
+                            <InputLabel id="faculty_id">Select Teacher</InputLabel>
+                            <Select
+                              labelId="faculty_id"
+                              id="faculty_id"
+                              name="faculty_id"
+                              value={values.faculty_id || ''}
+                              onChange={handleChange}
+                              style={{ width: 300 }}
+                            >
+                              <MenuItem value="">
+                                <em>Make a Selection</em>
+                              </MenuItem>
+                    
+                              {teachers.map((teacher) => (
+                                <MenuItem key={teacher.faculty_id} value={teacher.faculty_id}>
+                                  {teacher.name} - {teacher.email}
                                 </MenuItem>
                               ))}
                             </Select>

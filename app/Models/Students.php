@@ -21,15 +21,16 @@ class Students extends Model
     protected $table='students';
     protected $primaryKey = 'student_id';
 
+    
       
-    /**
- * Get the indexable data array for the model.
- *
- * @return array<string, mixed>
- */
+//     /**
+//  * Get the indexable data array for the model.
+//  *
+//  * @return array<string, mixed>
+//  */
 
 //  #[SearchUsingPrefix(['first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital'])]
-// #[SearchUsingFullText(['first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital'])]
+//  #[SearchUsingFullText(['first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital'])]
 // public function toSearchableArray(): array
 // {
 //     return [

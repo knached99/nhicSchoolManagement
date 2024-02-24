@@ -23,7 +23,7 @@ return new class extends Migration
         $table->string('zip')->nullable();
         $table->string('level')->nullable();
         $table->string('gender')->nullable();
-        $table->longText('allergies_or_special_needs')->nullable(); 
+        $table->string('allergies_or_special_needs')->nullable(); 
         $table->string('emergency_contact_person')->nullable();
         $table->string('emergency_contact_hospital')->nullable();
         $table->unsignedBigInteger('user_id')->nullable();
@@ -31,6 +31,19 @@ return new class extends Migration
         $table->unsignedBigInteger('faculty_id')->nullable();
         $table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('set null');
         $table->timestamps();
+        // $table->index('first_name');
+        // $table->index('last_name');
+        // $table->index('date_of_birth');
+        // $table->index('address');
+        // $table->index('street_address_2');
+        // $table->index('city');
+        // $table->index('state');
+        // $table->index('zip');
+        // $table->index('level');
+        // $table->index('gender');
+        // $table->index('allergies_or_special_needs');
+        // $table->index('emergency_contact_person');
+        // $table->index('emergency_contact_hospital');
     });
     
 }
