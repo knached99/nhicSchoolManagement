@@ -48,6 +48,8 @@ import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined
 import ContactEmergencyOutlinedIcon from '@mui/icons-material/ContactEmergencyOutlined';
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+
 // Lists
 
 import List from '@mui/material/List';
@@ -257,7 +259,10 @@ export default function StudentDetails({auth, student}) {
             <div className="col-span-4 sm:col-span-3">
                 <div className="bg-white shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
-            
+                    <Link href="/dashboard" class="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
+                    <ArrowBackOutlinedIcon/>  Back
+                  </Link>
+
                     <Avatar sx={{ width: 100, height: 100 }} {...stringAvatar(`${student.first_name} ${student.last_name}`)} />
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
                         <p className="text-gray-700 text-center font-bold mt-3">Student Since: <span className="font-normal">{new Date(student.created_at).toLocaleDateString()}</span></p>

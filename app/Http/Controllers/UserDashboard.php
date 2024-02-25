@@ -15,7 +15,7 @@ class UserDashboard extends Controller
     public function getStudents()
     {
         try {
-            $students = Students::with('faculty')->where('user_id', Auth::id())->get();
+            $students = Students::with('faculty')->where('user_id', Auth::id())->orderBy('created_at', 'DESC')->get();
             return response()->json(['students' => $students]);
         } catch (QueryException $e) {
             return response()->json(['error' => 'Cannot load information, something went wrong']);

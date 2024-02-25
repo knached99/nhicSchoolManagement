@@ -209,8 +209,8 @@ export default function SideBar({auth}) {
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </DrawerHeader>
-        <ApplicationLogo/>
-        {/* <h6 className="font-normal text-indigo-500 text-start m-3 text-xl">My Role: {auth.role}</h6>    */}
+        {/* <ApplicationLogo/> */}
+        <h6 className="font-black text-emerald-500 text-start ml-3 mb-2 text-2xl">NHICCT<span className="text-slate-800 ml-2">EDU</span></h6>   
         <Divider />
 
         <Divider />
