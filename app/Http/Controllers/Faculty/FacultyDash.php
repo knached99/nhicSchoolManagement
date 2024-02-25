@@ -449,26 +449,6 @@ public function showAllStudents()
     }
 }
 
-public function getMyStudents()
-{
-    try {
-        $students = Students::with('user', 'faculty')->where('faculty_id', Auth::guard('faculty')->id())->orderBy('created_at', 'desc')->get();
-        return response()->json(['students'=>$students]);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
-    }
-}
-
-
-public function getStudentsForTeacher($faculty_id){
-    try {
-        $students = Students::with('user', 'faculty')->where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
-        return response()->json(['students'=>$students]);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
-    }
-}
-
 
 public function showStudentsForTeacher($faculty_id)
 {

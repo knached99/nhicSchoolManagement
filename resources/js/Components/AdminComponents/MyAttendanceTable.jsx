@@ -82,7 +82,7 @@ const handleAttendanceSubmission = async () => {
     const fetchCombinedData = async () => {
       try {
         // Fetch students
-        const studentsResponse = await fetch(`/getStudentsForTeacher/${facultyID ? facultyID : auth}}`);
+        const studentsResponse = await fetch(`/showStudentsForTeacher/${facultyID ? facultyID : auth}}`);
         const { students: studentData, error: studentError } = await studentsResponse.json();
 
         if (studentError) {

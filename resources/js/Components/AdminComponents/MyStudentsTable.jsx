@@ -104,7 +104,7 @@ export default function MyStudentsTable({auth}) {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const response = await fetch('/getMyStudents');
+        const response = await fetch(`/showStudentsForTeacher/${auth.faculty.faculty_id}`);
         const { students, error } = await response.json();
 
         if (error) {
