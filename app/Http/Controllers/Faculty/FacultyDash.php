@@ -621,6 +621,7 @@ public function getAttendanceHistoryBystudentID($studentId){
   {
       try {
           $query = $request->input('query');
+          $authenticatedUser = Auth::guard('faculty')->user(); 
 
           // Appears that the MYISAM DB engine is the only one that supports full text search 
   
@@ -628,7 +629,6 @@ public function getAttendanceHistoryBystudentID($studentId){
         //   $studentResults = Students::search($query)->get();
         //   $userResults = User::search($query)->get();
 
-          //Perform a regular search using WHERE LIKE for Faculty
 
           $facultyResults = Faculty::where('name', 'LIKE', "%$query%")
               ->orWhere('email', 'LIKE', "%$query%")
@@ -638,25 +638,45 @@ public function getAttendanceHistoryBystudentID($studentId){
               ->select('faculty_id', 'name', 'email', 'phone', 'role', 'room_number', 'profile_pic')
               ->get()
               ->toArray();
+
+        if($authenticatedUser->role === 'Admin'){
+            $studentResults = Students::where('first_name', 'LIKE', "%$query%")
+            ->orWhere('last_name', 'LIKE', "%$query%")
+            ->orWhere('address', 'LIKE', "%$query%")
+            ->orWhere('street_address_2', 'LIKE', "%$query%")
+            ->orWhere('city', 'LIKE', "%$query%")
+            ->orWhere('state', 'LIKE', "%$query%")
+            ->orWhere('zip', 'LIKE', "%$query%")
+            ->orWhere('level', 'LIKE', "%$query%")
+            ->orWhere('gender', 'LIKE', "%$query%")
+            ->orWhere('allergies_or_special_needs', 'LIKE', "%$query%")
+            ->orWhere('emergency_contact_person', 'LIKE', "%$query%")
+            ->orWhere('emergency_contact_hospital', 'LIKE', "%$query%")
+            ->select('student_id', 'first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital')
+            ->get()
+            ->toArray();
+        }
+        else if($authenticatedUser->role === 'Teacher' || $authenticatedUser === 'Assistant Teacher'){
+            $studentResults = Students::where('faculty_id', $authenticatedUser->faculty_id)
+            ->where('first_name', 'LIKE', "%$query%")
+            ->orWhere('last_name', 'LIKE', "%$query%")
+            ->orWhere('address', 'LIKE', "%$query%")
+            ->orWhere('street_address_2', 'LIKE', "%$query%")
+            ->orWhere('city', 'LIKE', "%$query%")
+            ->orWhere('state', 'LIKE', "%$query%")
+            ->orWhere('zip', 'LIKE', "%$query%")
+            ->orWhere('level', 'LIKE', "%$query%")
+            ->orWhere('gender', 'LIKE', "%$query%")
+            ->orWhere('allergies_or_special_needs', 'LIKE', "%$query%")
+            ->orWhere('emergency_contact_person', 'LIKE', "%$query%")
+            ->orWhere('emergency_contact_hospital', 'LIKE', "%$query%")
+            ->select('student_id', 'first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital')
+            ->get()
+            ->toArray();
+        }
   
-          // Perform a refined search using specific columns for Students
-          $studentResults = Students::where('first_name', 'LIKE', "%$query%")
-              ->orWhere('last_name', 'LIKE', "%$query%")
-              ->orWhere('address', 'LIKE', "%$query%")
-              ->orWhere('street_address_2', 'LIKE', "%$query%")
-              ->orWhere('city', 'LIKE', "%$query%")
-              ->orWhere('state', 'LIKE', "%$query%")
-              ->orWhere('zip', 'LIKE', "%$query%")
-              ->orWhere('level', 'LIKE', "%$query%")
-              ->orWhere('gender', 'LIKE', "%$query%")
-              ->orWhere('allergies_or_special_needs', 'LIKE', "%$query%")
-              ->orWhere('emergency_contact_person', 'LIKE', "%$query%")
-              ->orWhere('emergency_contact_hospital', 'LIKE', "%$query%")
-              ->select('student_id', 'first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital')
-              ->get()
-              ->toArray();
+        
   
-          // Perform a regular search using WHERE LIKE for Users
           $userResults = User::where('name', 'LIKE', "%$query%")
               ->orWhere('email', 'LIKE', "%$query%")
               ->orWhere('phone', 'LIKE', "%$query%")
