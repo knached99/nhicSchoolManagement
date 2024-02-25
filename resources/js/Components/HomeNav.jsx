@@ -66,7 +66,7 @@ function HomeNav() {
               textDecoration: 'none',
             }}
           >
-            <a href="/">NHIC</a>
+            <a href="/" className="text-emerald-400 font-black hover:text-white">NHIC</a>
             
           </Typography>
 
