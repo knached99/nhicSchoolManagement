@@ -300,53 +300,7 @@ export default function StudentDetails({auth, student}) {
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
               Edit and save the new information
             </Typography>
-              {error && (
-                            <Box sx={{ width: '100%' }}>
-                                <Collapse in={errorOpen}>
-                                    <Alert
-                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
-                                        severity="error"
-                                        action={
-                                            <IconButton
-                                                aria-label="close"
-                                                color="inherit"
-                                                size="small"
-                                                onClick={handleCloseError}
-                                            >
-                                                <CloseIcon fontSize="inherit" />
-                                            </IconButton>
-                                        }
-                                        sx={{ mb: 2 }}
-                                    >
-                                        {error}
-                                    </Alert>
-                                </Collapse>
-                            </Box>
-                        )}
-
-                        {success && (
-                            <Box sx={{ width: '100%' }}>
-                                <Collapse in={successOpen}>
-                                    <Alert
-                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
-                                        severity="success"
-                                        action={
-                                            <IconButton
-                                                aria-label="close"
-                                                color="inherit"
-                                                size="small"
-                                                onClick={handleCloseSuccess}
-                                            >
-                                                <CloseIcon fontSize="inherit" />
-                                            </IconButton>
-                                        }
-                                        sx={{ mb: 2 }}
-                                    >
-                                        {success}
-                                    </Alert>
-                                </Collapse>
-                            </Box>
-                        )}
+             
 
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={updateStudentInformation}>
             {({
@@ -433,7 +387,53 @@ export default function StudentDetails({auth, student}) {
             <Field as={TextField} value={values.emergency_contact_person} helperText={touched.emergency_contact_person && errors.emergency_contact_person} error={touched.emergency_contact_person && Boolean(errors.emergency_contact_person)} onBlur={handleBlur} onChange={handleChange} id="emergency_contact_person" name="emergency_contact_person" placeholder="Emergency Contact Person" style={{margin: 10}} fullWidth/>
             <Field as={TextField} value={values.emergency_contact_hospital} helperText={touched.emergency_contact_hospital && errors.emergency_contact_hospital} error={touched.emergency_contact_hospital && Boolean(errors.emergency_contact_hospital)} onBlur={handleBlur} onChange={handleChange} id="emergency_contact_hospital" name="emergency_contact_hospital" placeholder="Emergency Contact Hospital" style={{margin: 10}} fullWidth/>
             <Button type="submit" fullWidth style={{margin:5}}>Save Changes</Button>
+            {error && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
 
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
         </Form>
             )}
             </Formik>
