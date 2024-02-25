@@ -167,7 +167,14 @@ const handleAttendanceSubmission = async () => {
             
             ) : (
               // Display "Present" or "Absent" based on the value in the row
-              <div>{params.row.is_present ===1 &&  'Present' || params.row.is_present ===0 && 'Absent' || params.row.is_present === undefined && 'N/A'}</div>
+              <div>{params.row.is_present ===1 &&  
+                <span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-md font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">Present</span> 
+                || params.row.is_present ===0 && 
+                <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-inset ring-red-700/10">Absent</span>
+              
+                || params.row.is_present === undefined && 
+                <span class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-md font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10">N/A</span>
+                }</div>
             )
           )}
         </div>
