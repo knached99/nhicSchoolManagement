@@ -180,6 +180,10 @@ export default function SideBar({auth}) {
    
   </span>
       <Dropdown.Content>
+      <Dropdown.Link href={route('faculty.profile')}>
+       <AccountCircleOutlinedIcon/> My profile
+     </Dropdown.Link>
+
       <Dropdown.Link href={route('faculty.logout')} method="post" as="button">
        <LogoutOutlinedIcon/>  Log Out
      </Dropdown.Link>
