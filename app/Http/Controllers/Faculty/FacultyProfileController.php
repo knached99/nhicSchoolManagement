@@ -114,7 +114,7 @@ class FacultyProfileController extends Controller {
         $fileMimeType = mime_content_type($filePath);
     
         if (!in_array($fileMimeType, $supportedFileTypes)) {
-            \Log::error(['Exception Caught: ', 'Unsupported file type: ' . $fileMimeType]);
+            // Skip exif stripping to avoid unsupported file type error 
             return;
         }
     
