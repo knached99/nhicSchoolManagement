@@ -219,8 +219,8 @@ const style = {
                 
                 {isSubmitting ? (
                     <>
-                    <span className="inline-block mr-2">importing... </span>
-                    <CircularProgress size={24} style={{ color: '#6366f1' }} />
+                    <span className="inline-block mr-2 dark:text-white">importing... </span>
+                    <CircularProgress size={24} style={{ color: isDarkMode ? '#fff' : '#6366f1' }} />
                     </>
                 ) : (
                     <>
