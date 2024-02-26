@@ -29,13 +29,25 @@ export default function MyAttendanceTable({auth, facultyID}) {
   const [errorOpen, setErrorOpen] = useState(true);
   const [attendanceData, setAttendanceData] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [selectedValues, setSelectedValues] = useState({});
+
+  // const handleAttendanceChange = (id, value) => {
+  //   // Update the is_present field in the corresponding row
+  //   const updatedRows = rows.map((row) =>
+  //     row.id === id ? { ...row, is_present: value } : row
+  //   );
+  //   console.log("Updated Rows:", updatedRows); // Log the updated rows
+
+  //   setRows(updatedRows);
+  // };
+
   const handleAttendanceChange = (id, value) => {
-    // Update the is_present field in the corresponding row
-    const updatedRows = rows.map((row) =>
-      row.id === id ? { ...row, is_present: value } : row
-    );
-    setRows(updatedRows);
+    setSelectedValues((prevValues) => ({
+      ...prevValues,
+      [id]: value,
+    }));
   };
+  
 
 
   const handleCloseSuccess = () => {
@@ -50,32 +62,60 @@ const handleCloseError = () => {
 
 
 
-const handleAttendanceSubmission = async () => {
-    try {
-      console.log("Rows before submission:", rows);
+// const handleAttendanceSubmission = async () => {
+//     try {
+//       console.log("Rows before submission:", rows);
   
-      const response = await axios.post(`/submitAttendance/${facultyID ? facultyID : auth}`, {
-        attendanceData: rows.map(row => ({
-          student_id: row.student_id,
-          is_present: row.is_present,
-        })),
-      });
+//       const response = await axios.post(`/submitAttendance/${facultyID ? facultyID : auth}`, {
+//         attendanceData: rows.map(row => ({
+//           student_id: row.student_id,
+//           is_present: row.is_present,
+//         })),
+//       });
       
   
-      // Assuming the response directly contains the success or error message
-      const { success, error } = response.data;
+//       // Assuming the response directly contains the success or error message
+//       const { success, error } = response.data;
   
-      if (success) {
-        setSuccess(success);
-        setSuccessOpen(true);
-      } else if (error) {
-        setError(error);
-        setErrorOpen(true);
-      }
-    } catch (error) {
-      setError(`Something went wrong submitting attendance: ${error.message}`);
+//       if (success) {
+//         setSuccess(success);
+//         setSuccessOpen(true);
+//       } else if (error) {
+//         setError(error);
+//         setErrorOpen(true);
+//       }
+//     } catch (error) {
+//       setError(`Something went wrong submitting attendance: ${error.message}`);
+//     }
+//   };
+
+
+const handleAttendanceSubmission = async () => {
+  try {
+    console.log("Selected values before submission:", selectedValues);
+
+    const response = await axios.post(`/submitAttendance/${facultyID ? facultyID : auth}`, {
+      attendanceData: Object.keys(selectedValues).map(id => ({
+        student_id: id,
+        is_present: selectedValues[id],
+      })),
+    });
+
+    // Assuming the response directly contains the success or error message
+    const { success, error } = response.data;
+
+    if (success) {
+      setSuccess(success);
+      setSuccessOpen(true);
+    } else if (error) {
+      setError(error);
+      setErrorOpen(true);
     }
-  };
+  } catch (error) {
+    setError(`Something went wrong submitting attendance: ${error.message}`);
+  }
+};
+
 
 
   useEffect(() => {
@@ -130,7 +170,12 @@ const handleAttendanceSubmission = async () => {
   
   const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
-  const isAttendanceTaken = attendanceData && attendanceData.length > 0;
+  // const isAttendanceTaken = (attendanceData && attendanceData.length > 0) || rows.every(row => row.is_present !== undefined);
+  const isAttendanceTaken = rows.every(row => row.is_present !== undefined);
+
+  
+  console.log("isAttendanceTaken:", isAttendanceTaken);
+
   const columns = [
     { field: 'student_id', headerName: 'Student ID', width: 120 },
     { field: 'first_name', headerName: 'First Name', width: 120 },
@@ -149,28 +194,29 @@ const handleAttendanceSubmission = async () => {
             params.row.is_present === undefined  && auth === params.row.faculty_id ? (
               <>              
                 <>
-                  <FormControlLabel
-                    control={
-                      <Radio
-                        checked={params.value === 1}
-                        onChange={(e) => handleAttendanceChange(params.id, 1)}
-                        value={1}
-                        name={`attendance-radio-${params.id}`}
-                      />
-                    }
-                    label="Present"
-                  />
-                  <FormControlLabel
-                    control={
-                      <Radio
-                        checked={params.value === 0}
-                        onChange={(e) => handleAttendanceChange(params.id, 0)}
-                        value={0}
-                        name={`attendance-radio-${params.id}`}
-                      />
-                    }
-                    label="Absent"
-                  />
+                <FormControlLabel
+  control={
+    <Radio
+      checked={selectedValues[params.id] === 1}
+      onChange={(e) => handleAttendanceChange(params.id, 1)}
+      value={1}
+      name={`attendance-radio-${params.id}`}
+    />
+  }
+  label="Present"
+/>
+<FormControlLabel
+  control={
+    <Radio
+      checked={selectedValues[params.id] === 0}
+      onChange={(e) => handleAttendanceChange(params.id, 0)}
+      value={0}
+      name={`attendance-radio-${params.id}`}
+    />
+  }
+  label="Absent"
+/>
+
                 </>
               
             </>
@@ -263,15 +309,17 @@ const handleAttendanceSubmission = async () => {
         rowsPerPageOptions={[5, 10, 20]}
       />
       </Paper>
-      {!isAttendanceTaken && rows.every(row => row.faculty_id === auth) ? (
-      <Button
-      variant="contained"
-      color="primary"
-      onClick={handleAttendanceSubmission}
-      style={{marginTop: 20, float: 'right'}}
-    >
-      Submit Attendance
-    </Button>
+      {!isAttendanceTaken  && rows.every(row => row.faculty_id === auth) ? (
+    <Button
+    variant="contained"
+    color="primary"
+    onClick={handleAttendanceSubmission}
+    style={{ marginTop: 20, float: 'right' }}
+    disabled={!Object.keys(selectedValues).every((id) => selectedValues[id] !== undefined)}
+  >
+    Submit Attendance
+  </Button>
+  
       ) :
       null
       }
