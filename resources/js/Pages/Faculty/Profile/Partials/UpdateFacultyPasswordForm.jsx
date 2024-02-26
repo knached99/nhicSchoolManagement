@@ -14,6 +14,10 @@ import Alert from '@mui/material/Alert';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+
+import { Password } from 'primereact/password';
+        
+
 export default function UpdateFacultyPasswordForm({ className = '' }) {
     const [errors, setErrors] = useState();
     const [success, setSuccess] = useState();
@@ -81,7 +85,7 @@ export default function UpdateFacultyPasswordForm({ className = '' }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Update Password</h2>
+                <h2 className="text-lg font-medium text-gray-900 dark:text-white">Update Password</h2>
                 {errors && (
                             <Box   style={{
                               padding: '1rem',
@@ -135,7 +139,7 @@ export default function UpdateFacultyPasswordForm({ className = '' }) {
                             </Box>
                         )}
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-lg text-gray-600 dark:text-white">
                     Ensure your account is using a long, random password to stay secure.
                 </p>
             </header>
@@ -155,9 +159,51 @@ export default function UpdateFacultyPasswordForm({ className = '' }) {
 
             <Form onSubmit={handleSubmit} className="mt-6 space-y-6">
                 <div>
-                    <Field type="password" style={{margin: 10}} fullWidth placeholder="Current Password" as={TextField} value={values.current_password} helperText={touched.current_password && errors.current_password} error={touched.current_password && Boolean(errors.current_password)} onBlur={handleBlur} id="current_password" name="current_password"/>
+                    <Password 
+                    name="current_password"
+                    id="current_password"
+                    placeholder="Current Password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    toggleMask
+                    style={{
+                       
+                        ...(touched.current_password && errors.current_password && { border: '1px solid #ef4444' }),
+                    }}
+                    />
+                     <span className="text-red-500">{touched.current_password && errors.current_password}</span>
+
+                     <Password 
+                    name="password"
+                    id="password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    toggleMask
+                    placeholder="New Password"
+                    style={{
+                       
+                        ...(touched.password && errors.password && { border: '1px solid #ef4444' }),
+                    }}
+                    />
+                     <span className="text-red-500">{touched.password && errors.password}</span>
+                     
+                     <Password 
+                    name="password_confirmation"
+                    id="password_confirmation"
+                    placeholder="Retype Password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    toggleMask
+                    style={{
+                       
+                        ...(touched.password_confirmation && errors.password_confirmation && { border: '1px solid #ef4444' }),
+                    }}
+                    />
+                     <span className="text-red-500">{touched.password_confirmation && errors.password_confirmation}</span>
+
+                    {/* <Field type="password" style={{margin: 10}} fullWidth placeholder="Current Password" as={TextField} value={values.current_password} helperText={touched.current_password && errors.current_password} error={touched.current_password && Boolean(errors.current_password)} onBlur={handleBlur} id="current_password" name="current_password"/>
                     <Field type="password"  style={{margin: 10}} fullWidth placeholder="New Password" as={TextField} value={values.password} helperText={touched.password && errors.password} error={touched.password && Boolean(errors.password)} onBlur={handleBlur} id="password" name="password"/>
-                    <Field type="password"  style={{margin: 10}} fullWidth placeholder="Confirm Password" as={TextField} value={values.password_confirmation} helperText={touched.password_confirmation && errors.password_confirmation} error={touched.password_confirmation && Boolean(errors.password_confirmation)} onBlur={handleBlur} id="password_confirmation" name="password_confirmation"/>
+                    <Field type="password"  style={{margin: 10}} fullWidth placeholder="Confirm Password" as={TextField} value={values.password_confirmation} helperText={touched.password_confirmation && errors.password_confirmation} error={touched.password_confirmation && Boolean(errors.password_confirmation)} onBlur={handleBlur} id="password_confirmation" name="password_confirmation"/> */}
                     <Button
                     type="submit"
                     variant="contained"

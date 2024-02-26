@@ -23,7 +23,7 @@ export default function ParentsTable({auth}) {
   const [success, setSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
   useEffect(() => {
     const fetchParents = async () => {
       try {
@@ -49,6 +49,15 @@ export default function ParentsTable({auth}) {
 
     fetchParents();
   }, []);
+
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+  
+  const backgroundColor = isDarkMode ? '#000' : 'background.paper';
 
   const handleCloseSuccess = () => {
     setSuccessOpen(false);
@@ -178,7 +187,7 @@ const columns = [
     renderCell: (params) => (
       <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
         <IconButton className="hover:text-emerald-500" onClick={() => viewParentDetails(params.row.user_id)}>
-          <VisibilityOutlinedIcon />
+          <VisibilityOutlinedIcon className="dark:text-white"/>
         </IconButton>
       </Tooltip>
     ),
@@ -191,7 +200,7 @@ const columns = [
     renderCell: (params) => (
       <Tooltip title={`Delete ${params.row.name} from the system`}>
         <IconButton disabled={!auth.role==='Admin'} className="hover:text-red-500" onClick={()=> deleteParent(params.row.user_id)}>
-          <DeleteOutlineOutlinedIcon/>
+          <DeleteOutlineOutlinedIcon className="dark:text-white"/>
         </IconButton>
       </Tooltip>
     )
@@ -200,8 +209,8 @@ const columns = [
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
-        <h1 className="m-3 text-center font-black text-xl">Parents</h1>
+      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+        <h1 className="m-3 text-center font-black text-xl dark:text-white">Parents</h1>
   
 {rows.length === 0 ? (
   // No data, do not display the button
@@ -283,9 +292,10 @@ const columns = [
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">No Parents in the system</div>
         ) : (
-          <Paper sx={{ width: '100%', backgroundColor: '#fff' }}>
+          <Paper sx={{ width: '100%', backgroundColor }}>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
+                sx={{color: isDarkMode ? '#fff': 'inherit'}}
                 rows={rows}
                 columns={columns}
                 pageSize={5}

@@ -16,6 +16,9 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { InputMask } from "primereact/inputmask";
 
+import { InputText } from 'primereact/inputtext';
+        
+
 export default function UpdateFacultyProfile({className = '' }) {
     const user = usePage().props.auth.faculty;
     // const { data, setData } = useForm({
@@ -108,7 +111,7 @@ export default function UpdateFacultyProfile({className = '' }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                <h2 className="text-xl m-3 font-medium text-gray-900 dark:text-white">Profile Information</h2>
                 {errors && (
                             <Box   style={{
                               padding: '1rem',
@@ -162,7 +165,7 @@ export default function UpdateFacultyProfile({className = '' }) {
                             </Box>
                         )}
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="m-3 text-sm text-gray-600 dark:text-white">
                     Update your account's profile information and email address.
                 </p>
             </header>
@@ -179,15 +182,27 @@ export default function UpdateFacultyProfile({className = '' }) {
                 isSubmitting,
             }) => (
                 <Form onSubmit={handleSubmit} className="mt-6 space-y-6">
-                <div>
+                <div className="m-3">
                     <h1 className="text-xl font-black">{user.name}</h1> 
                     <p className="font-semibold">My Role: {user.role}</p>
                 </div>
 
                 <div>
                 {/* <InputMask style={{width: '100%'}} mask="email" placeholder="Email" value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} name="email"></InputMask> */}
+                <InputText  style={{
+                    width: '100%',
+                    ...(touched.email && errors.email && { border: '1px solid #ef4444' }),
+                }}
+                 placeholder="Email"
+                 onBlur={handleBlur}
+                 onChange={handleChange}
+                 value={values.email}
+                 name="email"
+                 id="email"
+                />
+                 <span className="text-red-500">{touched.email && errors.email}</span>
 
-                <Field style={{margin: 10}} fullWidth placeholder="Email" as={TextField}  value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/>
+                {/* <Field style={{margin: 10, color: '#fff'}} fullWidth placeholder="Email" as={TextField}  value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email"/> */}
                 </div>
                 <div>
                 <InputMask  style={{

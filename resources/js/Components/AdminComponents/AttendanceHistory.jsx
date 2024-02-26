@@ -10,6 +10,7 @@ import { TableVirtuoso } from 'react-virtuoso';
 
 export default function AttendanceHistory({studentID}) {
     const [rows, setRows] = useState([]);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
 const columns = [
   
@@ -45,6 +46,16 @@ const fetchAttendanceHistory = async (studentID) => {
 
     fetchData();
 }, [studentID]);
+
+
+useEffect(() => {
+  // Check if the system is in dark mode
+  const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  setIsDarkMode(prefersDarkMode);
+}, []);
+
+const backgroundColor = isDarkMode ? '#000' : 'background.paper';
 
 
 
@@ -103,9 +114,9 @@ const VirtuosoTableComponents = {
   }
 
   return (
- 
-    <Paper style={{ height: 400, width: '100%' }}>
-     <h1 className="text-center text-lg font-semibold">Attendance History</h1>
+    
+    <Paper style={{ height: 400, width: '100%', backgroundColor }}>
+     <h1 className="text-center text-lg font-semibold dark:text-white">Attendance History</h1>
      {rows && rows.length > 0 ? (
       <TableVirtuoso
       data={rows}
@@ -115,7 +126,7 @@ const VirtuosoTableComponents = {
     />
      )
     : 
-    <p className="text-slate-700 text-lg text-center m-10">No Attendance History</p>
+    <p className="text-slate-700 text-lg text-center m-10 dark:text-red-50">No Attendance History</p>
     }
     
   </Paper>

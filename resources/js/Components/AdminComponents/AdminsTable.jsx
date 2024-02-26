@@ -44,6 +44,8 @@ export default function AdminsTable({auth}) {
   const [success, setSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
 
   const viewFacultyDetails = (userID) => {
@@ -97,6 +99,15 @@ const deleteAdminUser = async (userId) => {
   
       fetchData();
     }, []);
+
+    useEffect(() => {
+      // Check if the system is in dark mode
+      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+      setIsDarkMode(prefersDarkMode);
+    }, []);
+    
+    const backgroundColor = isDarkMode ? '#000' : 'background.paper';
   
 
     const handleCloseSuccess = () => {
@@ -142,7 +153,7 @@ const deleteAdminUser = async (userId) => {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
       {error && (
                             <Box   style={{
                               padding: '1rem',
@@ -195,7 +206,7 @@ const deleteAdminUser = async (userId) => {
                                 </Collapse>
                             </Box>
                         )}
-        <h1 className="m-3 text-center font-black text-xl">Faculty Users</h1>
+        <h1 className="m-3 text-center font-black text-xl dark:text-white">Faculty Users</h1>
       
 
         {/* Table Section */}
@@ -207,13 +218,13 @@ const deleteAdminUser = async (userId) => {
             No faculty users created yet
           </div>
         ) : (
-          <Paper sx={{ width: '100%', backgroundColor: '#fff' }}>
+            <Paper sx={{ width: '100%', backgroundColor }}>
             <TableContainer>
               <Table>
                 <TableHead>
                   <TableRow>
                     {columns.map((column) => (
-                      <TableCell key={column.id}>{column.label}</TableCell>
+                      <TableCell  sx={{ color: isDarkMode ? 'white' : 'inherit' }} key={column.id}>{column.label} </TableCell>
                     ))}
                   </TableRow>
                 </TableHead>
@@ -221,8 +232,9 @@ const deleteAdminUser = async (userId) => {
                   {Array.isArray(rows) &&
                     rows.map((row, index) => (
                       <TableRow key={row.faculty_id}>
-                        <TableCell>{row.faculty_id}</TableCell>
-                        <TableCell>
+
+                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>{row.faculty_id}</TableCell>
+                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                         {row.profile_pic ? (
                           <>
                         <Avatar alt="Profile Picture" src={`${profilePicPath}/${row.profile_pic}`} sx={{ width: 50, height: 50 }} />
@@ -240,17 +252,18 @@ const deleteAdminUser = async (userId) => {
                          
                       
                           
-                        <TableCell>{row.email}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>{row.email}</TableCell>
+                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                           {row.phone ? row.phone : 'N/A'}
                         </TableCell>
-                        <TableCell>{row.role}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>{row.role}</TableCell>
+                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                           {new Date(row.created_at).toLocaleString()}
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                           <Tooltip title={`${row.name}'s details`}>
                             <IconButton
+                              sx={{color: isDarkMode ? 'white' : 'inherit'}}
                               className="hover:text-emerald-500"
                               onClick={() => viewFacultyDetails(row.faculty_id)}
                               disabled={row.faculty_id === auth.faculty.faculty_id}
@@ -263,11 +276,13 @@ const deleteAdminUser = async (userId) => {
 
                        
                                 
-                                <TableCell>
+                                <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                                 <Tooltip
                                 title={`Delete ${row.name} from the system`}
                               >
-                                <IconButton className="hover:text-red-500" onClick ={()=>deleteAdminUser(row.faculty_id)}
+                                <IconButton 
+                                sx={{color: isDarkMode ? 'white' : 'inherit'}}
+                                className="hover:text-red-500" onClick ={()=>deleteAdminUser(row.faculty_id)}
                                   disabled={/* Add a condition for disabling */ row.faculty_id === auth.faculty.faculty_id || auth.faculty.role !== 'Admin'}
                                 >
                                   <DeleteOutlineOutlinedIcon />

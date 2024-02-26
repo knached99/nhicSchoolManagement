@@ -24,6 +24,8 @@ import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
 import { InputMask } from 'primereact/inputmask';
 
+import { InputText } from 'primereact/inputtext';
+        
 
 // Icons 
 import Avatar from '@mui/material/Avatar';
@@ -45,7 +47,7 @@ export default function ViewProfile({auth, user, students}) {
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
   const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
 
@@ -145,6 +147,15 @@ const handleCloseError = () => {
   }
   
 
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+  
+  const backgroundColor = isDarkMode ? '#000' : 'background.paper';
+
 
   return (
     <>
@@ -152,11 +163,11 @@ const handleCloseError = () => {
         user={auth}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">{user.name}'s Profile Page</h2>}
       >
-    <div className="bg-gray-100">
+    <div className="bg-gray-100 dark:bg-black">
     <div className="container mx-auto py-8">
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
             <div className="col-span-4 sm:col-span-3">
-                <div className="bg-white shadow rounded-lg p-6">
+                <div className="bg-white dark:bg-black shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
                     {user.profile_pic ? (
                     <>
@@ -170,13 +181,13 @@ const handleCloseError = () => {
                   )}
 
                        
-                        <h1 className="text-xl font-bold">{user.name}</h1>
-                        <p className="text-gray-700 text-center font-bold"><MailOutlineOutlinedIcon/> <span className="font-semibold">{user.email}</span></p>
+                        <h1 className="text-xl font-bold dark:text-white">{user.name}</h1>
+                        <p className="text-gray-700 dark:text-white text-center font-bold"><MailOutlineOutlinedIcon/> <span className="font-semibold">{user.email}</span></p>
 
                     </div>
                     <hr className="my-6 border-t border-gray-300" />
-                    <div className="flex flex-col">
-                        <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Teacher Information</span>
+                    <div className="flex flex-col dark:text-white">
+                        <span className="dark:text-white text-gray-700 uppercase font-bold tracking-wider mb-2">Teacher Information</span>
                         <ul>
                         {/* <li className="mb-2">Permissions:  <span className="font-normal">{user.role==='Admin' && 'All Permissions' || user.role==='Teacher' && formatPermissions(user.permissions)}</span></li>                       */}
                         <li className="mb-2"><SmartphoneOutlinedIcon/> {user.phone ?? 'N/A'}</li>
@@ -253,9 +264,10 @@ const handleCloseError = () => {
                             </Box>
                         )}
                                        <div>
-                                       <Field
+                                       {/* <Field
                                         id="email"
                                         name="email"
+                                        className=""
                                         helperText={touched.email && errors.email}
                                         error={touched.email && Boolean(errors.email)}
                                         value={values.email}
@@ -264,6 +276,18 @@ const handleCloseError = () => {
                                         style={{ margin: 10 }}
                                         fullWidth
                                         onChange={handleChange}
+                                      /> */}
+                                      <InputText 
+                                      id="email"
+                                      name="email"
+                                      value={values.email}
+                                      className="w-full"
+                                      onChange={handleChange} 
+                                      onBlur={handleBlur} 
+                                      style={{
+                                        width: '100%',
+                                        ...(touched.email && errors.email && { border: '1px solid #ef4444' }),
+                                    }}
                                       />
 
 
@@ -300,8 +324,9 @@ const handleCloseError = () => {
 
                                        <div>
                                        <FormControl sx={{ m: 1, width: '100%', }}>
-                                      <InputLabel id="role">Select Role</InputLabel>
+                                      <InputLabel id="role" style={{color: isDarkMode ? '#fff' : 'inherit', margin: 'auto'}}>Select Role</InputLabel>
                                       <Select
+                                      style={{backgroundColor: isDarkMode ? '#1e293b' : 'inherit'}}
                                       labelId="role"
                                       id="role"
                                       name="role"
@@ -364,14 +389,14 @@ const handleCloseError = () => {
                 </div>
             </div>
             <div className="col-span-4 sm:col-span-9">
-                <div className="bg-white shadow rounded-lg p-6">
+                <div className="dark:bg-black bg-white shadow rounded-lg p-6">
                     <h2 className="text-xl font-bold mb-4">Teacher's Information</h2>
                  
                 
                         
 <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-black dark:text-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Students
@@ -384,7 +409,7 @@ const handleCloseError = () => {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-black dark:text-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Total Assignments
@@ -397,7 +422,7 @@ const handleCloseError = () => {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-black dark:text-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Faculty Since

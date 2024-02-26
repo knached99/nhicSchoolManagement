@@ -110,14 +110,14 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
        
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" className="dark:text-white" value="Email" />
 
                     <TextInput
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full dark:bg-slate-700 dark:text-white"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
@@ -127,14 +127,14 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" className="dark:text-white" value="Password" />
 
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full dark:bg-slate-700 dark:text-white"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
@@ -142,7 +142,7 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="block mt-4">
+                {/* <div className="block mt-4">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -151,18 +151,18 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
                         />
                         <span className="ml-2 text-sm text-gray-600">Remember me</span>
                     </label>
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-end mt-4">
 
-                        <Link href={route('faculty.password.request')} className="text-sm text-gray-600 hover:text-gray-900">
+                        <Link href={route('faculty.password.request')} className="text-sm dark:text-white dark:hover:text-slate-200 text-gray-600 hover:text-gray-900">
                             Forgot your password?
                         </Link>
               
 
                     <PrimaryButton
                         type="submit"
-                        className="ml-4"
+                        className="ml-4 dark:bg-indigo-500 dark:hover:bg-indigo-600"
                         processing={processing}
                         disabled={processing}
                     >

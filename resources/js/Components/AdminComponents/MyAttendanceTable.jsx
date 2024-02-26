@@ -28,7 +28,7 @@ export default function MyAttendanceTable({auth, facultyID}) {
   const [successOpen, setSuccessOpen] = useState(true);
   const [errorOpen, setErrorOpen] = useState(true);
   const [attendanceData, setAttendanceData] = useState([]);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const handleAttendanceChange = (id, value) => {
     // Update the is_present field in the corresponding row
     const updatedRows = rows.map((row) =>
@@ -120,6 +120,16 @@ const handleAttendanceSubmission = async () => {
     fetchCombinedData();
   }, [success]);
 
+
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+  
+  const backgroundColor = isDarkMode ? '#000' : 'background.paper';
+
   const isAttendanceTaken = attendanceData && attendanceData.length > 0;
   const columns = [
     { field: 'student_id', headerName: 'Student ID', width: 120 },
@@ -188,8 +198,8 @@ const handleAttendanceSubmission = async () => {
   
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
-      <h1 className="m-3 text-center font-black text-xl">Attendance For {new Date().toLocaleDateString()}</h1>
+      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      <h1 className="m-3 text-center font-black text-xl dark:text-white">Attendance For {new Date().toLocaleDateString()}</h1>
       {error && (
                             <Box sx={{ width: '100%' }}>
                                 <Collapse in={errorOpen}>
@@ -238,9 +248,12 @@ const handleAttendanceSubmission = async () => {
                             </Box>
                         )}
 
-        <Paper sx={{width: '100%', backgroundColor: '#fff'}}>
+        <Paper sx={{width: '100%'}}>
      
       <DataGrid
+        sx={{backgroundColor: backgroundColor,
+        color: isDarkMode ? '#fff' : 'inherit'
+        }}
         rows={rows}
         columns={columns}
         loading={loading}

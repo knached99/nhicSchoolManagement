@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Image;
+use Illuminate\Support\Facades\Validator;
+
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
@@ -71,9 +73,16 @@ class FacultyProfileController extends Controller {
         try {
             $user = Auth::guard('faculty')->user();
     
-            $validated = $request->validate([
+            $validate = Validator::make($request->validate([
                 'profile_pic' => ['required', 'image', 'mimes:jpeg,png,jpg|max:2048'],
-            ]);
+            ]));
+            \Log::info(['File Selected: '. $request->file('profile_pic')]);
+
+            if($validate->fails()){
+                return response()->json(['Validation Error' => $validate->errors()]);
+                return response()->json(['errors'=>$validate->errors()]);
+            }
+            
     
             if ($user->profile_pic && Storage::exists('public/profile_pics/' . basename($user->profile_pic))) {
                 Storage::delete('public/profile_pics/' . basename($user->profile_pic));

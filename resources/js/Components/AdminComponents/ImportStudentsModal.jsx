@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -24,17 +24,6 @@ import { styled } from '@mui/material/styles';
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import Zoom from '@mui/material/Zoom';
 
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-   boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-  p: 4,
-  };
-  
 
 
 
@@ -47,7 +36,7 @@ export default function ImportStudentsModal() {
   const [success, setSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
   // Form Initial Values
   const initialValues = {
       file: null,
@@ -115,6 +104,31 @@ export default function ImportStudentsModal() {
       setErrorOpen(false);
       setError(null);
   };
+
+
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+  
+  const backgroundColor = isDarkMode ? '#0f172a' : 'background.paper';
+
+
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: backgroundColor,
+   boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+  p: 4,
+  };
+  
+
+
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ">
      <Tooltip title="Batch Import Students" TransitionComponent={Zoom} >
@@ -179,12 +193,12 @@ export default function ImportStudentsModal() {
                             </Box>
                         )}
             <IconButton onClick={handleClose} className="inline-flex float-end m-2">
-                <CloseIcon/>
+                <CloseIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}/>
             </IconButton>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-title" variant="h6" component="h2">
             Batch Student Import
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-description" sx={{ mt: 2 }}>
            You can import a batch of students from an excel spreadsheet.
           </Typography>
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={importStudents}>

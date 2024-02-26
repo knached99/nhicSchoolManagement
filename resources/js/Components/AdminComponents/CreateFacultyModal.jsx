@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -28,6 +28,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Zoom from '@mui/material/Zoom';
 
+import { InputText } from 'primereact/inputtext';
+        
+        
 
 
 export default function CreateFacultyModal() {
@@ -39,6 +42,16 @@ export default function CreateFacultyModal() {
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
   const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+  
+  const backgroundColor = isDarkMode ? '#020617' : '#fff';
 
   // Form Intial Values
   const initialValues = {
@@ -99,7 +112,7 @@ export default function CreateFacultyModal() {
     const handleTogglePermissionsMenu = () => {
       setOpenPermissionsMenu(!openPermissionsMenu);
     };
-      
+
 
     const style = {
         position: 'absolute',
@@ -110,8 +123,8 @@ export default function CreateFacultyModal() {
         maxWidth: 400, // Set a maximum width
         maxHeight: '80vh', // Set a maximum height (80% of the viewport height)
         overflowY: 'auto', // Enable vertical scrolling when content exceeds the height
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
+        bgcolor: backgroundColor,
+        border: isDarkMode ? '2px solid #fff' : '2px solid #000',
         boxShadow: 24,
         p: 4,
       };
@@ -141,7 +154,7 @@ export default function CreateFacultyModal() {
           maxHeight: '80vh',
           overflowY: 'auto',
           padding: '1rem',
-          backgroundColor: '#fff'
+          backgroundColor: backgroundColor
         }}>
 
         {error && (
@@ -197,14 +210,14 @@ export default function CreateFacultyModal() {
                             </Box>
                         )}
             <IconButton onClick={handleClose} className="inline-flex float-end m-2">
-                <CloseIcon/>
+                <CloseIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}/>
             </IconButton>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-title" variant="h6" component="h2">
             Create a User
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-description" sx={{ mt: 2 }}>
           As an administrative user, you have the ability to assign roles and privileges to different faculty users of this system.
-          <span className="text-indigo-800 font-semibold">
+          <span className="text-indigo-800 font-semibold dark:text-orange-400">
           Upon successful user creation, the new user will get an email, notifying them that they've been assigned the role and will receive a temporary password to login with. 
           </span>
           </Typography>
@@ -222,8 +235,40 @@ export default function CreateFacultyModal() {
             isSubmitting,
           }) => (
             <Form onSubmit={handleSubmit} autoComplete="off">
-            <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}} />
-            <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}} />
+            <InputText 
+            id="name"
+            name="name"
+            value={values.name}
+            style={{
+                width: '100%',
+                ...(touched.name && errors.name && { border: '1px solid #ef4444' }),
+            }}
+            onChange={handleChange} 
+            onBlur={handleBlur} 
+            placeholder="Name"
+            className="mb-3 mt-3"
+            />
+           <span className="text-red-500">{touched.name && errors.name}</span>
+
+
+           <InputText 
+            id="email"
+            name="email"
+            value={values.email}
+            style={{
+                width: '100%',
+                ...(touched.email && errors.email && { border: '1px solid #ef4444' }),
+            }}
+            onChange={handleChange} 
+            onBlur={handleBlur} 
+            placeholder="Email"
+            className="mb-3 mt-3"
+            />
+           <span className="text-red-500">{touched.email && errors.email}</span>
+
+            
+            {/* <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}} /> */}
+            {/* <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}} /> */}
             <InputMask
              id="phone" 
              name="phone" 
@@ -235,13 +280,24 @@ export default function CreateFacultyModal() {
              onChange={handleChange} 
              onBlur={handleBlur}  
              mask="(999) 999-9999" 
+             className="mb-3 mt-3"
              placeholder="(999) 999-9999">
              </InputMask>
              <span className="text-red-500">{touched.phone && errors.phone}</span>
 
-
             {/* <Field as={TextField} onChange={handleChange} value={values.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone" placeholder="Phone Number" fullWidth style={{margin: 5}} /> */}
-            <FormControl sx={{ m: 1, width: '100%', }}>
+            <select name="role" 
+            id="role"
+            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded p-2"
+            value={values.role}
+            onChange={handleChange}
+            >
+            <option disabled selected>Select Role</option>
+            <option value="Admin">Admin</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Assistant Teacher">Assistant Teacher</option>
+            </select>
+          {/* <FormControl sx={{ m: 1, width: '100%', }}>
             <InputLabel id="role">Select Role</InputLabel>
             <Select
                 labelId="role"
@@ -259,7 +315,7 @@ export default function CreateFacultyModal() {
              {touched.role && errors.role && (
                 <FormHelperText>{errors.role}</FormHelperText>
              )}
-        </FormControl>
+        </FormControl> */}
 
         {/* <Button onClick={handleTogglePermissionsMenu} variant="outlined" style={{ margin: '10px 0' }}>
         {openPermissionsMenu ? 'Hide Permissions' : 'Show Permissions (For Teachers Only)'}

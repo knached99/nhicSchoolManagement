@@ -6,17 +6,20 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
     <div className="bg-dark">
         {/* NAVBAR COMPONENT HERE*/}
     <HomeNav/>
-    <div className="relative isolate px-6 pt-14 lg:px-8">
+    <div className="relative isolate px-6 pt-14 lg:px-8 bg-gradient-to-tr from-purple-600 to-sky-500 dark:from-slate-800 dark:to-slate-700">
       <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
       </div>
       <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
         
         <div className="text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl"><span className="text-emerald-500 font-black mr-2">NHICCT</span>EDU</h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600">Parents, login to the system to view your child's progress and track how well they're doing</p>
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl"><span className="text-emerald-400 font-black mr-2">NHICCT</span>EDU</h1>
+          <p className="mt-6 text-2xl font-bold leading-8 text-white ">Parents, you login to the system to view your child's progress and track how well they're doing</p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <a href="/login" className="inline-flex items-center bg-transparent border-2 py-1 px-5 focus:outline-none hover:bg-white hover:text-blue-500 rounded-full text-base mt-4 md:mt-0">Login Here</a>
-            <a href="/register" className="inline-flex items-center bg-transparent border-2 py-1 px-5 focus:outline-none hover:bg-white hover:text-blue-500 rounded-full text-base mt-4 md:mt-0">Don't have an account?</a>
+            <Link href="/login" className="dark:bg-slate-500 shadow-lg dark:hover:bg-slate-400  bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">Login</Link>
+            <Link href="/register" className="dark:bg-slate-500 shadow-lg dark:hover:bg-slate-400 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full">Create Account</Link>
+
+            {/* <a href="/login" className="dark:text-white inline-flex items-center bg-transparent border-2 py-1 px-5 focus:outline-none dark:hover:bg-slate-600 hover:bg-white hover:text-blue-500 dark:hover:text-slate-200 rounded-full text-base mt-4 md:mt-0">Login Here</a>
+            <a href="/register" className="inline-flex items-center bg-transparent border-2 py-1 px-5 focus:outline-none hover:bg-white hover:text-blue-500 rounded-full text-base mt-4 md:mt-0">Don't have an account?</a> */}
           </div>
         </div>
       </div>

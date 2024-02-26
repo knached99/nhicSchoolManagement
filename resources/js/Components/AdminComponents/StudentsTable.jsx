@@ -24,7 +24,7 @@ export default function StudentsTable({auth, path}) {
   const [success, setSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
   useEffect(() => {
     const fetchStudents = async () => {
       try {
@@ -50,6 +50,16 @@ export default function StudentsTable({auth, path}) {
 
     fetchStudents();
   }, []);
+
+
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+  
+  const backgroundColor = isDarkMode ? '#000' : 'background.paper';
 
   const handleCloseSuccess = () => {
     setSuccessOpen(false);
@@ -129,6 +139,7 @@ const viewStudentDetails = (student_id) => {
   window.location.href = `/student/${student_id}/view`;
 }
 
+
 const columns = [
   { field: 'student_id', headerName: 'Student ID', width: 120 },
   { field: 'first_name', headerName: 'First Name', width: 120 },
@@ -195,7 +206,7 @@ const columns = [
     renderCell: (params) => (
       <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
         <IconButton disabled={auth.role === 'Teacher' || auth.role === 'Assistant Teacher'} className="hover:text-emerald-500" onClick={() => viewStudentDetails(params.row.student_id)}>
-          <VisibilityOutlinedIcon />
+          <VisibilityOutlinedIcon className="dark:text-white"/>
         </IconButton>
       </Tooltip>
     ),
@@ -208,7 +219,7 @@ const columns = [
     renderCell: (params) => (
       <Tooltip title={`Delete ${params.row.first_name} ${params.row.last_name} from the system`}>
         <IconButton disabled={auth.role === 'Teacher' || auth.role === 'Assistant Teacher'} className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
-          <DeleteOutlineOutlinedIcon/>
+          <DeleteOutlineOutlinedIcon className="dark:text-white"/>
         </IconButton>
       </Tooltip>
     )
@@ -217,8 +228,8 @@ const columns = [
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
-        <h1 className="m-3 text-center font-black text-xl">Students</h1>
+      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+        <h1 className="m-3 text-center font-black text-xl dark:text-white">Students</h1>
         {auth.faculty && (
           (auth.faculty.role === 'Admin') && (
               <>
@@ -307,9 +318,10 @@ const columns = [
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">No Students in the system</div>
         ) : (
-          <Paper sx={{ width: '100%', backgroundColor: '#fff' }}>
+          <Paper sx={{ width: '100%', backgroundColor}}>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
+              sx={{backgroundColor, color: isDarkMode ? '#fff' : 'inherit'}}
                 rows={rows}
                 columns={columns}
                 pageSize={5}

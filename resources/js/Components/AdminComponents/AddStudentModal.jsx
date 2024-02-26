@@ -31,6 +31,74 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import states from '@/constants/states';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 
+  
+export default function AddStudentModal({refreshData}) {
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [errorOpen, setErrorOpen] = useState(true);
+    const [successOpen, setSuccessOpen] = useState(true);
+    const [parents, setParents] = useState([]);
+    const [teachers, setTeachers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(true);
+
+    const fetchData = async () => {
+      try {
+        // Fetch parents
+        const parentsResponse = await fetch('/fetchParents');
+        const { parents, error: parentsError } = await parentsResponse.json();
+    
+        if (parentsError) {
+          throw new Error(parentsError);
+        }
+    
+        // Fetch teachers
+        const teachersResponse = await fetch('/fetchTeachers');
+        const { teachers, error: teachersError } = await teachersResponse.json();
+    
+        if (teachersError) {
+          throw new Error(teachersError);
+        }
+    
+        // Now you have both parents and teachers data
+        setParents(parents || []);
+        setTeachers(teachers || []);
+        setLoading(false);
+      } catch (error) {
+        setError('Error fetching data: ' + error.message);
+        setLoading(false);
+      }
+    };
+    
+    useEffect(() => {
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+      // Check if the system is in dark mode
+      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+      setIsDarkMode(prefersDarkMode);
+    }, []);
+    
+    const backgroundColor = isDarkMode ? '#000' : 'background.paper';
+
+    
+
+    const handleCloseSuccess = () => {
+      setSuccessOpen(false);
+      setSuccess(null);
+  };
+
+  const handleCloseError = () => {
+      setErrorOpen(false);
+      setError(null);
+  };
+
+
 const style = {
   position: 'absolute',
   top: '50%',
@@ -40,7 +108,7 @@ const style = {
   maxWidth: 400, // Set a maximum width
   maxHeight: '80vh', // Set a maximum height (80% of the viewport height)
   overflowY: 'auto', // Enable vertical scrolling when content exceeds the height
-  bgcolor: 'background.paper',
+  bgcolor: backgroundColor,
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
@@ -102,62 +170,6 @@ const style = {
     }
   `,
   );
-  
-export default function AddStudentModal({refreshData}) {
-    const [open, setOpen] = useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(null);
-    const [errorOpen, setErrorOpen] = useState(true);
-    const [successOpen, setSuccessOpen] = useState(true);
-    const [parents, setParents] = useState([]);
-    const [teachers, setTeachers] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    const fetchData = async () => {
-      try {
-        // Fetch parents
-        const parentsResponse = await fetch('/fetchParents');
-        const { parents, error: parentsError } = await parentsResponse.json();
-    
-        if (parentsError) {
-          throw new Error(parentsError);
-        }
-    
-        // Fetch teachers
-        const teachersResponse = await fetch('/fetchTeachers');
-        const { teachers, error: teachersError } = await teachersResponse.json();
-    
-        if (teachersError) {
-          throw new Error(teachersError);
-        }
-    
-        // Now you have both parents and teachers data
-        setParents(parents || []);
-        setTeachers(teachers || []);
-        setLoading(false);
-      } catch (error) {
-        setError('Error fetching data: ' + error.message);
-        setLoading(false);
-      }
-    };
-    
-    useEffect(() => {
-      fetchData();
-    }, []);
-
-    
-
-    const handleCloseSuccess = () => {
-      setSuccessOpen(false);
-      setSuccess(null);
-  };
-
-  const handleCloseError = () => {
-      setErrorOpen(false);
-      setError(null);
-  };
       
 
     const initialValues = {
@@ -263,7 +275,7 @@ export default function AddStudentModal({refreshData}) {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
+            <Typography id="transition-modal-title" variant="h6" style={{color: isDarkMode ? '#fff' : 'inherit'}} component="h2">
               Add a Student 
 
               {error && (
@@ -315,10 +327,10 @@ export default function AddStudentModal({refreshData}) {
                         )}
                         
             <IconButton onClick={handleClose} className="inline-flex float-end m-2">
-            <CloseIcon/>
+            <CloseIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}/>
             </IconButton>
             </Typography>
-            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+            <Typography id="transition-modal-description" sx={{ mt: 2, color: isDarkMode ? '#fff' : 'inherit' }}>
             Add a student manually. Ensure all information typed is correct.
             </Typography>
             <Formik initialValues={initialValues} validationSchema={validation} onSubmit={addStudent}>
@@ -334,32 +346,44 @@ export default function AddStudentModal({refreshData}) {
             isSubmitting,
           }) => (
             <Form onSubmit={handleSubmit} autoComplete="off">
-            <Field as={TextField} value={values.first_name} helperText={touched.first_name && errors.first_name} error={touched.first_name && Boolean(errors.first_name)} onBlur={handleBlur} id="first_name" name="first_name" placeholder="First Name" fullWidth style={{margin: 10}} />
-            <Field as={TextField} value={values.last_name} helperText={touched.last_name && errors.last_name} error={touched.last_name && Boolean(errors.last_name)} onBlur={handleBlur} id="last_name" name="last_name" placeholder="Last Name" fullWidth style={{margin: 10}} />
+            <Field as={TextField} value={values.first_name} helperText={touched.first_name && errors.first_name} error={touched.first_name && Boolean(errors.first_name)} onBlur={handleBlur} id="first_name" name="first_name" placeholder="First Name" fullWidth  style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }} />
+            <Field as={TextField} value={values.last_name} helperText={touched.last_name && errors.last_name} error={touched.last_name && Boolean(errors.last_name)} onBlur={handleBlur} id="last_name" name="last_name" placeholder="Last Name" fullWidth 
+            style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }} 
+            />
 
-            {/* <Field as={TextField} value={values.parent_guardian_email} helperText={touched.parent_guardian_email && errors.parent_guardian_email} error={touched.parent_guardian_email && Boolean(errors.parent_guardian_email)} onBlur={handleBlur} id="parent_guardian_email" name="parent_guardian_email" placeholder="Parent/Guardian Email" fullWidth style={{margin: 10}} /> */}
-             <InputLabel>Date Of Birth</InputLabel>
-             {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer
-                components={[
-                'DatePicker',
-                'MobileDatePicker',
-                'DesktopDatePicker',
-                'StaticDatePicker',
-                ]}
-            >
-         <DemoItem label="Date Of Birth">
-         <DatePicker style={{margin: 5}} value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} id="date_of_birth" name="date_of_birth" onBlur={handleBlur} onChange={handleChange} />
-        </DemoItem>
-            </DemoContainer>
-            </LocalizationProvider> */}
-            <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth style={{margin: 10}} />
-            <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth style={{margin: 10}} />
-            <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth style={{margin: 10}} />
+             <InputLabel style={{color: isDarkMode ? '#fff' : 'inherit'}}>Date Of Birth</InputLabel>
+
+            <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth 
+            style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }} 
+            />
+            <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth 
+            style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }} 
+            />
+            <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth 
+            style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }} 
+            />
            
-            <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{margin: 10}} />
+            <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }}  />
             <FormControl sx={{mx: 1, mt:3, mb:3, width: '100%' }}>
-            <InputLabel id="state">Select State</InputLabel>
+            <InputLabel id="state" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select State</InputLabel>
             <Select
               labelId="state"
               id="state"
@@ -368,7 +392,10 @@ export default function AddStudentModal({refreshData}) {
               onChange={handleChange}
               onBlur={handleBlur}
               error={touched.state && Boolean(errors.state)}
-
+              style={{
+                margin: 10,
+                backgroundColor: isDarkMode ? '#334155' : 'inherit',
+              }} 
             >
               <MenuItem value="">
                 <em>Select a State</em>
@@ -384,9 +411,14 @@ export default function AddStudentModal({refreshData}) {
             )}
           </FormControl>
 
-            <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.zip)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth style={{margin: 10}} />
+            <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.zip)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth 
+            style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }} 
+            />
             <FormControl sx={{mx: 1, mt:3, mb:3,  width: '100%'}}>
-              <InputLabel id="level">Select Level</InputLabel>
+              <InputLabel id="level" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select Level</InputLabel>
               <Select
               labelId="level"
               id="level"
@@ -395,6 +427,11 @@ export default function AddStudentModal({refreshData}) {
               onChange={handleChange}
               error={touched.level && Boolean(errors.level)}
               onBlur={handleBlur}
+              style={{
+                margin: 10,
+                width: '100%',
+                backgroundColor: isDarkMode ? '#334155' : 'inherit',
+              }} 
               >
              <MenuItem value="">
               <em>Select Level</em>
@@ -411,8 +448,14 @@ export default function AddStudentModal({refreshData}) {
             </FormControl>
               
             <FormControl sx={{mx: 1, mt:3, mb:3, width: '100%'}}>
-              <InputLabel id="gender">Select Gender</InputLabel>
+              <InputLabel id="gender" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select Gender</InputLabel>
               <Select
+              style={{
+                margin: 10,
+                width: '100%',
+                backgroundColor: isDarkMode ? '#334155' : 'inherit',
+              }} 
+
               labelId="gender"
               id="gender"
               name="gender"
@@ -441,7 +484,11 @@ export default function AddStudentModal({refreshData}) {
                               name="user_id"
                               value={values.user_id || ''}
                               onChange={handleChange}
-                              style={{ width: 300 }}
+                              style={{
+                                margin: 10,
+                                width: '100%',
+                                backgroundColor: isDarkMode ? '#334155' : 'inherit',
+                              }} 
                             >
                               <MenuItem value="">
                                 <em>Make a Selection</em>
@@ -459,14 +506,18 @@ export default function AddStudentModal({refreshData}) {
 
             {loading ? <CircularProgress color="primary" /> : 
             <FormControl sx={{ mx: 1, mt:3, mb:3,  width: '100%'}}>
-                            <InputLabel id="faculty_id">Select Teacher</InputLabel>
+                            <InputLabel id="faculty_id" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select Teacher</InputLabel>
                             <Select
                               labelId="faculty_id"
                               id="faculty_id"
                               name="faculty_id"
                               value={values.faculty_id || ''}
                               onChange={handleChange}
-                              style={{ width: 300 }}
+                              style={{
+                                margin: 10,
+                                width: '100%',
+                                backgroundColor: isDarkMode ? '#334155' : 'inherit',
+                              }} 
                             >
                               <MenuItem value="">
                                 <em>Make a Selection</em>
@@ -491,11 +542,24 @@ export default function AddStudentModal({refreshData}) {
              ame="allergies_or_special_needs" 
              placeholder="Allergies or Special Needs" 
              fullWidth 
-             style={{margin: 10}} 
+             style={{
+              margin: 10,
+              backgroundColor: isDarkMode ? '#334155' : 'inherit',
+            }} 
             />
 
-          <Field as={TextField} value={values.emergency_contact_person} helperText={touched.emergency_contact_person && errors.emergency_contact_person} error={touched.emergency_contact_person && Boolean(errors.emergency_contact_person)} onBlur={handleBlur} id="emergency_contact_personp" name="emergency_contact_person" placeholder="emergency contact person" fullWidth style={{margin: 10}} />
-          <Field as={TextField} value={values.emergency_contact_hospital} helperText={touched.emergency_contact_hospital && errors.emergency_contact_hospital} error={touched.emergency_contact_hospital && Boolean(errors.emergency_contact_hospital)} onBlur={handleBlur} id="emergency_contact_hospital" name="emergency_contact_hospital" placeholder="emergency contact hospital" fullWidth style={{margin: 10}} />
+          <Field as={TextField} value={values.emergency_contact_person} helperText={touched.emergency_contact_person && errors.emergency_contact_person} error={touched.emergency_contact_person && Boolean(errors.emergency_contact_person)} onBlur={handleBlur} id="emergency_contact_personp" name="emergency_contact_person" placeholder="emergency contact person" fullWidth 
+          style={{
+            margin: 10,
+            backgroundColor: isDarkMode ? '#334155' : 'inherit',
+          }} 
+           />
+          <Field as={TextField} value={values.emergency_contact_hospital} helperText={touched.emergency_contact_hospital && errors.emergency_contact_hospital} error={touched.emergency_contact_hospital && Boolean(errors.emergency_contact_hospital)} onBlur={handleBlur} id="emergency_contact_hospital" name="emergency_contact_hospital" placeholder="emergency contact hospital" fullWidth 
+          style={{
+            margin: 10,
+            backgroundColor: isDarkMode ? '#334155' : 'inherit',
+          }} 
+          />
 
 
 

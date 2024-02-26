@@ -61,7 +61,8 @@ export default function Student({auth, student}) {
     const [loading, setLoading] = useState(true);
     const [loadingParents, setLoadingParents] = useState(true);
     const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
-   
+    const [isDarkMode , setIsDarkMode] = useState(false);
+
     const fetchTeachers = async () => {
         try {
           const response = await fetch('/fetchTeachers');
@@ -112,6 +113,15 @@ export default function Student({auth, student}) {
         fetchData();
       }, []);
     
+      useEffect(() => {
+        // Check if the system is in dark mode
+        const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+        setIsDarkMode(prefersDarkMode);
+      }, []);
+      
+      const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
+
     
 
       // For assigning teacher to student 
@@ -316,12 +326,12 @@ export default function Student({auth, student}) {
         user={auth}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">{student.first_name} {student.last_name}'s Profile Page</h2>}
       >
-    <div className="bg-gray-100">
+    <div className="bg-gray-100 dark:bg-slate-900">
     <div className="container mx-auto py-8">
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
             <div className="col-span-4 sm:col-span-3">
             
-                <div className="bg-white shadow rounded-lg p-6">
+                <div className="bg-white dark:bg-slate-800 dark:text-white shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
                     <Link href="/faculty/dash" class="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
                     <ArrowBackOutlinedIcon/>  Back
@@ -329,7 +339,7 @@ export default function Student({auth, student}) {
             
                     <Avatar sx={{ width: 100, height: 100 }} {...stringAvatar(`${student.first_name} ${student.last_name}`)} />
                         <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
-                        <p className="text-gray-700 text-center font-bold mt-3">
+                        <p className="text-gray-700 dark:text-white text-center font-bold mt-3">
                         Student Since: 
                         <span className="font-normal ml-1">
                           {new Date(student.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -339,7 +349,7 @@ export default function Student({auth, student}) {
 
                         {auth.role === 'Admin' && !student.faculty_id && (
                         <div class="mt-6 flex flex-wrap gap-4 justify-center">
-                        <span className="text-indigo-500">{student.first_name} {student.last_name} is not assigned to a teacher</span>
+                        <span className="text-indigo-500 dark:text-indigo-300">{student.first_name} {student.last_name} is not assigned to a teacher</span>
                         {loading ? <CircularProgress color="primary" />  : 
                       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={assignTeacherToStudent}>
                       {({
@@ -415,7 +425,10 @@ export default function Student({auth, student}) {
                               name="faculty_id"
                               value={values.faculty_id || ''}
                               onChange={handleChange}
-                              style={{ width: 300 }}
+                              style={{ width: 300,
+                                backgroundColor: isDarkMode ? '#475569' : 'inherit'
+                              
+                              }}
                             >
                               <MenuItem value="">
                                 <em>Select Teacher</em>
@@ -456,13 +469,13 @@ export default function Student({auth, student}) {
                     </div>
                     <hr className="my-6 border-t border-gray-300" />
                     <div className="flex flex-col">
-                        <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Student Bio</span>
-                        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                        <span className="text-gray-700 dark:text-white uppercase font-bold tracking-wider mb-2">Student Bio</span>
+                        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: backgroundColor }}>
       <nav aria-label="main mailbox folders">
         <List>
           <ListItem disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                 <Tooltip title="Street Address" arrow>
                 <HomeOutlinedIcon/> 
                 </Tooltip>
@@ -474,7 +487,7 @@ export default function Student({auth, student}) {
 
           <ListItem disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                {student.gender &&
                 student.gender === 'Male' && (
                   <>
@@ -501,7 +514,7 @@ export default function Student({auth, student}) {
 
           <ListItem disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                 <Tooltip title="Birthday" arrow>
                 <CakeOutlinedIcon/> 
                 </Tooltip>
@@ -514,7 +527,7 @@ export default function Student({auth, student}) {
 
         <ListItem disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                 <Tooltip title="Level" arrow>
                 <GradeOutlinedIcon/> 
                 </Tooltip>
@@ -526,7 +539,7 @@ export default function Student({auth, student}) {
 
           <ListItem disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                 <Tooltip title="Allergies or Special Needs" arrow>
                 <PsychologyAltOutlinedIcon/> 
                 </Tooltip>
@@ -538,7 +551,7 @@ export default function Student({auth, student}) {
 
           <ListItem disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                 <Tooltip title="Emergency Contact Person" arrow>
                 <ContactEmergencyOutlinedIcon/> 
                 </Tooltip>
@@ -550,7 +563,7 @@ export default function Student({auth, student}) {
 
           <ListItem disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                 <Tooltip title="Emergency Contact Hospital" arrow>
                 <LocalHospitalOutlinedIcon/> 
                 </Tooltip>
@@ -568,16 +581,16 @@ export default function Student({auth, student}) {
                     </div>
                    {student.user_id ? (
                     <div className="flex flex-col mt-5">
-                    <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Parent Bio</span>
+                    <span className="text-gray-700 dark:text-white uppercase font-bold tracking-wider mb-2">Parent Bio</span>
                     {student.user ? 
    
-                    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: backgroundColor }}>
                     <nav aria-label="main mailbox folders">
                       <List>
 
                       <ListItem disablePadding>
                           <ListItemButton>
-                            <ListItemIcon>
+                            <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                               <Tooltip title="Parent's Name" arrow>
                               <PersonOutlineOutlinedIcon/> 
                               </Tooltip>
@@ -590,7 +603,7 @@ export default function Student({auth, student}) {
                                     
                         <ListItem disablePadding>
                           <ListItemButton>
-                            <ListItemIcon>
+                            <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                               <Tooltip title="Parent's Address" arrow>
                               <HomeOutlinedIcon/> 
                               </Tooltip>
@@ -603,7 +616,7 @@ export default function Student({auth, student}) {
 
                         <ListItem disablePadding>
                           <ListItemButton>
-                            <ListItemIcon>
+                            <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                               <Tooltip title="Parent's Number" arrow>
                               <PhoneIphoneOutlinedIcon/> 
                               </Tooltip>
@@ -615,7 +628,7 @@ export default function Student({auth, student}) {
 
                         <ListItem disablePadding>
                           <ListItemButton>
-                            <ListItemIcon>
+                            <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
                               <Tooltip title="Parent's Email" arrow>
                               <MailOutlineOutlinedIcon/> 
                               </Tooltip>
@@ -725,7 +738,9 @@ export default function Student({auth, student}) {
                       name="user_id"
                       value={values.user_id || ''}
                       onChange={handleChange}
-                      style={{ width: 300 }}
+                      style={{ width: 300,
+                      backgroundColor: backgroundColor
+                      }}
                     >
                       <MenuItem value="">
                         <em>Select Parent</em>
@@ -767,14 +782,14 @@ export default function Student({auth, student}) {
                 </div>
             </div>
             <div className="col-span-4 sm:col-span-9">
-                <div className="bg-white shadow rounded-lg p-6">
-                    <h2 className="text-xl font-bold mb-4">Student Information</h2>
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                    <h2 className="text-xl dark:text-white font-bold mb-4">Student Information</h2>
                  
                 
                         
 <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-800 dark:text-white border-slate-900 dark:border-slate-100 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Assignments
@@ -787,7 +802,7 @@ export default function Student({auth, student}) {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-800 dark:text-white border-slate-900 dark:border-slate-100 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Average Grade
@@ -800,7 +815,7 @@ export default function Student({auth, student}) {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-800 dark:text-white border-slate-900 dark:border-slate-100 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Teacher
@@ -816,7 +831,7 @@ export default function Student({auth, student}) {
   </div>
   
 </div>
-                    <h2 className="text-xl font-bold mt-6 mb-4">Student Metrics</h2>
+                    <h2 className="text-xl font-bold mt-6 mb-4 dark:text-white">Student Metrics</h2>
                     <AttendanceHistory studentID={student.student_id}/>
                     {/* <div className="mb-6">
                         <div className="flex justify-between flex-wrap gap-2 w-full">

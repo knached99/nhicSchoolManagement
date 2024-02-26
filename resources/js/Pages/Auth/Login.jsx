@@ -29,20 +29,20 @@ export default function Login({ status }) {
     return (
         <GuestLayout>
             <Head title="Log in" />
-            <h1 className="m-3 font-black text-xl text-purple-500">Login to your account</h1>
+            <h1 className="m-3 font-black text-xl text-purple-500 dark:text-white">Login to your account</h1>
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" className="dark:text-white" value="Email" />
 
                     <TextInput
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full dark:bg-slate-700 dark:text-white"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
@@ -52,14 +52,14 @@ export default function Login({ status }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" className="dark:text-white" value="Password" />
 
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full dark:bg-slate-700 dark:text-white"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
@@ -67,7 +67,7 @@ export default function Login({ status }) {
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="block mt-4">
+                {/* <div className="block mt-4">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -76,7 +76,7 @@ export default function Login({ status }) {
                         />
                         <span className="ms-2 text-sm text-gray-600">Remember me</span>
                     </label>
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-end mt-4">
                    
@@ -89,7 +89,7 @@ export default function Login({ status }) {
 
                         <Link
                             href="user-forgot-password"
-                            className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            className="underline text-sm dark:text-white dark:hover:text-slate-200 text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
                             Forgot your password?
                         </Link>
@@ -97,7 +97,7 @@ export default function Login({ status }) {
                 
                   
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <PrimaryButton className="ms-4 dark:bg-indigo-500 dark:hover:bg-indigo-600" disabled={processing}>
                         Log in
                     </PrimaryButton>
                 </div>

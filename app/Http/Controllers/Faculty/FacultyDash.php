@@ -673,6 +673,7 @@ public function getAttendanceHistoryBystudentID($studentId){
           $results = array_unique(array_merge($facultyResults, $studentResults, $userResults), SORT_REGULAR);
 
           return response()->json(['results' => $results]);
+        
       } catch (\Exception $e) {
           \Log::error('Search Error: ' . $e->getMessage());
           return response()->json(['error' => 'An error occurred during the search.']);

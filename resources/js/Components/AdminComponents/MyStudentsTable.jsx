@@ -206,7 +206,7 @@ const deleteMyStudents = async () => {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
         <h1 className="m-3 text-center font-black text-xl">My Students</h1>
         
         {auth.faculty && (

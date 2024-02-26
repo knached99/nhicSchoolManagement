@@ -39,6 +39,8 @@ import Avatar from '@mui/material/Avatar';
 
 const drawerWidth = 240;
 
+
+
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     flexGrow: 1,
@@ -89,6 +91,15 @@ export default function SideBar({auth}) {
   const [open, setOpen] = React.useState(false);
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
   const [loading, setLoading] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+  
+  const backgroundColor = isDarkMode ? '#111827' : '#10b981';
 
 
   const handleDrawerOpen = () => {
@@ -130,9 +141,9 @@ export default function SideBar({auth}) {
   
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex'}}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} style={{backgroundColor: '#6366f1'}}>
+      <AppBar position="fixed" open={open} style={{backgroundColor}}>
       <Toolbar className="flex items-center justify-between">
   <div className="flex items-center">
     <IconButton
@@ -220,7 +231,7 @@ export default function SideBar({auth}) {
         <Divider />
         <List>
         <ListItem key="dash" disablePadding style={{
-       backgroundColor: route().current('faculty.dash') ? '#6366f1' : '', color: route().current('faculty.dash') ? '#fff' : '#000'}}>
+       backgroundColor: route().current('faculty.dash') ? '#10b981' : '', color: route().current('faculty.dash') ? '#fff' : '#000'}}>
               <ListItemButton component={Link} to={route('faculty.dash')}>
                 <ListItemIcon>
                 <GridViewIcon style={{color: route().current('faculty.dash') ? '#fff' : '#000'}}/>
@@ -230,7 +241,7 @@ export default function SideBar({auth}) {
             </ListItem>
 
             <ListItem key="profile" disablePadding style={{
-       backgroundColor: route().current('faculty.profile') ? '#6366f1' : '', color: route().current('faculty.profile') ? '#fff' : '#000'}}>
+       backgroundColor: route().current('faculty.profile') ? '#10b981' : '', color: route().current('faculty.profile') ? '#fff' : '#000'}}>
               <ListItemButton component={Link} to={route('faculty.profile')}>
                 <ListItemIcon>
                 <AccountCircleOutlinedIcon style={{color: route().current('faculty.profile') ? '#fff' : '#000'}}/>
@@ -240,7 +251,7 @@ export default function SideBar({auth}) {
             </ListItem>
 
         </List>
-        <p className="text-start m-3 font-semibold">App Version <span class="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-md font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">Beta</span></p>
+        <p className="text-start m-3 font-semibold">App Version <span class="inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-md font-medium text-orange-500 ring-1 ring-inset ring-orange-700/10">Beta</span></p>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
