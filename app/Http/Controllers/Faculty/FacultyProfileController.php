@@ -73,16 +73,9 @@ class FacultyProfileController extends Controller {
         try {
             $user = Auth::guard('faculty')->user();
     
-            $validate = Validator::make($request->validate([
+            $validated = $request->validate([
                 'profile_pic' => ['required', 'image', 'mimes:jpeg,png,jpg|max:2048'],
-            ]));
-            \Log::info(['File Selected: '. $request->file('profile_pic')]);
-
-            if($validate->fails()){
-                return response()->json(['Validation Error' => $validate->errors()]);
-                return response()->json(['errors'=>$validate->errors()]);
-            }
-            
+            ]);
     
             if ($user->profile_pic && Storage::exists('public/profile_pics/' . basename($user->profile_pic))) {
                 Storage::delete('public/profile_pics/' . basename($user->profile_pic));
@@ -115,33 +108,45 @@ class FacultyProfileController extends Controller {
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
-    
-
     private function stripExifData($filePath)
-{
-    // Read Exif data
-    $exif = exif_read_data($filePath);
-
-    // Remove Exif data
-    if ($exif !== false) {
-        foreach ($exif as $key => $section) {
-            if (is_array($section)) {
-                foreach ($section as $name => $val) {
-                    // Remove all sections and entries except for 'COMPUTED' entries
-                    if ($key !== 'COMPUTED') {
-                        unset($exif[$key][$name]);
+    {   
+        $supportedFileTypes = ['image/jpeg']; // exif is only present in jpg/jpeg images so no need to include png 
+        $fileMimeType = mime_content_type($filePath);
+    
+        if (!in_array($fileMimeType, $supportedFileTypes)) {
+            \Log::error(['Exception Caught: ', 'Unsupported file type: ' . $fileMimeType]);
+            return;
+        }
+    
+        // Read Exif data
+        $exifBefore = exif_read_data($filePath);
+    
+        // Remove Exif data
+        if ($fileMimeType === 'image/jpeg' && $exifBefore !== false) {
+            foreach ($exifBefore as $key => $section) {
+                if (is_array($section)) {
+                    foreach ($section as $name => $val) {
+                        // Remove all sections and entries except for 'COMPUTED' entries
+                        if ($key !== 'COMPUTED') {
+                            unset($exifBefore[$key][$name]);
+                        }
                     }
                 }
             }
+    
+            // Save the image without Exif data
+            $image = imagecreatefromjpeg($filePath);
+            imagejpeg($image, $filePath);
+            imagedestroy($image);
         }
-
-        // Save the image without Exif data
-        $image = imagecreatefromjpeg($filePath);
-        imagejpeg($image, $filePath);
-        imagedestroy($image);
+    
+        // Read Exif data after stripping
+        // $exifAfter = exif_read_data($filePath);
+    
+        // Log Exif information before and after stripping
+        // \Log::info(['Exif Before Stripping' => $exifBefore, 'Exif After Stripping' => $exifAfter]);
     }
-}
-
+    
 
 }
 

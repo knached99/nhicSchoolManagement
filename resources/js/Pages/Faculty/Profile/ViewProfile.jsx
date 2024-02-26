@@ -25,7 +25,7 @@ import FormHelperText  from '@mui/material/FormHelperText';
 import { InputMask } from 'primereact/inputmask';
 
 import { InputText } from 'primereact/inputtext';
-        
+      
 
 // Icons 
 import Avatar from '@mui/material/Avatar';
@@ -163,11 +163,11 @@ const handleCloseError = () => {
         user={auth}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">{user.name}'s Profile Page</h2>}
       >
-    <div className="bg-gray-100 dark:bg-black">
+    <div className="bg-gray-100 dark:bg-slate-900">
     <div className="container mx-auto py-8">
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
             <div className="col-span-4 sm:col-span-3">
-                <div className="bg-white dark:bg-black shadow rounded-lg p-6">
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
                     {user.profile_pic ? (
                     <>
@@ -326,7 +326,7 @@ const handleCloseError = () => {
                                        <FormControl sx={{ m: 1, width: '100%', }}>
                                       <InputLabel id="role" style={{color: isDarkMode ? '#fff' : 'inherit', margin: 'auto'}}>Select Role</InputLabel>
                                       <Select
-                                      style={{backgroundColor: isDarkMode ? '#1e293b' : 'inherit'}}
+                                      style={{backgroundColor: isDarkMode ? '#475569' : 'inherit'}}
                                       labelId="role"
                                       id="role"
                                       name="role"
@@ -389,14 +389,14 @@ const handleCloseError = () => {
                 </div>
             </div>
             <div className="col-span-4 sm:col-span-9">
-                <div className="dark:bg-black bg-white shadow rounded-lg p-6">
-                    <h2 className="text-xl font-bold mb-4">Teacher's Information</h2>
+                <div className="dark:bg-slate-800 bg-white shadow rounded-lg p-6">
+                    <h2 className="text-xl font-bold mb-4 dark:text-white">Teacher's Information</h2>
                  
                 
                         
 <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white dark:bg-black dark:text-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-600 dark:text-white border-slate-900 dark:border-slate-200 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Students
@@ -409,7 +409,7 @@ const handleCloseError = () => {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white dark:bg-black dark:text-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-600 dark:text-white border-slate-900 dark:border-slate-200 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Total Assignments
@@ -422,7 +422,7 @@ const handleCloseError = () => {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white dark:bg-black dark:text-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-600 dark:text-white border-slate-900 dark:border-slate-200 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Faculty Since
@@ -438,9 +438,10 @@ const handleCloseError = () => {
   </div>
   
 </div>
-                    <h2 className="text-xl font-bold mt-6 mb-4">Students</h2>
+                    <h2 className="text-xl font-bold mt-6 mb-4 dark:text-white">Students</h2>
 
                     <StudentsTable auth={auth} path={`/showStudentsForTeacher/${user.faculty_id}`}/>
+                    <div className="dark:border-white dark:border-b-2"></div>
                     {auth.role === 'Teacher' || auth.role === 'Substitute Teacher' && auth.faculty_id !== user.faculty_id ? (
                     <p></p>
                   ) : (

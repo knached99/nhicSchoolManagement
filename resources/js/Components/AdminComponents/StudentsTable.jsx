@@ -228,7 +228,7 @@ const columns = [
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      <div className="dark:bg-slate-800 bg-white p-5 rounded overflow-hidden sm:rounded-lg">
         <h1 className="m-3 text-center font-black text-xl dark:text-white">Students</h1>
         {auth.faculty && (
           (auth.faculty.role === 'Admin') && (
@@ -321,7 +321,7 @@ const columns = [
           <Paper sx={{ width: '100%', backgroundColor}}>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
-              sx={{backgroundColor, color: isDarkMode ? '#fff' : 'inherit'}}
+              sx={{backgroundColor: isDarkMode ? '#334155' : 'inherit', color: isDarkMode ? '#fff' : 'inherit'}}
                 rows={rows}
                 columns={columns}
                 pageSize={5}

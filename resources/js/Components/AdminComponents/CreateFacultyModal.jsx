@@ -51,7 +51,7 @@ export default function CreateFacultyModal() {
     setIsDarkMode(prefersDarkMode);
   }, []);
   
-  const backgroundColor = isDarkMode ? '#020617' : '#fff';
+  const backgroundColor = isDarkMode ? '#334155' : '#fff';
 
   // Form Intial Values
   const initialValues = {

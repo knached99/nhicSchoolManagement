@@ -32,14 +32,14 @@ export default function ResetPassword({ token, email }) {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel className="dark:text-white" htmlFor="email" value="Email" />
 
                     <TextInput
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full dark:bg-slate-700 dark:text-white"
                         autoComplete="username"
                         onChange={(e) => setData('email', e.target.value)}
                     />
@@ -48,14 +48,14 @@ export default function ResetPassword({ token, email }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel className="dark:text-white" htmlFor="password" value="Password" />
 
                     <TextInput
                         id="password"
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full dark:bg-slate-700 dark:text-white"
                         autoComplete="new-password"
                         isFocused={true}
                         onChange={(e) => setData('password', e.target.value)}
@@ -65,13 +65,13 @@ export default function ResetPassword({ token, email }) {
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
+                    <InputLabel className="dark:text-white" htmlFor="password_confirmation" value="Confirm Password" />
 
                     <TextInput
                         type="password"
                         name="password_confirmation"
                         value={data.password_confirmation}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full dark:bg-slate-700 dark:text-white"
                         autoComplete="new-password"
                         onChange={(e) => setData('password_confirmation', e.target.value)}
                     />
@@ -80,7 +80,7 @@ export default function ResetPassword({ token, email }) {
                 </div>
 
                 <div className="flex items-center justify-end mt-4">
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <PrimaryButton className="ms-4 dark:bg-indigo-500 dark:hover:bg-indigo-600" disabled={processing}>
                         Reset Password
                     </PrimaryButton>
                 </div>

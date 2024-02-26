@@ -311,7 +311,7 @@ export default function Student({auth, student}) {
         user={auth}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">Not Authorized</h2>}
       >
-       <h1 className="text-center font-normal text-2xl">You are not authorized to view this page. This student is not assigned to you. </h1>
+       <h1 className="text-center font-normal text-2xl dark:text-white">You are not authorized to view this page. This student is not assigned to you. </h1>
       </AdminLayout>
             
 

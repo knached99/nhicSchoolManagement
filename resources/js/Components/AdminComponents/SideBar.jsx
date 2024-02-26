@@ -99,7 +99,7 @@ export default function SideBar({auth}) {
     setIsDarkMode(prefersDarkMode);
   }, []);
   
-  const backgroundColor = isDarkMode ? '#111827' : '#10b981';
+  const backgroundColor = isDarkMode ? '#334155' : '#10b981';
 
 
   const handleDrawerOpen = () => {

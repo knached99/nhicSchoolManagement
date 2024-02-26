@@ -107,7 +107,7 @@ const deleteAdminUser = async (userId) => {
       setIsDarkMode(prefersDarkMode);
     }, []);
     
-    const backgroundColor = isDarkMode ? '#000' : 'background.paper';
+    const backgroundColor = isDarkMode ? '#1e293b' : 'background.paper';
   
 
     const handleCloseSuccess = () => {
@@ -153,7 +153,7 @@ const deleteAdminUser = async (userId) => {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      <div className="dark:bg-slate-800 bg-white p-5 rounded overflow-hidden sm:rounded-lg">
       {error && (
                             <Box   style={{
                               padding: '1rem',
@@ -218,7 +218,7 @@ const deleteAdminUser = async (userId) => {
             No faculty users created yet
           </div>
         ) : (
-            <Paper sx={{ width: '100%', backgroundColor }}>
+            <Paper sx={{ width: '100%', backgroundColor: isDarkMode ? '#334155' : 'inherit' }}>
             <TableContainer>
               <Table>
                 <TableHead>

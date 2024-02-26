@@ -21,7 +21,7 @@ export default function PasswordReset({status}) {
         <FacultyGuestLayout>
                <Head title="Forgot Password" />
 
-<div className="mb-4 text-sm text-gray-600">
+<div className="mb-4 text-lg text-gray-600 dark:text-white">
     Forgot your password? No problem. Just let us know your email address and we will email you a password
     reset link that will allow you to choose a new one.
 </div>
@@ -34,7 +34,7 @@ export default function PasswordReset({status}) {
         type="email"
         name="email"
         value={data.email}
-        className="mt-1 block w-full"
+        className="mt-1 block w-full dark:bg-slate-800 dark:text-white"
         isFocused={true}
         onChange={(e) => setData('email', e.target.value)}
     />
@@ -42,7 +42,7 @@ export default function PasswordReset({status}) {
     <InputError message={errors.email} className="mt-2" />
 
     <div className="flex items-center justify-end mt-4">
-        <PrimaryButton className="ms-4" disabled={processing}>
+        <PrimaryButton className="ms-4 dark:bg-indigo-500 dark:hover:bg-indigo-600" disabled={processing}>
             Email Password Reset Link
         </PrimaryButton>
     </div>

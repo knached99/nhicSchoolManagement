@@ -24,10 +24,20 @@ export default function MyStudentsTable({auth}) {
   const [success, setSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const viewStudentDetails = (student_id) => {
   window.location.href = `/student/${student_id}/view`;
 }
+
+useEffect(() => {
+  // Check if the system is in dark mode
+  const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  setIsDarkMode(prefersDarkMode);
+}, []);
+
+const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
 
   const columns = [
@@ -66,7 +76,7 @@ export default function MyStudentsTable({auth}) {
     renderCell: (params) => (
       <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
         <IconButton className="hover:text-emerald-500" disabled={auth.faculty.faculty_id !== params.row.faculty_id} onClick={() => viewStudentDetails(params.row.student_id)}>
-          <VisibilityOutlinedIcon />
+          <VisibilityOutlinedIcon style={{color: isDarkMode ? '#fff' : 'inherit'}} />
         </IconButton>
       </Tooltip>
     ),
@@ -80,7 +90,7 @@ export default function MyStudentsTable({auth}) {
           return (
             <Tooltip title={`Delete ${params.row.first_name} ${params.row.last_name} from the system`}>
               <IconButton className="hover:text-red-500" onClick={() => deleteStudent(params.row.student_id)}>
-                <DeleteOutlineOutlinedIcon />
+                <DeleteOutlineOutlinedIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}/>
               </IconButton>
             </Tooltip>
           );
@@ -206,8 +216,8 @@ const deleteMyStudents = async () => {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="dark:bg-black bg-white p-5 rounded overflow-hidden sm:rounded-lg">
-        <h1 className="m-3 text-center font-black text-xl">My Students</h1>
+      <div className="dark:bg-slate-700 bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+        <h1 className="m-3 text-center font-black text-xl dark:text-white">My Students</h1>
         
         {auth.faculty && (
           (auth.faculty.role === 'Admin' ) && (
@@ -296,10 +306,11 @@ const deleteMyStudents = async () => {
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">You have not been assigned any students yet, check back here later</div>
         ) : (
-          <Paper sx={{ width: '100%', backgroundColor: '#fff' }}>
+          <Paper sx={{ width: '100%', backgroundColor}}>
             <div style={{ height: 400, width: '100%' }}>
               
               <DataGrid
+              style={{color: isDarkMode ? '#fff' : 'inherit'}}
                 rows={rows}
                 columns={columns}
                 pageSize={5}

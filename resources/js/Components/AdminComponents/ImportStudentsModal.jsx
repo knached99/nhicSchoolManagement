@@ -113,7 +113,7 @@ export default function ImportStudentsModal() {
     setIsDarkMode(prefersDarkMode);
   }, []);
   
-  const backgroundColor = isDarkMode ? '#0f172a' : 'background.paper';
+  const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
 
 const style = {

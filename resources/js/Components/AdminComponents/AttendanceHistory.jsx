@@ -55,7 +55,7 @@ useEffect(() => {
   setIsDarkMode(prefersDarkMode);
 }, []);
 
-const backgroundColor = isDarkMode ? '#000' : 'background.paper';
+const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
 
 
@@ -75,7 +75,7 @@ const VirtuosoTableComponents = {
 
   function fixedHeaderContent() {
     return (
-      <TableRow>
+      <TableRow > 
         {columns.map((column) => (
           <TableCell
             key={column.dataKey}
@@ -96,7 +96,7 @@ const VirtuosoTableComponents = {
   function rowContent(_index, row) {
     return (
         <>
-        <TableCell key="created_at" align="left">
+        <TableCell style={{color: isDarkMode ? '#fff' : 'inherit'}} key="created_at" align="left">
         {new Date(row.created_at).toLocaleString('en-US', {
       weekday: 'long',
       year: 'numeric',
@@ -119,6 +119,7 @@ const VirtuosoTableComponents = {
      <h1 className="text-center text-lg font-semibold dark:text-white">Attendance History</h1>
      {rows && rows.length > 0 ? (
       <TableVirtuoso
+      style={{backgroundColor}}
       data={rows}
       components={VirtuosoTableComponents}
       fixedHeaderContent={fixedHeaderContent}
