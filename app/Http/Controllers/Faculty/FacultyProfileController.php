@@ -141,10 +141,10 @@ class FacultyProfileController extends Controller {
         }
     
         // Read Exif data after stripping
-        // $exifAfter = exif_read_data($filePath);
+        $exifAfter = exif_read_data($filePath);
     
         // Log Exif information before and after stripping
-        // \Log::info(['Exif Before Stripping' => $exifBefore, 'Exif After Stripping' => $exifAfter]);
+        \Log::info(['Exif Before Stripping' => $exifBefore, 'Exif After Stripping' => $exifAfter]);
     }
     
 

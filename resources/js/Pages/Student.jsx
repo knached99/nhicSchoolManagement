@@ -1,5 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import { Head, Link } from '@inertiajs/react';
+import states from '@/constants/states';
 
 import React, {useState, useEffect} from 'react'
 import Avatar from '@mui/material/Avatar';
@@ -25,15 +26,19 @@ import FormHelperText  from '@mui/material/FormHelperText';
 import CircularProgress from '@mui/material/CircularProgress';
 // ICONS 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import PlaceIcon from '@mui/icons-material/Place';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import MailOutlineOutlinedIcon from '@mui/icons-material/MailOutlineOutlined';
 import PhoneIphoneOutlinedIcon from '@mui/icons-material/PhoneIphoneOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined';
-import Face6OutlinedIcon from '@mui/icons-material/Face6Outlined';
-import Face3OutlinedIcon from '@mui/icons-material/Face3Outlined';
+import MaleIcon from '@mui/icons-material/Male';
+import FemaleIcon from '@mui/icons-material/Female';
 import CakeOutlinedIcon from '@mui/icons-material/CakeOutlined';
+import NumbersIcon from '@mui/icons-material/Numbers';
 import PsychologyAltOutlinedIcon from '@mui/icons-material/PsychologyAltOutlined';
 import ContactEmergencyOutlinedIcon from '@mui/icons-material/ContactEmergencyOutlined';
 import LocalHospitalOutlinedIcon from '@mui/icons-material/LocalHospitalOutlined';
@@ -49,6 +54,10 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 
 // components 
+
+import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
+import { InputText } from 'primereact/inputtext';
+
 import AttendanceHistory from '@/Components/AdminComponents/AttendanceHistory';
 
 export default function Student({auth, student}) {
@@ -160,37 +169,7 @@ export default function Student({auth, student}) {
     
 
 
-    const editStudentInformation = async (values, { setSubmitting }) => {
-      try {
-        const response = await axios.put(`/editStudentInformation/${values.student_id}`, values, {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
     
-        if (response.data.errors) {
-          setError(response.data.errors);
-          setErrorOpen(true);
-        } else if (response.data.success) {
-          setSuccess(response.data.success);
-          setSuccessOpen(true);
-    
-          // Reset form values
-          Object.keys(values).forEach((key) => {
-            values[key] = '';
-          });
-          window.setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }
-      } catch (error) {
-        setError(error.message || 'Unable to edit student information, something went wrong');
-        setErrorOpen(true);
-      } finally {
-        setSubmitting(false);
-      }
-    };
-
 
     const assignTeacherToStudent = async (values, { setSubmitting }) => {
       try {
@@ -300,6 +279,81 @@ export default function Student({auth, student}) {
       children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
     };
   }
+
+  const studentInitialValues = {
+    student_id : student.student_id, 
+    date_of_birth: student.date_of_birth,
+    address: student.address, 
+    street_address_2 : student.street_address_2,
+    city: student.city, 
+    state: student.state, 
+    zip: student.zip, 
+    level: student.level, 
+    gender: student.gender, 
+    allergies_or_special_needs: student.allergies_or_special_needs,
+    emergency_contact_person: student.emergency_contact_person,
+    emergency_contact_hospital: student.emergency_contact_hospital,
+    faculty_id: student.faculty_id, 
+
+  };
+
+  const studentValidationSchema = Yup.object().shape({
+    date_of_birth:  Yup.date()
+    .max(new Date(), 'Date of Birth cannot be today or a future date')
+    .nullable(),
+    address: Yup.string().nullable().matches(/^[a-zA-Z0-9\s,.-]+$/, 'Invalid address'),
+    street_address_2: Yup.string().nullable().matches(/^[a-zA-Z0-9\s]+$/, 'Invalid apartment or unit number'),
+    city: Yup.string().nullable(),
+    state: Yup.string().nullable(),
+    zip: Yup.string()
+    .matches(/^\d{5}$/, 'Must be a valid 5-digit ZIP code')
+    .nullable(),
+    level: Yup.string().nullable(),
+    gender: Yup.string().nullable(),
+    allergies_or_special_needs: Yup.string(),
+    emergency_contact_person: Yup.string(),
+    emergency_contact_hospital: Yup.string()
+
+  });
+
+  const editStudentInformation = async (values, { setSubmitting }) => {
+    console.log('Submitting Form: ' + values);
+
+    try {
+      const response = await axios.put(`/editStudentInformation/${values.student_id}`, values, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      });
+
+
+      console.log('Response: ' + response);
+  
+      if (response.data.errors) {
+        setError(response.data.errors);
+        console.log('Submission Error: ' + response.data.errors);
+        setErrorOpen(true);
+      } else if (response.data.success) {
+        setSuccess(response.data.success);
+        console.log('Submission Success: ' + response.data.success);
+        setSuccessOpen(true);
+  
+        // Reset form values
+        Object.keys(values).forEach((key) => {
+          values[key] = '';
+        });
+        window.setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    } catch (error) {
+      setError(error.message || 'Unable to edit student information, something went wrong');
+      console.log('Error Messages: ' + error.message);
+      setErrorOpen(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   
 
@@ -472,106 +526,277 @@ export default function Student({auth, student}) {
                         <span className="text-gray-700 dark:text-white uppercase font-bold tracking-wider mb-2">Student Bio</span>
                         <Box sx={{ width: '100%', maxWidth: 360, bgcolor: backgroundColor }}>
       <nav aria-label="main mailbox folders">
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
-                <Tooltip title="Street Address" arrow>
-                <HomeOutlinedIcon/> 
-                </Tooltip>
-              </ListItemIcon>
-              <ListItemText primary={`${student.address}${student.street_address_2 ? `, ${student.street_address_2}` : ''}, ${student.city}, ${student.state}, ${student.zip}`} />
-            </ListItemButton>
-          </ListItem>
-          <Divider />
+        
+       
+       <Formik initialValues={studentInitialValues} validationSchema={studentValidationSchema} onSubmit={editStudentInformation}>
+            {({
+            values, 
+            errors,
+            touched,
+            handleSubmit,
+            handleBlur,
+            handleChange,
+            isValid,
+            dirty,
+            isSubmitting,
+          }) => (
+       <Form onSubmit={handleSubmit} autoComplete="off">
 
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
-               {student.gender &&
-                student.gender === 'Male' && (
-                  <>
-                  <Tooltip title="Gender" arrow>
-                  <Face6OutlinedIcon/>
-                  </Tooltip>
-                  </>
-                )
-               }
-               {
-                student.gender === 'Female' && (
-                  <>
-                  <Tooltip title="Gender" arrow>
-                  <Face3OutlinedIcon/>
-                  </Tooltip>
-                  </> 
-                )
-               }
-              </ListItemIcon>
-              <ListItemText primary={student.gender ? student.gender : 'N/A'} />
-            </ListItemButton>
-          </ListItem>
-          <Divider />
+      <div className="card m-3">
+            <Inplace closable>
+                <InplaceDisplay>
+                   <CakeOutlinedIcon style={{margin: 5}}/>
+              {`${student.date_of_birth}` || 'Edit date of birth'}
+              </InplaceDisplay>
+                <InplaceContent>
+                    <InputText
+                     style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.date_of_birth && errors.date_of_birth && { border: '1px solid #ef4444' }),
+                  }}
+                    id="date_of_birth" name="date_of_birth" type="date" value={values.date_of_birth} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                <FormHelperText style={{color: '#ef4444'}}>{touched.date_of_birth && errors.date_of_birth}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
 
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
-                <Tooltip title="Birthday" arrow>
-                <CakeOutlinedIcon/> 
-                </Tooltip>
-              </ListItemIcon>
-              <ListItemText primary={student.date_of_birth ? student.date_of_birth : 'N/A'} />
-            </ListItemButton>
-          </ListItem>
-          <Divider />
+        <div className="card m-3">
+            <Inplace closable>
+                <InplaceDisplay>
+                {student.gender === 'Male' && <MaleIcon style={{ margin: 5 }} />}
+                {student.gender === 'Female' && <FemaleIcon style={{ margin: 5 }} />}
+                  {`${student.gender}` || 'Edit Gender'}</InplaceDisplay>
+                <InplaceContent>
+                <select
+                 style={{
+                  width: '100%',
+                  margin: 10,
+                  ...(touched.gender && errors.gender && { border: '1px solid #ef4444' }),
+              }}
+                id="gender" name="gender" onChange={handleChange} onBlur={handleBlur} className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.gender && errors.gender ? 'border-red-500 border-1' : ''}`}>
+                  <option disabled selected>{values.gender ? values.gender : 'Select Gender'}</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                <FormHelperText style={{color: '#ef4444'}}>{touched.gender && errors.gender}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
 
+        <div className="card m-3">
+            <Inplace closable>
+                <InplaceDisplay>
+                  <GradeOutlinedIcon style={{margin: 5}}/>
+                  {`${student.level}` || 'Edit Level'}
+                  </InplaceDisplay>
+                <InplaceContent>
+                <select 
+                style={{
+                  width: '100%',
+                  margin: 10,
+                  ...(touched.level && errors.level && { border: '1px solid #ef4444' }),
+              }}
+                id="level" name="level" onChange={handleChange} onBlur={handleBlur} className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.gender && errors.gender ? 'border-red-500 border-1' : ''}`}>
+                  <option disabled selected>{values.level ? values.level : 'Select Level'}</option>
+                  <option value="1">Level 1</option>
+                  <option value="2">Level 2</option>
+                  <option value="3">Level 3</option>
+                  <option value="4">Level 4</option>
+                  <option value="5">Level 5</option>
+                </select>
+                <FormHelperText style={{color: '#ef4444'}}>{touched.level && errors.level}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
 
-        <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
-                <Tooltip title="Level" arrow>
-                <GradeOutlinedIcon/> 
-                </Tooltip>
-              </ListItemIcon>
-              <ListItemText primary={student.level ? student.level : 'N/A'} />
-            </ListItemButton>
-          </ListItem>
-          <Divider />
+        <div className="card m-3">
+            <Inplace closable>
+                <InplaceDisplay>
+                  <HomeOutlinedIcon style={{margin: 5}}/>
+                  {`${student.address}` || 'Edit Street Address'}
+                  </InplaceDisplay>
+                <InplaceContent>
+                    <InputText 
+                     style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.address && errors.address && { border: '1px solid #ef4444' }),
+                  }}
+                    id="address" name="address" value={values.address} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                    <FormHelperText style={{color: '#ef4444', fontSize: 18}}>{touched.address && errors.address}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
+        <div className="card m-3">
+            <Inplace closable>
+            <InplaceDisplay>
+              <ApartmentIcon style={{margin: 5}}/>
+              {`${student.street_address_2 ? values.street_address_2 : ''}` || 'Edit Apartment/Unit Number'}
+              </InplaceDisplay>
+                <InplaceContent>
+                    <InputText
+                    style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.street_address_2 && errors.street_address_2 && { border: '1px solid #ef4444' }),
+                  }}
+                    id="street_address_2" name="street_address_2" value={values.street_address_2 ? values.street_address_2 : ''} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                  <FormHelperText style={{color: '#ef4444'}}>{touched.street_address_2 && errors.street_address_2}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
 
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
-                <Tooltip title="Allergies or Special Needs" arrow>
-                <PsychologyAltOutlinedIcon/> 
-                </Tooltip>
-              </ListItemIcon>
-              <ListItemText primary={student.allergies_or_special_needs ? student.allergies_or_special_needs : 'N/A'} />
-            </ListItemButton>
-          </ListItem>
-          <Divider />
+        <div className="card m-3">
+            <Inplace closable>
+            <InplaceDisplay>
+              <LocationCityIcon style={{margin: 5}}/>
+              {`${student.city ? student.city : ''}` || 'Edit City'}
+              </InplaceDisplay>
+                <InplaceContent>
+                    <InputText
+                    id="city"
+                    name="city" 
+                     style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.city && errors.city && { border: '1px solid #ef4444' }),
+                  }}
+                    value={values.city ? values.city : ''} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                  <FormHelperText style={{color: '#ef4444'}}>{touched.city && errors.city}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
 
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
-                <Tooltip title="Emergency Contact Person" arrow>
-                <ContactEmergencyOutlinedIcon/> 
-                </Tooltip>
-              </ListItemIcon>
-              <ListItemText primary={student.emergency_contact_person ? student.emergency_contact_person : 'N/A'} />
-            </ListItemButton>
-          </ListItem>
-          <Divider />
+        <div className="card m-3">
+            <Inplace closable>
+            <InplaceDisplay>
+              <PlaceIcon style={{margin: 5}}/>
+              {`${student.state ? student.state : ''}` || 'Edit State'}
+              </InplaceDisplay>
+                <InplaceContent>
+                  <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.state && errors.state ? 'border-red-500 border-1' : ''}`}
+                    id="state"
+                    name="state"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                  >
+                    <option disabled selected>{values.state}</option>
+                    {states.map((state) => (
+                <option key={state.abbreviation} value={state.abbreviation}>
+                  {state.name}
+                </option>
+              ))}
+                    
+                  </select>
 
-          <ListItem disablePadding>
-            <ListItemButton>
-              <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
-                <Tooltip title="Emergency Contact Hospital" arrow>
-                <LocalHospitalOutlinedIcon/> 
-                </Tooltip>
-              </ListItemIcon>
-              <ListItemText primary={student.emergency_contact_hospital ? student.emergency_contact_hospital : 'N/A'} />
-            </ListItemButton>
-          </ListItem>
-          </List>
+                    <FormHelperText style={{color: '#ef4444'}}>{touched.state && errors.state}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
+
+        <div className="card m-3">
+            <Inplace closable>
+            <InplaceDisplay>
+              <NumbersIcon style={{margin: 5}}/>
+              {`${student.zip ? student.zip : ''}` || 'Edit Zipcode'}
+              </InplaceDisplay>
+                <InplaceContent>
+                    <InputText
+                    id="zip"
+                    name="zip" 
+                     style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.zip && errors.zip && { border: '1px solid #ef4444' }),
+                  }}
+                    value={values.zip ? values.zip : ''} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                <FormHelperText style={{color: '#ef4444'}}>{touched.zip && errors.zip}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
+
+        <div className="card m-3">
+            <Inplace closable>
+            <InplaceDisplay>
+              <PsychologyAltOutlinedIcon style={{margin: 5}}/>
+              {`${values.allergies_or_special_needs ? values.allergies_or_special_needs : ''}` || 'Edit allergies or special needs'}</InplaceDisplay>
+                <InplaceContent>
+                    <InputText 
+                    id="allergies_or_special_needs"
+                    name="allergies_or_special_needs"
+                     style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.allergies_or_special_needs && errors.allergies_or_special_needs && { border: '1px solid #ef4444' }),
+                  }}
+                    value={values.allergies_or_special_needs ? values.allergies_or_special_needs : ''} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                </InplaceContent>
+                <FormHelperText style={{color: '#ef4444'}}>{touched.allergies_or_special_needs && errors.allergies_or_special_needs}</FormHelperText>
+            </Inplace>
+        </div>
+
+        <div className="card m-3">
+            <Inplace closable>
+            <InplaceDisplay>
+              <ContactEmergencyOutlinedIcon style={{margin: 5}} />
+              {`${values.emergency_contact_person ? values.emergency_contact_person : ''}` || 'Edit emergency contact person'}</InplaceDisplay>
+                <InplaceContent>
+                    <InputText 
+                    id="emergency_contact_person"
+                    name="emergency_contact_person"
+                    style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.emergency_contact_person && errors.emergency_contact_person && { border: '1px solid #ef4444' }),
+                  }}
+                    value={values.emergency_contact_person ? values.emergency_contact_person : ''} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                  <FormHelperText style={{color: '#ef4444'}}>{touched.emergency_contact_person && errors.emergency_contact_person}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
+
+        <div className="card m-3">
+            <Inplace closable>
+            <InplaceDisplay>
+              <LocalHospitalOutlinedIcon style={{margin: 5}}/>
+              {`${values.emergency_contact_hospital ? values.emergency_contact_hospital : ''}` || 'Edit emergency contact hospital'}</InplaceDisplay>
+                <InplaceContent>
+                    <InputText 
+                    id="emergency_contact_hospital"
+                    name="emergency_contact_hospital"
+                    style={{
+                      width: '100%',
+                      margin: 10,
+                      ...(touched.emergency_contact_hospital && errors.emergency_contact_hospital && { border: '1px solid #ef4444' }),
+                  }}
+                    value={values.emergency_contact_hospital ? values.emergency_contact_hospital : ''} onChange={handleChange} onBlur={handleBlur} autoFocus />
+                <FormHelperText style={{color:'#ef4444'}}>{touched.emergency_contact_hospital && errors.emergency_contact_hospital}</FormHelperText>
+                </InplaceContent>
+            </Inplace>
+        </div>
+        <Button
+        type="submit"
+        variant="contained"
+        style={{
+          color: 'white',
+          width: '100%',
+          backgroundColor: isSubmitting ? '#l66534' : '#3b82f6',
+          padding: 15,
+          marginTop: 10,
+        }}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <CircularProgress size={24} style={{ color: '#fff' }} />
+        ) : (
+          <>Save</>
+        )}
+      </Button>
+
+       </Form>
+       )}
+       </Formik>
 
         
       </nav>
