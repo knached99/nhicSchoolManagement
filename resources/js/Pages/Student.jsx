@@ -5,7 +5,9 @@ import states from '@/constants/states';
 import React, {useState, useEffect} from 'react'
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
+import { Button } from 'primereact/button';
+
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
@@ -155,21 +157,6 @@ export default function Student({auth, student}) {
     });
 
 
-    const editStudentValues = {
-      student_id: student.student_id, 
-      faculty_id: student.faculty_id, 
-      level: student.level 
-    };
-
-    const editStudentSchema = Yup.object().shape({
-      student_id: Yup.string().required('Student ID Required'),
-      faculty_id: Yup.string(), 
-      level: Yup.string(),  // Fix the typo here
-    });
-    
-
-
-    
 
     const assignTeacherToStudent = async (values, { setSubmitting }) => {
       try {
@@ -246,9 +233,9 @@ export default function Student({auth, student}) {
         setError(null);
     };
 
-      const handleTogglePermissionsMenu = () => {
-    setOpenPermissionsMenu(!openPermissionsMenu);
-  };
+  //     const handleTogglePermissionsMenu = () => {
+  //   setOpenPermissionsMenu(!openPermissionsMenu);
+  // };
 
 
   function stringToColor(string) {
@@ -282,24 +269,24 @@ export default function Student({auth, student}) {
 
   const studentInitialValues = {
     student_id : student.student_id, 
-    date_of_birth: student.date_of_birth,
-    address: student.address, 
-    street_address_2 : student.street_address_2,
-    city: student.city, 
-    state: student.state, 
-    zip: student.zip, 
-    level: student.level, 
-    gender: student.gender, 
-    allergies_or_special_needs: student.allergies_or_special_needs,
-    emergency_contact_person: student.emergency_contact_person,
-    emergency_contact_hospital: student.emergency_contact_hospital,
-    faculty_id: student.faculty_id, 
+    date_of_birth: student.date_of_birth || '',
+    address: student.address || '', 
+    street_address_2 : student.street_address_2 || '',
+    city: student.city || '', 
+    state: student.state || '', 
+    zip: student.zip || '', 
+    level: student.level || '', 
+    gender: student.gender || '', 
+    allergies_or_special_needs: student.allergies_or_special_needs || '',
+    emergency_contact_person: student.emergency_contact_person || '',
+    emergency_contact_hospital: student.emergency_contact_hospital || '',
+    faculty_id: student.faculty_id || '', 
 
   };
 
   const studentValidationSchema = Yup.object().shape({
     date_of_birth:  Yup.date()
-    .max(new Date(), 'Date of Birth cannot be today or a future date')
+    .max(new Date(), 'Date of Birth cannot be a future date')
     .nullable(),
     address: Yup.string().nullable().matches(/^[a-zA-Z0-9\s,.-]+$/, 'Invalid address'),
     street_address_2: Yup.string().nullable().matches(/^[a-zA-Z0-9\s]+$/, 'Invalid apartment or unit number'),
@@ -317,7 +304,6 @@ export default function Student({auth, student}) {
   });
 
   const editStudentInformation = async (values, { setSubmitting }) => {
-    console.log('Submitting Form: ' + values);
 
     try {
       const response = await axios.put(`/editStudentInformation/${values.student_id}`, values, {
@@ -327,7 +313,6 @@ export default function Student({auth, student}) {
       });
 
 
-      console.log('Response: ' + response);
   
       if (response.data.errors) {
         setError(response.data.errors);
@@ -348,7 +333,6 @@ export default function Student({auth, student}) {
       }
     } catch (error) {
       setError(error.message || 'Unable to edit student information, something went wrong');
-      console.log('Error Messages: ' + error.message);
       setErrorOpen(true);
     } finally {
       setSubmitting(false);
@@ -365,10 +349,9 @@ export default function Student({auth, student}) {
         user={auth}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">Not Authorized</h2>}
       >
-       <h1 className="text-center font-normal text-2xl dark:text-white">You are not authorized to view this page. This student is not assigned to you. </h1>
+       <h1 className="text-center font-normal text-2xl dark:text-white"> You are not authorized to view this page. This student is not assigned to you. </h1>
       </AdminLayout>
             
-
       </>
     );
   }
@@ -541,6 +524,58 @@ export default function Student({auth, student}) {
             isSubmitting,
           }) => (
        <Form onSubmit={handleSubmit} autoComplete="off">
+               {error && (
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
+                                <Collapse in={errorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {error}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {success && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={successOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {success}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
 
       <div className="card m-3">
             <Inplace closable>
@@ -569,6 +604,7 @@ export default function Student({auth, student}) {
                   {`${student.gender}` || 'Edit Gender'}</InplaceDisplay>
                 <InplaceContent>
                 <select
+                value={values.gender || ''}
                  style={{
                   width: '100%',
                   margin: 10,
@@ -592,6 +628,7 @@ export default function Student({auth, student}) {
                   </InplaceDisplay>
                 <InplaceContent>
                 <select 
+                value={values.level || ''}
                 style={{
                   width: '100%',
                   margin: 10,
@@ -677,6 +714,7 @@ export default function Student({auth, student}) {
                 <InplaceContent>
                   <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.state && errors.state ? 'border-red-500 border-1' : ''}`}
                     id="state"
+                    value={values.state || ''}
                     name="state"
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -775,24 +813,23 @@ export default function Student({auth, student}) {
                 </InplaceContent>
             </Inplace>
         </div>
-        <Button
-        type="submit"
-        variant="contained"
-        style={{
-          color: 'white',
-          width: '100%',
-          backgroundColor: isSubmitting ? '#l66534' : '#3b82f6',
-          padding: 15,
-          marginTop: 10,
-        }}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <CircularProgress size={24} style={{ color: '#fff' }} />
-        ) : (
-          <>Save</>
-        )}
-      </Button>
+
+            <Button
+              label={isSubmitting ? 'Saving' : 'Save'}
+              loading={isSubmitting}
+              severity="info"
+              type="submit" // Make sure this is set to "submit"
+              style={{
+                color: 'white',
+                width: '100%',
+                backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#3b82f6',
+                padding: 15,
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+              disabled={isSubmitting}
+              />
+
 
        </Form>
        )}

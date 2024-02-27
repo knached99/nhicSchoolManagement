@@ -355,6 +355,38 @@ public function addStudent(Request $request){
     }
 }
 
+public function editStudentInformation(Request $request, $student_id){
+    try{
+        $student = Students::findOrFail($student_id);
+        
+        $student->update([
+            'date_of_birth' => $request->date_of_birth,
+            'address' => $request->address,
+            'street_address_2' => $request->street_address_2,
+            'city' => $request->city,
+            'state' => $request->state,
+            'zip' => $request->zip,
+            'level' => $request->level,
+            'gender' => $request->gender,
+            'allergies_or_special_needs' => $request->allergies_or_special_needs,
+            'emergency_contact_person' => $request->emergency_contact_person,
+            'emergency_contact_hospital' => $request->emergency_contact_hospital
+        ]);
+
+        return response()->json(['success'=>'Changes Saved']);
+
+    }
+    catch(ModelNotFoundException $e){
+        \Log::error(['Exception Caught: '=>$e->getMessage()]);
+        return response()->json(['errors'=>'Unable to save information, are you sure this student exists?']);
+    }
+
+    catch(QueryException $e){
+        \Log::error(['Exception Caught: '=>$e->getMessage()]);
+        return response()->json(['errors'=>'Unable to save information, something went wrong']);   
+    }
+}
+
 public function deleteStudent($student_id)
 {
     try {

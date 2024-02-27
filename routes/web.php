@@ -63,6 +63,7 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/faculty/profile/{faculty_id}/view', [FacultyDash::class, 'viewFacultyUser'])->name('faculty.profile.view');
     Route::post('/studentBatchImport', [FacultyDash::class, 'studentBatchImport'])->name('studentBatchImport');
     Route::post('/addStudent', [FacultyDash::class, 'addStudent'])->name('addStudent');
+    Route::put('/editStudentInformation/{student_id}', [FacultyDash::class, 'editStudentInformation'])->name('editStudentInformation');
     Route::delete('/deleteStudent/{student_id}', [FacultyDash::class, 'deleteStudent'])->name('deleteStudent');
     Route::delete('/deleteAllStudents', [FacultyDash::class, 'deleteAllStudents'])->name('deleteAllStudents');
     Route::delete('/deleteMyStudents', [FacultyDash::class, 'deleteMyStudents'])->name('deleteMyStudents');

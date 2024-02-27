@@ -600,7 +600,7 @@ const style = {
 
 
         <Button
-        label={isSubmitting ? null : 'Create User'}
+        label={isSubmitting ? 'creating user' : 'Create User'}
         loading={isSubmitting}
         severity="help"
                                         type="submit"
