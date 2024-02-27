@@ -3,7 +3,10 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
+
+import { Button } from 'primereact/button';
+        
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import * as Yup from 'yup';
@@ -30,6 +33,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import states from '@/constants/states';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+
+import { InputText } from 'primereact/inputtext';
+import { InputTextarea } from "primereact/inputtextarea";
 
   
 export default function AddStudentModal({refreshData}) {
@@ -84,7 +90,7 @@ export default function AddStudentModal({refreshData}) {
       setIsDarkMode(prefersDarkMode);
     }, []);
     
-    const backgroundColor = isDarkMode ? '#000' : 'background.paper';
+    const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
     
 
@@ -346,243 +352,278 @@ const style = {
             isSubmitting,
           }) => (
             <Form onSubmit={handleSubmit} autoComplete="off">
-            <Field as={TextField} value={values.first_name} helperText={touched.first_name && errors.first_name} error={touched.first_name && Boolean(errors.first_name)} onBlur={handleBlur} id="first_name" name="first_name" placeholder="First Name" fullWidth  style={{
-              margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }} />
-            <Field as={TextField} value={values.last_name} helperText={touched.last_name && errors.last_name} error={touched.last_name && Boolean(errors.last_name)} onBlur={handleBlur} id="last_name" name="last_name" placeholder="Last Name" fullWidth 
+ 
+            <InputText 
             style={{
+              width: '100%',
               margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }} 
+              ...(touched.first_name && errors.first_name && { border: '1px solid #ef4444' }),
+          }}
+          name="first_name"
+          value={values.first_name}
+          id="first_name"
+          placeholder="First Name"
+          onChange={handleChange}
+          onBlur={handleBlur}
             />
+            <span className="text-red-500">{touched.first_name && errors.first_name}</span>
+
+
+          <InputText 
+            style={{
+              width: '100%',
+              margin: 10,
+              ...(touched.last_name && errors.last_name && { border: '1px solid #ef4444' }),
+          }}
+          name="last_name"
+          value={values.last_name}
+          id="last_name"
+          placeholder="Last Name"
+          onChange={handleChange}
+          onBlur={handleBlur}
+            />
+            <span className="text-red-500">{touched.last_name && errors.last_name}</span>
+
 
              <InputLabel style={{color: isDarkMode ? '#fff' : 'inherit'}}>Date Of Birth</InputLabel>
 
-            <Field as={TextField} type="date" value={values.date_of_birth} helperText={touched.date_of_birth && errors.date_of_birth} error={touched.date_of_birth && Boolean(errors.date_of_birth)} onBlur={handleBlur} id="date_of_birth" name="date_of_birth" placeholder="Date Of Birth" fullWidth 
+             <InputText 
             style={{
+              width: '100%',
               margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }} 
+              ...(touched.date_of_birth && errors.date_of_birth && { border: '1px solid #ef4444' }),
+          }}
+          name="date_of_birth"
+          value={values.date_of_birth}
+          id="date_of_birth"
+          placeholder="Date Of Birth"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          type="date"
             />
-            <Field as={TextField} value={values.address} helperText={touched.address && errors.address} error={touched.address && Boolean(errors.address)} onBlur={handleBlur} id="address" name="address" placeholder="Address" fullWidth 
+            <span className="text-red-500">{touched.date_of_birth && errors.date_of_birth}</span>
+
+
+          <InputText 
             style={{
+              width: '100%',
               margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }} 
+              ...(touched.address && errors.address && { border: '1px solid #ef4444' }),
+          }}
+          name="address"
+          value={values.address}
+          id="address"
+          placeholder="Street Address"
+          onChange={handleChange}
+          onBlur={handleBlur}
             />
-            <Field as={TextField} value={values.street_address_2} helperText={touched.street_address_2 && errors.street_address_2} error={touched.street_address_2 && Boolean(errors.street_address_2)} onBlur={handleBlur} id="street_address_2" name="street_address_2" placeholder="Apartment/Unit Number" fullWidth 
-            style={{
-              margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }} 
-            />
-           
-            <Field as={TextField} value={values.city} helperText={touched.city && errors.city} error={touched.city && Boolean(errors.city)} onBlur={handleBlur} id="city" name="city" placeholder="City" fullWidth style={{
-              margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }}  />
-            <FormControl sx={{mx: 1, mt:3, mb:3, width: '100%' }}>
-            <InputLabel id="state" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select State</InputLabel>
-            <Select
-              labelId="state"
-              id="state"
-              name="state"
-              value={values.state}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={touched.state && Boolean(errors.state)}
-              style={{
-                margin: 10,
-                backgroundColor: isDarkMode ? '#334155' : 'inherit',
-              }} 
-            >
-              <MenuItem value="">
-                <em>Select a State</em>
-              </MenuItem>
-              {states.map((state) => (
-                <MenuItem key={state.abbreviation} value={state.abbreviation}>
-                  {state.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {touched.state && errors.state && (
-              <FormHelperText style={{color: 'red'}}>{errors.state}</FormHelperText>
-            )}
-          </FormControl>
-
-            <Field as={TextField} value={values.zip} helperText={touched.zip && errors.zip} error={touched.zip && Boolean(errors.zip)} onBlur={handleBlur} id="zip" name="zip" placeholder="Zip Code" fullWidth 
-            style={{
-              margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }} 
-            />
-            <FormControl sx={{mx: 1, mt:3, mb:3,  width: '100%'}}>
-              <InputLabel id="level" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select Level</InputLabel>
-              <Select
-              labelId="level"
-              id="level"
-              name="level"
-              value={values.level}
-              onChange={handleChange}
-              error={touched.level && Boolean(errors.level)}
-              onBlur={handleBlur}
-              style={{
-                margin: 10,
-                width: '100%',
-                backgroundColor: isDarkMode ? '#334155' : 'inherit',
-              }} 
-              >
-             <MenuItem value="">
-              <em>Select Level</em>
-             </MenuItem>
-             <MenuItem value="l">Level 1</MenuItem>
-              <MenuItem value="2">Level 2</MenuItem>
-              <MenuItem value="3">Level 3</MenuItem>
-              <MenuItem value="4">Level 4</MenuItem>
-              <MenuItem value="5">Level 5</MenuItem>
-              </Select>
-              {touched.level && errors.level && (
-              <FormHelperText style={{color: 'red'}}>{errors.level}</FormHelperText>
-            )}
-            </FormControl>
-              
-            <FormControl sx={{mx: 1, mt:3, mb:3, width: '100%'}}>
-              <InputLabel id="gender" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select Gender</InputLabel>
-              <Select
-              style={{
-                margin: 10,
-                width: '100%',
-                backgroundColor: isDarkMode ? '#334155' : 'inherit',
-              }} 
-
-              labelId="gender"
-              id="gender"
-              name="gender"
-              value={values.gender}
-              onChange={handleChange}
-              error={touched.gender && Boolean(errors.gender)}
-              onBlur={handleBlur}
-              >
-             <MenuItem value="">
-              <em>Select Gender</em>
-             </MenuItem>
-             <MenuItem value="Male">Male</MenuItem>
-              <MenuItem value="Female">Female</MenuItem>
-              </Select>
-              {touched.gender && errors.gender && (
-              <FormHelperText style={{color: 'red'}}>{errors.gender}</FormHelperText>
-            )}
-            </FormControl>
-
-            {loading ? <CircularProgress color="primary" /> : 
-            <FormControl sx={{ mx: 1, mt:3, mb:3,  width: '100%'}}>
-                            <InputLabel id="user_id">Select Parent</InputLabel>
-                            <Select
-                              labelId="user_id"
-                              id="user_id"
-                              name="user_id"
-                              value={values.user_id || ''}
-                              onChange={handleChange}
-                              style={{
-                                margin: 10,
-                                width: '100%',
-                                backgroundColor: isDarkMode ? '#334155' : 'inherit',
-                              }} 
-                            >
-                              <MenuItem value="">
-                                <em>Make a Selection</em>
-                              </MenuItem>
-                    
-                              {parents.map((parent) => (
-                                <MenuItem key={parent.user_id} value={parent.user_id}>
-                                  {parent.name} - {parent.email}
-                                </MenuItem>
-                              ))}
-                            </Select>
-            </FormControl>
-            }
-
-
-            {loading ? <CircularProgress color="primary" /> : 
-            <FormControl sx={{ mx: 1, mt:3, mb:3,  width: '100%'}}>
-                            <InputLabel id="faculty_id" style={{color: isDarkMode ? '#fff' : 'inherit'}}>Select Teacher</InputLabel>
-                            <Select
-                              labelId="faculty_id"
-                              id="faculty_id"
-                              name="faculty_id"
-                              value={values.faculty_id || ''}
-                              onChange={handleChange}
-                              style={{
-                                margin: 10,
-                                width: '100%',
-                                backgroundColor: isDarkMode ? '#334155' : 'inherit',
-                              }} 
-                            >
-                              <MenuItem value="">
-                                <em>Make a Selection</em>
-                              </MenuItem>
-                    
-                              {teachers.map((teacher) => (
-                                <MenuItem key={teacher.faculty_id} value={teacher.faculty_id}>
-                                  {teacher.name} - {teacher.email}
-                                </MenuItem>
-                              ))}
-                            </Select>
-            </FormControl>
-            }
+            <span className="text-red-500">{touched.address && errors.address}</span>
 
             
-            <Field as={Textarea} 
-            value={values.allergies_or_special_needs}
-             helperText={touched.allergies_or_special_needs && errors.allergies_or_special_needs} 
-             error={touched.zip && Boolean(errors.allergies_or_special_needs)} 
-             onBlur={handleBlur} 
-             id="allergies_or_special_needs" 
-             ame="allergies_or_special_needs" 
-             placeholder="Allergies or Special Needs" 
-             fullWidth 
-             style={{
+          <InputText 
+            style={{
+              width: '100%',
               margin: 10,
-              backgroundColor: isDarkMode ? '#334155' : 'inherit',
-            }} 
+              ...(touched.street_address_2 && errors.street_address_2 && { border: '1px solid #ef4444' }),
+          }}
+          name="street_address_2"
+          value={values.street_address_2}
+          id="street_address_2"
+          placeholder="Apartment/Unit Number"
+          onChange={handleChange}
+          onBlur={handleBlur}
             />
+            <span className="text-red-500">{touched.street_address_2 && errors.street_address_2}</span>
 
-          <Field as={TextField} value={values.emergency_contact_person} helperText={touched.emergency_contact_person && errors.emergency_contact_person} error={touched.emergency_contact_person && Boolean(errors.emergency_contact_person)} onBlur={handleBlur} id="emergency_contact_personp" name="emergency_contact_person" placeholder="emergency contact person" fullWidth 
-          style={{
-            margin: 10,
-            backgroundColor: isDarkMode ? '#334155' : 'inherit',
-          }} 
-           />
-          <Field as={TextField} value={values.emergency_contact_hospital} helperText={touched.emergency_contact_hospital && errors.emergency_contact_hospital} error={touched.emergency_contact_hospital && Boolean(errors.emergency_contact_hospital)} onBlur={handleBlur} id="emergency_contact_hospital" name="emergency_contact_hospital" placeholder="emergency contact hospital" fullWidth 
-          style={{
-            margin: 10,
-            backgroundColor: isDarkMode ? '#334155' : 'inherit',
-          }} 
-          />
+          <InputText 
+            style={{
+              width: '100%',
+              margin: 10,
+              ...(touched.city && errors.city && { border: '1px solid #ef4444' }),
+          }}
+          name="city"
+          value={values.city}
+          id="city"
+          placeholder="City"
+          onChange={handleChange}
+          onBlur={handleBlur}
+            />
+            <span className="text-red-500">{touched.city && errors.city}</span>
+
+            <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.state && errors.state ? 'border-red-500 border-1' : ''}`} 
+             name="state"
+             id="state"
+             onChange={handleChange}
+             onBlur={handleBlur}
+            >
+      
+              <option disabled selected>Select State</option>
+              {states.map((state) => (
+                <option key={state.abbreviation} value={state.abbreviation}>
+                  {state.name}
+                </option>
+              ))}
+            </select>
+            <span className="text-red-500">{touched.state && errors.state}</span>
+
+
+            <InputText 
+            style={{
+              width: '100%',
+              margin: 10,
+              ...(touched.zip && errors.zip && { border: '1px solid #ef4444' }),
+          }}
+          name="zip"
+          value={values.zip}
+          id="zip"
+          placeholder="Zip Code"
+          onChange={handleChange}
+          onBlur={handleBlur}
+            />
+            <span className="text-red-500">{touched.zip && errors.zip}</span>
+            
+
+
+            
+          <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.level && errors.level ? 'border-red-500 border-1' : ''}`} 
+             name="level"
+             id="level"
+             onChange={handleChange}
+             onBlur={handleBlur}
+            >
+      
+              <option disabled selected>Select Level</option>
+              <option value="l">Level 1</option>
+              <option value="2">Level 2</option>
+              <option value="3">Level 3</option>
+              <option value="4">Level 4</option>
+              <option value="5">Level 5</option>
+            </select>
+            <span className="text-red-500">{touched.level && errors.level}</span>
+
+
+            <select className={`p-3 m-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.gender && errors.gender ? 'border-red-500 border-1' : ''}`} 
+             name="gender"
+             id="gender"
+             onChange={handleChange}
+             onBlur={handleBlur}
+            >
+      
+              <option disabled selected>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            <span className="text-red-500">{touched.gender && errors.gender}</span>
+
+
+            {loading ? <CircularProgress color="primary" /> : 
+          <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.user_id && errors.user_id ? 'border-red-500 border-1' : ''}`} 
+          name="user_id"
+          id="user_id"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          >
+
+          <option disabled selected>Select Parent</option>
+            {parents.map((parent)=>(
+              <option key={parent.user_id} value={parent.user_id}>
+                {parent.name} - {parent.email}
+              </option>
+            ))}
+          </select>
+      
+            }
+
+
+            {loading ? <CircularProgress color="primary" /> : 
+            <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.faculty_id && errors.faculty_id ? 'border-red-500 border-1' : ''}`} 
+          name="faculty_id"
+          id="faculty_id"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          >
+
+          <option disabled selected>Select Teacher</option>
+            {teachers.map((teacher)=>(
+              <option key={teacher.faculty_id} value={teacher.faculty_id}>
+                {teacher.name} - {teacher.email}
+              </option>
+            ))}
+          </select>
+        }
+
+
+            
+        <InputTextarea 
+        rows={2} cols={30} 
+            style={{
+              width: '100%',
+              margin: 10,
+              ...(touched.allergies_or_special_needs && errors.allergies_or_special_needs && { border: '1px solid #ef4444' }),
+          }}
+          name="allergies_or_special_needs"
+          value={values.allergies_or_special_needs}
+          id="allergies_or_special_needs"
+          placeholder="allergies or special needs"
+          onChange={handleChange}
+          onBlur={handleBlur}
+            />
+            <span className="text-red-500">{touched.allergies_or_special_needs && errors.allergies_or_special_needs}</span>
+
+            <InputText 
+            style={{
+              width: '100%',
+              margin: 10,
+              ...(touched.allergies_or_special_needs && errors.emergency_contact_person && { border: '1px solid #ef4444' }),
+          }}
+          name="emergency_contact_person"
+          value={values.emergency_contact_person}
+          id="emergency_contact_person"
+          placeholder="emergency contact person"
+          onChange={handleChange}
+          onBlur={handleBlur}
+            />
+            <span className="text-red-500">{touched.emergency_contact_person && errors.emergency_contact_person}</span>
+
+
+            <InputText 
+            style={{
+              width: '100%',
+              margin: 10,
+              ...(touched.emergency_contact_hospital && errors.emergency_contact_hospital && { border: '1px solid #ef4444' }),
+          }}
+          name="emergency_contact_hospital"
+          value={values.emergency_contact_hospital}
+          id="emergency_contact_hospital"
+          placeholder="emergency contact hospital"
+          onChange={handleChange}
+          onBlur={handleBlur}
+            />
+            <span className="text-red-500">{touched.emergency_contact_hospital && errors.emergency_contact_hospital}</span>
 
 
 
         <Button
+        label={isSubmitting ? null : 'Create User'}
+        loading={isSubmitting}
+        severity="help"
                                         type="submit"
-                                        variant="contained"
                                         style={{
                                             color: 'white',
                                             width: '100%',
-                                            backgroundColor: isSubmitting || !isValid || !dirty ? '#l66534' : '#059669',
+                                            backgroundColor: isSubmitting || !isValid || !dirty && '#l66534',
                                             padding: 15,
                                             marginTop: 10,
                                         }}
                                         disabled={isSubmitting || !isValid || !dirty}
-                                    >
-                                        {isSubmitting ? (
+                                    />
+                                        {/* {isSubmitting ? (
                                             <CircularProgress size={24} style={{ color: '#fff' }} />
                                         ) : (
                                             <>
                                                Create User
                                             </>
-                                        )}
-                                    </Button>
+                                        )} */}
          </Form>
          )}
             </Formik>

@@ -72,19 +72,6 @@ export default function UpdateFacultyProfile({className = '' }) {
         }
     };
 
-       // useEffect for data refresh
-       useEffect(() => {
-        const fetchData = async () => {
-            // Fetch updated data from the server and update local state
-            const updatedData = await axios.get('/fetchFacultyData');
-          //setData(updatedData);
-        };
-
-        if (refreshData) {
-            fetchData();
-            setRefreshData(false); // Reset the flag
-        }
-    }, [refreshData]);
 
     const handleCloseSuccess = () => {
         setSuccessOpen(false);

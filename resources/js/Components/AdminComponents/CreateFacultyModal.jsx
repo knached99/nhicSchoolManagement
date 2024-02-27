@@ -217,7 +217,7 @@ export default function CreateFacultyModal() {
           </Typography>
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-description" sx={{ mt: 2 }}>
           As an administrative user, you have the ability to assign roles and privileges to different faculty users of this system.
-          <span className="text-indigo-800 font-semibold dark:text-orange-400">
+          <span className="text-indigo-800 font-semibold dark:text-purple-300 block">
           Upon successful user creation, the new user will get an email, notifying them that they've been assigned the role and will receive a temporary password to login with. 
           </span>
           </Typography>
