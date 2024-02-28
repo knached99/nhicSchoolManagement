@@ -118,12 +118,15 @@ export default function ImportStudentsModal() {
 
 const style = {
     position: 'absolute',
+    borderRadius: 5,
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: '100%',
+    maxWidth: 500,
     bgcolor: backgroundColor,
    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
+   border: 'none',
   p: 4,
   };
   
@@ -196,10 +199,10 @@ const style = {
                 <CloseIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}/>
             </IconButton>
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-title" variant="h6" component="h2">
-            Batch Student Import
+           <h1 className="font-black text-2xl"> Batch Student Import </h1>
           </Typography>
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-description" sx={{ mt: 2 }}>
-           You can import a batch of students from an excel spreadsheet.
+           <h5 className="font-semibold m-3">You can import multiple students from an excel spreadsheet.</h5>
           </Typography>
             <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={importStudents}>
             {({ values, errors, touched, handleSubmit, handleBlur, setFieldValue, isValid, dirty, isSubmitting }) => (

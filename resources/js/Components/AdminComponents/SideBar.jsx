@@ -88,10 +88,11 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function SideBar({auth}) {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
+
   useEffect(() => {
     // Check if the system is in dark mode
     const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;

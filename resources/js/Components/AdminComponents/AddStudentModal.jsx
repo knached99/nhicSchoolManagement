@@ -103,15 +103,15 @@ export default function AddStudentModal({refreshData}) {
 
 const style = {
   position: 'absolute',
+  borderRadius: 5,
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '90%', // Set to a percentage for responsiveness
-  maxWidth: 400, // Set a maximum width
+  width: '100%', // Set to a percentage for responsiveness
+  maxWidth: 800, // Set a maximum width
   maxHeight: '80vh', // Set a maximum height (80% of the viewport height)
   overflowY: 'auto', // Enable vertical scrolling when content exceeds the height
   bgcolor: backgroundColor,
-  border: '2px solid #000',
   boxShadow: 24,
   p: 4,
 };
@@ -277,8 +277,8 @@ const style = {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" style={{color: isDarkMode ? '#fff' : 'inherit'}} component="h2">
-              Add a Student 
+            <Typography id="transition-modal-title" variant="h6" style={{color: isDarkMode ? '#fff' : 'inherit'}} component="h1">
+             <h1 className="font-black text-2xl"> Add a Student </h1>
 
               {error && (
                             <Box sx={{ width: '100%' }}>
@@ -333,7 +333,11 @@ const style = {
             </IconButton>
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2, color: isDarkMode ? '#fff' : 'inherit' }}>
+           <h5 className="mb-5 font-bold">
+            <Alert severity="info">
             Add a student manually. Ensure all information typed is correct.
+            </Alert>
+           </h5>
             </Typography>
             <Formik initialValues={initialValues} validationSchema={validation} onSubmit={addStudent}>
             {({
@@ -602,7 +606,7 @@ const style = {
         <Button
         label={isSubmitting ? 'creating user' : 'Create User'}
         loading={isSubmitting}
-        severity="help"
+        severity="info"
                                         type="submit"
                                         style={{
                                             color: 'white',

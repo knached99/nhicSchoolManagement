@@ -1,8 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
+import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import Fade from '@mui/material/Fade';
 import { Button } from 'primereact/button';
 import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+
+
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,6 +34,7 @@ import Zoom from '@mui/material/Zoom';
 
 import { InputText } from 'primereact/inputtext';
         
+
         
 
 
@@ -51,7 +56,7 @@ export default function CreateFacultyModal() {
     setIsDarkMode(prefersDarkMode);
   }, []);
   
-  const backgroundColor = isDarkMode ? '#334155' : '#fff';
+  const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
   // Form Intial Values
   const initialValues = {
@@ -116,19 +121,20 @@ export default function CreateFacultyModal() {
 
     const style = {
         position: 'absolute',
+        borderRadius: 5,
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        width: '90%', // Set to a percentage for responsiveness
-        maxWidth: 400, // Set a maximum width
+        width: '100%', // Set to a percentage for responsiveness
+        maxWidth: 800, // Set a maximum width
         maxHeight: '80vh', // Set a maximum height (80% of the viewport height)
         overflowY: 'auto', // Enable vertical scrolling when content exceeds the height
-        bgcolor: backgroundColor,
-        border: isDarkMode ? '2px solid #fff' : '2px solid #000',
+        bgcolor: backgroundColor, // Apply dynamic background color
         boxShadow: 24,
         p: 4,
       };
 
+  
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
@@ -137,25 +143,22 @@ export default function CreateFacultyModal() {
             <AddCircleOutlineIcon style={{color: '#fff', fontSize: 35}}/>
         </IconButton>
     </Tooltip>
-      <Modal
-       open={open}
-       onClose={handleClose}
-       aria-labelledby="modal-modal-title"
-       aria-describedby="modal-modal-description"
-       style={{
-         display: 'flex',
-         alignItems: 'center',
-         justifyContent: 'center',
-       }}
+    <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+
       >
-        <Box   style={{
-          width: '100%',
-          maxWidth: '80%',
-          maxHeight: '80vh',
-          overflowY: 'auto',
-          padding: '1rem',
-          backgroundColor: backgroundColor
-        }}>
+        <Fade in={open}>
+        <Box sx={style}>
 
         {error && (
                             <Box   style={{
@@ -213,13 +216,16 @@ export default function CreateFacultyModal() {
                 <CloseIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}/>
             </IconButton>
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-title" variant="h6" component="h2">
-            Create a User
+           <h1 className="font-black text-2xl"> Create a User </h1>
           </Typography>
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-description" sx={{ mt: 2 }}>
-          As an administrative user, you have the ability to assign roles and privileges to different faculty users of this system.
-          <span className="text-indigo-800 font-semibold dark:text-purple-300 block">
-          Upon successful user creation, the new user will get an email, notifying them that they've been assigned the role and will receive a temporary password to login with. 
-          </span>
+         <h5 className="font-semibold m-5"> 
+         <Alert  severity="info">
+         <h5 className="mb-3 font-bold"> As an administrative user, you have the ability to assign roles and privileges to different faculty users of this system.</h5>
+            Upon successful user creation, the newly created user will get an email with instructions on how to login to the system.
+         </Alert>
+       
+          </h5>
           </Typography>
           <Formik initialValues={initialValues} validationSchema={validation} onSubmit={createFacultyRole}>
 
@@ -368,6 +374,7 @@ export default function CreateFacultyModal() {
          )}
          </Formik>
         </Box>
+        </Fade>
       </Modal>
     </div>
   )
