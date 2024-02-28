@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
 import { object, mixed } from 'yup';
 import { Formik, Form, Field } from 'formik';
@@ -31,6 +31,8 @@ export default function UpdateProfilePic({ className = '' }) {
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(true);
+
     // const [refreshData, setRefreshData] = useState(false); // handle state for refreshed data
     // const [previewImage, setPreviewImage] = useState(null);
 
@@ -161,6 +163,15 @@ export default function UpdateProfilePic({ className = '' }) {
         };
       }
 
+      useEffect(() => {
+        // Check if the system is in dark mode
+        const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+        setIsDarkMode(prefersDarkMode);
+      }, []);
+      
+      const color = isDarkMode ? '#fff' : 'inherit';
+
 
     return (
         <section className={className}>
@@ -248,7 +259,7 @@ export default function UpdateProfilePic({ className = '' }) {
                 <form onSubmit={handleSubmit} className="mt-6 space-y-6">
                     <Tooltip title="Upload Profile Picture" arrow placement="right">
                         <IconButton onClick={() => fileInputRef.current.click()}>
-                    <AddPhotoAlternateOutlinedIcon style={{ fontSize: 60 }} />
+                    <AddPhotoAlternateOutlinedIcon style={{ fontSize: 60, color: color }} />
                     </IconButton>
                     </Tooltip>
 
