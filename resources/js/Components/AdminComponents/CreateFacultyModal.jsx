@@ -222,7 +222,7 @@ export default function CreateFacultyModal() {
          <h5 className="font-semibold m-5"> 
          <Alert  severity="info">
          <h5 className="mb-3 font-bold"> As an administrative user, you have the ability to assign roles and privileges to different faculty users of this system.</h5>
-            Upon successful user creation, the newly created user will get an email with instructions on how to login to the system.
+            Upon successful user creation, the newly created user will get an email with login credentials so they can login to the system.
          </Alert>
        
           </h5>
