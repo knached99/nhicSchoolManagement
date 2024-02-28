@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import { Button } from 'primereact/button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
@@ -334,7 +334,17 @@ export default function CreateFacultyModal() {
         </FormGroup>
         </Collapse> */}
 
-        <Button
+        <Button 
+        type="submit"
+        label={isSubmitting ? 'creating user' : 'create user'}
+        disabled={isSubmitting || !isValid || !dirty}
+        loading={isSubmitting}
+        severity="info"
+        style={{width: '100%', padding: 15}}
+        />
+
+
+        {/* <Button
                                         type="submit"
                                         variant="contained"
                                         style={{
@@ -353,7 +363,7 @@ export default function CreateFacultyModal() {
                                                Create User
                                             </>
                                         )}
-                                    </Button>
+                                    </Button> */}
          </Form>
          )}
          </Formik>
