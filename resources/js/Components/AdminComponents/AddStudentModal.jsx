@@ -265,7 +265,6 @@ const style = {
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
-        onClose={handleClose}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{
@@ -335,7 +334,7 @@ const style = {
             <Typography id="transition-modal-description" sx={{ mt: 2, color: isDarkMode ? '#fff' : 'inherit' }}>
            <h5 className="mb-5 font-bold">
             <Alert severity="info">
-            Add a student manually. Ensure all information typed is correct.
+            Add a student manually. Ensure all information typed is correctly.
             </Alert>
            </h5>
             </Typography>
@@ -384,8 +383,9 @@ const style = {
             />
             <span className="text-red-500">{touched.last_name && errors.last_name}</span>
 
+            <FormHelperText style={{color: isDarkMode ? '#fff' : 'inherit'}}>Date of Birth</FormHelperText>
 
-             <InputLabel style={{color: isDarkMode ? '#fff' : 'inherit'}}>Date Of Birth</InputLabel>
+             {/* <InputLabel style={{color: isDarkMode ? '#fff' : 'inherit'}}>Date Of Birth</InputLabel> */}
 
              <InputText 
             style={{
@@ -536,7 +536,7 @@ const style = {
 
 
             {loading ? <CircularProgress color="primary" /> : 
-            <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.faculty_id && errors.faculty_id ? 'border-red-500 border-1' : ''}`} 
+            <select className={`p-3 ml-3 mt-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.faculty_id && errors.faculty_id ? 'border-red-500 border-1' : ''}`} 
           name="faculty_id"
           id="faculty_id"
           onChange={handleChange}
@@ -604,7 +604,7 @@ const style = {
 
 
         <Button
-        label={isSubmitting ? 'creating user' : 'Create User'}
+        label={isSubmitting ? 'Adding Student' : 'Add Student'}
         loading={isSubmitting}
         severity="info"
                                         type="submit"

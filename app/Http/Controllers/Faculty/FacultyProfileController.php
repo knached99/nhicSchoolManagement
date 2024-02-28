@@ -108,6 +108,7 @@ class FacultyProfileController extends Controller {
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
+    
     private function stripExifData($filePath)
     {   
         $supportedFileTypes = ['image/jpeg']; // exif is only present in jpg/jpeg images so no need to include png 

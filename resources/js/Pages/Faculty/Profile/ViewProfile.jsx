@@ -1,6 +1,6 @@
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout'
 import React, {useState, useEffect} from 'react';
-import { useForm, usePage } from '@inertiajs/react';
+import { Link} from '@inertiajs/react';
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import Box from '@mui/material/Box';
@@ -34,6 +34,8 @@ import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined';
 import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+
 // Table 
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
@@ -169,6 +171,9 @@ const handleCloseError = () => {
             <div className="col-span-4 sm:col-span-3">
                 <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
+                    <Link href="/faculty/dash" class="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
+                    <ArrowBackOutlinedIcon/>  Back
+                  </Link>
                     {user.profile_pic ? (
                     <>
                     <Avatar alt="Profile Picture" src={`${profilePicPath}/${user.profile_pic}`} sx={{ width: 100, height: 100 }} />
@@ -187,7 +192,7 @@ const handleCloseError = () => {
                     </div>
                     <hr className="my-6 border-t border-gray-300" />
                     <div className="flex flex-col dark:text-white">
-                        <span className="dark:text-white text-gray-700 uppercase font-bold tracking-wider mb-2">Teacher Information</span>
+                        <span className="dark:text-white text-gray-700 uppercase font-bold tracking-wider mb-2">Team Member's Bio</span>
                         <ul>
                         {/* <li className="mb-2">Permissions:  <span className="font-normal">{user.role==='Admin' && 'All Permissions' || user.role==='Teacher' && formatPermissions(user.permissions)}</span></li>                       */}
                         <li className="mb-2"><SmartphoneOutlinedIcon/> {user.phone ?? 'N/A'}</li>
@@ -390,8 +395,8 @@ const handleCloseError = () => {
             </div>
             <div className="col-span-4 sm:col-span-9">
                 <div className="dark:bg-slate-800 bg-white shadow rounded-lg p-6">
-                    <h2 className="text-xl font-bold mb-4 dark:text-white">Teacher's Information</h2>
-                 
+                    <h2 className="text-xl font-bold mb-4 dark:text-white">Team Member's Information</h2>
+                    
                 
                         
 <div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">

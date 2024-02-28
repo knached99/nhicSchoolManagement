@@ -12,24 +12,15 @@ import Tooltip from '@mui/material/Tooltip';
 import CloseIcon from '@mui/icons-material/Close';
 import Collapse from '@mui/material/Collapse';
 import Alert from '@mui/material/Alert';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import TextField from '@mui/material/TextField';
+import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 
 import { InputMask } from 'primereact/inputmask';
         
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import FormHelperText  from '@mui/material/FormHelperText';
+
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import CircularProgress from '@mui/material/CircularProgress';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import Zoom from '@mui/material/Zoom';
 
 import { InputText } from 'primereact/inputtext';
@@ -91,11 +82,15 @@ export default function CreateFacultyModal() {
         } else if (response.data.success) {
             setSuccess(response.data.success);
             setSuccessOpen(true);
+            window.location.reload();
 
             // Reset form values
             Object.keys(values).forEach((key) => {
                 values[key] = '';
             });
+            window.setTimeout(() => {
+                window.location.reload();
+              }, 2000);
         }
     } catch (error) {
         setError(error.message || 'An unexpected error occurred');
@@ -138,16 +133,15 @@ export default function CreateFacultyModal() {
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
-    <Tooltip title="Create Faculty User" TransitionComponent={Zoom}>
+    <Tooltip title="Invite Team Member" TransitionComponent={Zoom}>
         <IconButton onClick={handleOpen} className="hover:text-slate-100">
-            <AddCircleOutlineIcon style={{color: '#fff', fontSize: 35}}/>
+            <PersonAddAltOutlinedIcon style={{color: '#fff', fontSize: 35}}/>
         </IconButton>
     </Tooltip>
     <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
-        onClose={handleClose}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{
@@ -216,13 +210,14 @@ export default function CreateFacultyModal() {
                 <CloseIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}/>
             </IconButton>
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-title" variant="h6" component="h2">
-           <h1 className="font-black text-2xl"> Create a User </h1>
+           <h1 className="font-black text-2xl"> Invite a team member to this organization </h1>
           </Typography>
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-description" sx={{ mt: 2 }}>
+          <h5 className="mb-3 font-bold"> As an administrative user, you have the ability to assign roles and privileges to different faculty users of this system.</h5>
+
          <h5 className="font-semibold m-5"> 
          <Alert  severity="info">
-         <h5 className="mb-3 font-bold"> As an administrative user, you have the ability to assign roles and privileges to different faculty users of this system.</h5>
-            Upon successful user creation, the newly created user will get an email with login credentials so they can login to the system.
+            Upon invitation, the invited user will get an email with login credentials so they can login to the system.
          </Alert>
        
           </h5>
@@ -294,11 +289,10 @@ export default function CreateFacultyModal() {
             {/* <Field as={TextField} onChange={handleChange} value={values.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone" placeholder="Phone Number" fullWidth style={{margin: 5}} /> */}
             <select name="role" 
             id="role"
-            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded p-2"
+            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded border-none outline-none p-3"
             value={values.role}
             onChange={handleChange}
             >
-            <option disabled selected>Select Role</option>
             <option value="Admin">Admin</option>
             <option value="Teacher">Teacher</option>
             <option value="Assistant Teacher">Assistant Teacher</option>

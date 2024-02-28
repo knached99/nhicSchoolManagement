@@ -19,9 +19,8 @@ import FormHelperText  from '@mui/material/FormHelperText';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CircularProgress from '@mui/material/CircularProgress';
-import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { styled } from '@mui/material/styles';
-import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import Zoom from '@mui/material/Zoom';
 
 
@@ -130,19 +129,29 @@ const style = {
   p: 4,
   };
   
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
 
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ">
      <Tooltip title="Batch Import Students" TransitionComponent={Zoom} >
         <IconButton onClick={handleOpen} className="hover:text-slate-100">
-        <FileUploadOutlinedIcon style={{color: '#fff', fontSize: '35'}}/>
+        <FileDownloadOutlinedIcon style={{color: '#fff', fontSize: '35'}}/>
         </IconButton>
      </Tooltip>
 
      <Modal
         open={open}
-        onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -204,51 +213,39 @@ const style = {
           <Typography style={{color: isDarkMode ? '#fff' : 'inherit'}} id="modal-modal-description" sx={{ mt: 2 }}>
            <h5 className="font-semibold m-3">You can import multiple students from an excel spreadsheet.</h5>
           </Typography>
-            <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={importStudents}>
-            {({ values, errors, touched, handleSubmit, handleBlur, setFieldValue, isValid, dirty, isSubmitting }) => (
-              <Form onSubmit={handleSubmit} autoComplete="off">
-                <Field 
-                type="file"
-                name="file"
-                id="file"
-                fullWidth
-                accept=".xls, .xlsx"
-                label="File"
-                component={TextField}
-                helperText={touched.file && errors.file}
-                error={touched.file && Boolean(errors.file)}
-                onChange={(e) => setFieldValue('file', e.currentTarget.files[0])}
-            />
-                
-                {isSubmitting ? (
-                    <>
-                    <span className="inline-block mr-2 dark:text-white">importing... </span>
-                    <CircularProgress size={24} style={{ color: isDarkMode ? '#fff' : '#6366f1' }} />
-                    </>
-                ) : (
-                    <>
-                <Button
-                disabled={isSubmitting || !isValid || !dirty}
-                type="submit"
-                style={{
-                    margin: 10,
-                    borderWidth: 1,
-                    borderColor: isSubmitting || !isValid || !dirty ? 'gray' : 'green',
-                    color: isSubmitting || !isValid || !dirty ? 'gray' : 'green',
-                }}
-                variant="outlined"
-                startIcon={<CloudUploadOutlinedIcon />}
-                >
-                import 
-                </Button>
-                    </>
-                )}
 
                 
+<Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={importStudents}>
+  {({ handleSubmit, setSubmitting, setFieldValue, isValid, dirty, isSubmitting }) => (
+    <Form onSubmit={handleSubmit} autoComplete="off">
 
-              </Form>
-            )}
-          </Formik>
+      <VisuallyHiddenInput
+        type="file"
+        name="file"
+        id="file"
+        accept=".xls, .xlsx"
+        onChange={(e) => {
+            setFieldValue('file', e.currentTarget.files[0]);
+            importStudents({ file: e.currentTarget.files[0] }, { setSubmitting });
+          }}
+        
+      />
+      
+      <Button
+        component="label"
+        role={undefined}
+        variant="contained"
+        tabIndex={-1}
+        startIcon={<FileDownloadOutlinedIcon />}
+        htmlFor="file"
+      >
+        Import
+      </Button>
+
+    </Form>
+  )}
+</Formik>
+
         </Box>
       </Modal>
     </div>
