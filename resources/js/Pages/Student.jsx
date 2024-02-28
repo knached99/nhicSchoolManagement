@@ -304,6 +304,7 @@ export default function Student({auth, student}) {
   });
 
   const editStudentInformation = async (values, { setSubmitting }) => {
+    console.log('Submitting Form: ' + values);
 
     try {
       const response = await axios.put(`/editStudentInformation/${values.student_id}`, values, {
@@ -313,6 +314,7 @@ export default function Student({auth, student}) {
       });
 
 
+      console.log('Response: ' + response);
   
       if (response.data.errors) {
         setError(response.data.errors);
@@ -333,6 +335,7 @@ export default function Student({auth, student}) {
       }
     } catch (error) {
       setError(error.message || 'Unable to edit student information, something went wrong');
+      console.log('Error Messages: ' + error.message);
       setErrorOpen(true);
     } finally {
       setSubmitting(false);
@@ -581,7 +584,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
                 <InplaceDisplay>
                    <CakeOutlinedIcon style={{margin: 5}}/>
-              {`${student.date_of_birth}` || 'Edit date of birth'}
+              {`${student.date_of_birth}` || 'Click to edit date of birth'}
               </InplaceDisplay>
                 <InplaceContent>
                     <InputText
@@ -601,7 +604,7 @@ export default function Student({auth, student}) {
                 <InplaceDisplay>
                 {student.gender === 'Male' && <MaleIcon style={{ margin: 5 }} />}
                 {student.gender === 'Female' && <FemaleIcon style={{ margin: 5 }} />}
-                  {`${student.gender}` || 'Edit Gender'}</InplaceDisplay>
+                  {`${student.gender}` || 'Click to edit gender'}</InplaceDisplay>
                 <InplaceContent>
                 <select
                 value={values.gender || ''}
@@ -624,7 +627,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
                 <InplaceDisplay>
                   <GradeOutlinedIcon style={{margin: 5}}/>
-                  {`${student.level}` || 'Edit Level'}
+                  {`${student.level}` || 'Click to edit level'}
                   </InplaceDisplay>
                 <InplaceContent>
                 <select 
@@ -651,7 +654,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
                 <InplaceDisplay>
                   <HomeOutlinedIcon style={{margin: 5}}/>
-                  {`${student.address}` || 'Edit Street Address'}
+                  {`${student.address}` || 'Click to edit street address'}
                   </InplaceDisplay>
                 <InplaceContent>
                     <InputText 
@@ -669,7 +672,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
             <InplaceDisplay>
               <ApartmentIcon style={{margin: 5}}/>
-              {`${student.street_address_2 ? values.street_address_2 : ''}` || 'Edit Apartment/Unit Number'}
+              {`${student.street_address_2 ? values.street_address_2 : ''}` || 'Click to edit apartment/unit number'}
               </InplaceDisplay>
                 <InplaceContent>
                     <InputText
@@ -688,7 +691,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
             <InplaceDisplay>
               <LocationCityIcon style={{margin: 5}}/>
-              {`${student.city ? student.city : ''}` || 'Edit City'}
+              {`${student.city ? student.city : ''}` || 'Click to edit city'}
               </InplaceDisplay>
                 <InplaceContent>
                     <InputText
@@ -709,7 +712,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
             <InplaceDisplay>
               <PlaceIcon style={{margin: 5}}/>
-              {`${student.state ? student.state : ''}` || 'Edit State'}
+              {`${student.state ? student.state : ''}` || 'Click to edit state'}
               </InplaceDisplay>
                 <InplaceContent>
                   <select className={`p-3 ml-3 rounded dark:bg-slate-900 dark:text-white w-full inline-block ${touched.state && errors.state ? 'border-red-500 border-1' : ''}`}
@@ -737,7 +740,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
             <InplaceDisplay>
               <NumbersIcon style={{margin: 5}}/>
-              {`${student.zip ? student.zip : ''}` || 'Edit Zipcode'}
+              {`${student.zip ? student.zip : ''}` || 'Click to edit zipcode'}
               </InplaceDisplay>
                 <InplaceContent>
                     <InputText
@@ -758,7 +761,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
             <InplaceDisplay>
               <PsychologyAltOutlinedIcon style={{margin: 5}}/>
-              {`${values.allergies_or_special_needs ? values.allergies_or_special_needs : ''}` || 'Edit allergies or special needs'}</InplaceDisplay>
+              {`${values.allergies_or_special_needs ? values.allergies_or_special_needs : ''}` || 'Click to edit allergies or special needs'}</InplaceDisplay>
                 <InplaceContent>
                     <InputText 
                     id="allergies_or_special_needs"
@@ -778,7 +781,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
             <InplaceDisplay>
               <ContactEmergencyOutlinedIcon style={{margin: 5}} />
-              {`${values.emergency_contact_person ? values.emergency_contact_person : ''}` || 'Edit emergency contact person'}</InplaceDisplay>
+              {`${values.emergency_contact_person ? values.emergency_contact_person : ''}` || 'Click to edit emergency contact person'}</InplaceDisplay>
                 <InplaceContent>
                     <InputText 
                     id="emergency_contact_person"
@@ -798,7 +801,7 @@ export default function Student({auth, student}) {
             <Inplace closable>
             <InplaceDisplay>
               <LocalHospitalOutlinedIcon style={{margin: 5}}/>
-              {`${values.emergency_contact_hospital ? values.emergency_contact_hospital : ''}` || 'Edit emergency contact hospital'}</InplaceDisplay>
+              {`${values.emergency_contact_hospital ? values.emergency_contact_hospital : ''}` || 'Click to edit emergency contact hospital'}</InplaceDisplay>
                 <InplaceContent>
                     <InputText 
                     id="emergency_contact_hospital"
