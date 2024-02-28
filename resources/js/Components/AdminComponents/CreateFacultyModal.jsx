@@ -289,7 +289,7 @@ export default function CreateFacultyModal() {
             {/* <Field as={TextField} onChange={handleChange} value={values.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone" placeholder="Phone Number" fullWidth style={{margin: 5}} /> */}
             <select name="role" 
             id="role"
-            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded border-none outline-none p-3"
+            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded border-slate-300 p-3"
             value={values.role}
             onChange={handleChange}
             >
