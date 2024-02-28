@@ -658,6 +658,7 @@ export default function Student({auth, student}) {
                   </InplaceDisplay>
                 <InplaceContent>
                     <InputText 
+                    placeholder="Street Address"
                      style={{
                       width: '100%',
                       margin: 10,
@@ -676,6 +677,7 @@ export default function Student({auth, student}) {
               </InplaceDisplay>
                 <InplaceContent>
                     <InputText
+                    placeholder="Apartment/Unit Number"
                     style={{
                       width: '100%',
                       margin: 10,
@@ -695,6 +697,7 @@ export default function Student({auth, student}) {
               </InplaceDisplay>
                 <InplaceContent>
                     <InputText
+                    placeholder="City"
                     id="city"
                     name="city" 
                      style={{
@@ -744,6 +747,7 @@ export default function Student({auth, student}) {
               </InplaceDisplay>
                 <InplaceContent>
                     <InputText
+                    placeholder="Zip Code"
                     id="zip"
                     name="zip" 
                      style={{
@@ -766,6 +770,7 @@ export default function Student({auth, student}) {
                     <InputText 
                     id="allergies_or_special_needs"
                     name="allergies_or_special_needs"
+                    placeholder="allergies or special needs"
                      style={{
                       width: '100%',
                       margin: 10,
@@ -784,6 +789,7 @@ export default function Student({auth, student}) {
               {`${values.emergency_contact_person ? values.emergency_contact_person : ''}` || 'Click to edit emergency contact person'}</InplaceDisplay>
                 <InplaceContent>
                     <InputText 
+                    placeholder="emergency contact person"
                     id="emergency_contact_person"
                     name="emergency_contact_person"
                     style={{
@@ -804,6 +810,7 @@ export default function Student({auth, student}) {
               {`${values.emergency_contact_hospital ? values.emergency_contact_hospital : ''}` || 'Click to edit emergency contact hospital'}</InplaceDisplay>
                 <InplaceContent>
                     <InputText 
+                    placeholder="emergency contact hospital"
                     id="emergency_contact_hospital"
                     name="emergency_contact_hospital"
                     style={{
