@@ -206,7 +206,7 @@ const deleteAdminUser = async (userId) => {
                                 </Collapse>
                             </Box>
                         )}
-        <h1 className="m-3 text-center font-black text-xl dark:text-white">Faculty Users</h1>
+        <h1 className="m-3 text-center font-black text-xl dark:text-white">Team Members</h1>
       
 
         {/* Table Section */}
@@ -215,7 +215,7 @@ const deleteAdminUser = async (userId) => {
 
         ) : rows.length === 0 ? (
           <div className="text-slate-500 text-xl text-center p-3 m-3">
-            No faculty users created yet
+            No Team Members Invited Yet
           </div>
         ) : (
             <Paper sx={{ width: '100%', backgroundColor: isDarkMode ? '#334155' : 'inherit' }}>
@@ -239,12 +239,12 @@ const deleteAdminUser = async (userId) => {
                           <>
                         <Avatar alt="Profile Picture" src={`${profilePicPath}/${row.profile_pic}`} sx={{ width: 50, height: 50 }} />
 
-                            {row.name}
+                            <h1 className="font-semibold">{row.name}</h1>
                           </>
                         ) : (
                           <>
                     <Avatar sx={{width: 50, height: 50}} {...stringAvatar(row.name)} />
-                            {row.name}
+                    <h1 className="font-semibold">{row.name}</h1>
                           </>
                         )}
                       </TableCell>
