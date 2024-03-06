@@ -21,15 +21,10 @@ return new class extends Migration
             $table->string('room_number')->nullable();
             $table->string('profile_pic')->nullable();
             $table->json('permissions')->nullable();
-            $table->boolean('status')->default(1);
+            $table->string('client_ip')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            // $table->index('name');
-            // $table->index('email');
-            // $table->index('phone');
-            // $table->index('role');
-            // $table->index('room_number');
-    
+
         }); 
         
     }

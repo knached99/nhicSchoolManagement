@@ -27,7 +27,7 @@ class Faculty extends Authenticatable
         'room_number',
         'profile_pic',
         'permissions',
-        'status',
+        'client_ip',
         'teacher_student_id',
     ];
 

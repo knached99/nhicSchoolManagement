@@ -17,6 +17,7 @@ use App\Notifications\NotifyUserOfStudentAssigned;
 use App\Models\Faculty;
 use App\Models\Students;
 use App\Models\User;
+use App\Models\Banned;
 use App\Models\Attendance;
 use Carbon\Carbon;
 
@@ -206,7 +207,8 @@ public function viewFacultyUser($faculty_id){
   try{
     $user = Faculty::where('faculty_id',$faculty_id)->firstOrFail();
     $students = Students::where('faculty_id', $faculty_id)->get();
-    return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students]);
+    $bannedDetails = Banned::where('faculty_id', $faculty_id)->get();
+    return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students, 'bannedDetails'=>$bannedDetails]);
   }
   catch(ModelNotFoundException $e) {
     return redirect('faculty/dash');

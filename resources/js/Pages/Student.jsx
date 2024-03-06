@@ -386,10 +386,10 @@ export default function Student({auth, student}) {
                         </span>
                       </p>
                                   
-
-                        {auth.role === 'Admin' && !student.faculty_id && (
+                      {/* && !student.faculty_id */}
+                        {auth.role === 'Admin'  && (
                         <div class="mt-6 flex flex-wrap gap-4 justify-center">
-                        <span className="text-indigo-500 dark:text-indigo-300">{student.first_name} {student.last_name} is not assigned to a teacher</span>
+                        <span className="text-indigo-500 dark:text-indigo-300">{student.first_name} {student.last_name} {!student.faculty_id ? 'is not assigned to a teacher' :  `is assigned to ${student.faculty.name} but you can switch teachers at any time`} </span>
                         {loading ? <CircularProgress color="primary" />  : 
                       <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={assignTeacherToStudent}>
                       {({
@@ -458,7 +458,7 @@ export default function Student({auth, student}) {
                         )}
                           <input type="hidden" name="student_id" id="student_id" value={student.student_id}/>
                           <FormControl sx={{ m: 1, width: '100%' }}>
-                            <InputLabel id="faculty_id">Select Teacher</InputLabel>
+                            <InputLabel id="faculty_id">{!student.faculty_id ? 'Select Teacher' : 'Switch Teacher'}</InputLabel>
                             <Select
                               labelId="faculty_id"
                               id="faculty_id"

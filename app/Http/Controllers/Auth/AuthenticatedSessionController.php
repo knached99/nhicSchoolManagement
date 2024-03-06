@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
@@ -34,6 +35,11 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $ip = User::where('email', $request->email)->pluck('client_ip');
+
+        if ($request->ip() !== $ip) {
+            $saveIP = User::where('email', $request->email)->update(['client_ip' => $request->ip()]);
+        }
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

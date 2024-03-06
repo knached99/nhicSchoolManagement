@@ -92,7 +92,6 @@ const handleCloseError = () => {
 
 const handleAttendanceSubmission = async () => {
   try {
-    console.log("Selected values before submission:", selectedValues);
 
     const response = await axios.post(`/submitAttendance/${facultyID ? facultyID : auth}`, {
       attendanceData: Object.keys(selectedValues).map(id => ({
@@ -174,7 +173,6 @@ const handleAttendanceSubmission = async () => {
   const isAttendanceTaken = rows.every(row => row.is_present !== undefined);
 
   
-  console.log("isAttendanceTaken:", isAttendanceTaken);
 
   const columns = [
     { field: 'student_id', headerName: 'Student ID', width: 120 },

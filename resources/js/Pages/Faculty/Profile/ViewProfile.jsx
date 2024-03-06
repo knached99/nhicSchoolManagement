@@ -15,17 +15,18 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import axios from 'axios';
 import MenuItem from '@mui/material/MenuItem';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
-import { InputMask } from 'primereact/inputmask';
 
+// Prime React Components 
+
+import { InputMask } from 'primereact/inputmask';
 import { InputText } from 'primereact/inputtext';
-      
+import { InputTextarea } from 'primereact/inputtextarea';
+        
+        
 
 // Icons 
 import Avatar from '@mui/material/Avatar';
@@ -40,27 +41,25 @@ import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 
-export default function ViewProfile({auth, user, students}) {
+export default function ViewProfile({auth, user, students, bannedDetails}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [banError, setBanError] = useState(null);
+  const [banSuccess, setBanSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
+  const [banSuccessOpen, setBanSuccessOpen] = useState(true);
+  const [banErrorOpen, setBanErrorOpen] = useState(true);
   const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
+  const [openBanBlock, setOpenBanBlock] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
 
-  //   const formatPermissions = (permissions) => {
-  //     if (!permissions || !Array.isArray(permissions)) {
-  //         return 'N/A';
-  //     }
-  
-  //     // Replace underscores with spaces and join permissions with spaces
-  //     return permissions.map(permission => permission.replace(/_/g, ' ')).join(', ');
-  // };
 
   const initialValues={
     email: user.email,
@@ -73,6 +72,51 @@ export default function ViewProfile({auth, user, students}) {
     phone_number: Yup.string().matches(/^\(\d{3}\) \d{3}-\d{4}$/, 'Invalid US phone number format'),
     role: Yup.string(),
   });
+
+  const banInitialValues = {
+    ban_status: '',
+    permanent_ban: '',
+    client_ip: user.client_ip,
+    banned_until: '',
+    ban_reason: ''
+  };
+
+  const banValidationSchema = Yup.object().shape({
+    ban_status: Yup.string().required('Must select ban or unban'),
+    //permanent_ban: Yup.string().required('Must select Yes or No')
+  });
+
+  const updateBanStatus = async (values, { setSubmitting }) => {
+    try {
+      const response = await axios.put(`/banOrUnbanUser/${user.faculty_id}`, values, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Values Selected: ' + values);
+  
+      if (response.data.errors) {
+        setBanError(response.data.errors);
+        setBanErrorOpen(true);
+      } else if (response.data.success) {
+        setBanSuccess(response.data.success);
+        setBanError(null);
+        setBanSuccessOpen(true);
+        Object.keys(values).forEach((key) => {
+          values[key] = '';
+        });
+        window.setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+    } catch (error) {
+      setBanError(error.message || 'An unexpected error occurred');
+      setBanErrorOpen(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
 
   const updateUserInformation = async (values, { setSubmitting }) => {
@@ -88,6 +132,7 @@ export default function ViewProfile({auth, user, students}) {
         setErrorOpen(true);
       } else if (response.data.success) {
         setSuccess(response.data.success);
+        setError(null);
         setSuccessOpen(true);
         Object.keys(values).forEach((key) => {
           values[key] = '';
@@ -114,9 +159,25 @@ const handleCloseError = () => {
     setError(null);
 };
 
+
+
+const handleBanCloseSuccess = () => {
+  setBanSuccessOpen(false);
+  setBanSuccess(null);
+};
+
+const handleBanCloseError = () => {
+  setBanErrorOpen(false);
+  setBanError(null);
+};
+
   const handleTogglePermissionsMenu = () => {
     setOpenPermissionsMenu(!openPermissionsMenu);
   };
+
+  const handleBanBlock = () => {
+    setOpenBanBlock(!openBanBlock);
+  }
     
 
   function stringToColor(string) {
@@ -158,6 +219,23 @@ const handleCloseError = () => {
   
   const backgroundColor = isDarkMode ? '#000' : 'background.paper';
 
+  useEffect(() => {
+    const getBanStatus = async () => {
+      try {
+        const response = await axios.get(`/getBanStatus/${user.user_id}`);
+        const data = await response.json();
+
+        setChecked(data.ban_status);
+      } catch (error) {
+        console.error('Error fetching ban status:', error);
+      }
+    };
+
+    // Check if the user object is available before calling the function
+    if (user && user.user_id) {
+      getBanStatus(user.user_id);
+    }
+  }, [user, banSuccess]); // Add any other dependencies as needed
 
   return (
     <>
@@ -384,14 +462,283 @@ const handleCloseError = () => {
                                )}
                            </Formik>
                            </Collapse>
-                           </>
-                        }
+                            
+                            {/* Start IP Ban Block */}
+                            <>
+                           <button
+                              onClick={handleBanBlock}
+                              className={`${
+                                openPermissionsMenu ? 'bg-blue-700' : 'bg-slate-400 hover:bg-blue-700'
+                              } text-white font-bold py-2 px-4 m-4 rounded`}
+                            >
+                              Ban User {openBanBlock ? <ArrowDropUpIcon/> : <ArrowDropDownIcon/>}
+                            </button>
+
+
+                         <Collapse in={openBanBlock}>
+                         
+                        <div className="border-t-2 border-slate-800"></div>
+                        {bannedDetails && bannedDetails.length !== 0 && (
+  <>
+    <h6 className="text-black dark:text-white font-black text-xl">
+      Ban Details
+    </h6>
+
+    <ul className="max-w-md space-y-1 text-gray-500 list-inside dark:text-white">
+      <li className="flex items-center font-bold">
+        Client IP Address:
+        <span className="inline-block ml-2 text-black dark:text-white">
+          {bannedDetails[0].client_ip}
+        </span>
+      </li>
+
+      <li className="flex items-center font-bold">
+        Status:
+        <span className="inline-block ml-2 text-black dark:text-white">
+          {bannedDetails[0].ban_status === 0 ? (
+            <span className="text-emerald-500">Not Banned</span>
+          ) : bannedDetails[0].ban_status === 1 ? (
+            <span className="text-red-500">Banned</span>
+          ) : null}
+        </span>
+      </li>
+
+
+      <li className="flex items-center font-bold">
+        Banned On:
+        <span className="inline-block ml-2 text-black dark:text-white">
+          {new Date(bannedDetails[0].created_at).toLocaleDateString()}
+        </span>
+      </li>
+
+      <li className="flex items-center font-bold">
+        Banned Until:
+        <span className="inline-block ml-2 text-black dark:text-white">
+          {new Date(bannedDetails[0].banned_until).toLocaleDateString()}
+        </span>
+      </li>
+
+      <li className="flex items-center font-bold">
+        Reason:
+        <span className="inline-block ml-2 text-black dark:text-white">
+          {bannedDetails[0].ban_reason ? bannedDetails[0].ban_reason : 'None Provided'}
+        </span>
+      </li>
+
+      <li className="flex items-center font-bold">
+        Permanently Banned?
+        <span className="inline-block ml-2 text-black dark:text-white">
+          {bannedDetails[0].permanent_ban !== undefined ? (
+            bannedDetails[0].permanent_ban === 0 ? (
+              <span className="text-emerald-500">No</span>
+            ) : bannedDetails[0].permanent_ban === 1 ? (
+              <span className="text-red-500">Yes</span>
+            ) : null
+          ) : null}
+        </span>
+      </li>
+
+    </ul>
+  </>
+)}
+
+                      
+{user.client_ip !== null && 
+  <Formik initialValues={banInitialValues} validationSchema={banValidationSchema} onSubmit={updateBanStatus}>
+                           {({ values, errors, touched, handleSubmit, handleBlur, handleChange, isValid, dirty, isSubmitting, setFieldValue }) => (
+                               <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+                                   
+                            {banError && (
+                            <Box   style={{
+                              padding: '1rem',
+                              maxHeight: '80vh',
+                              overflowY: 'auto',
+                              width: '100%'
+                            }}>
+                                <Collapse in={banErrorOpen}>
+                                    <Alert
+                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
+                                        severity="error"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleBanCloseError}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {banError}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+                        {banSuccess && (
+                            <Box sx={{ width: '100%' }}>
+                                <Collapse in={banSuccessOpen}>
+                                    <Alert
+                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+                                        severity="success"
+                                        action={
+                                            <IconButton
+                                                aria-label="close"
+                                                color="inherit"
+                                                size="small"
+                                                onClick={handleBanCloseSuccess}
+                                            >
+                                                <CloseIcon fontSize="inherit" />
+                                            </IconButton>
+                                        }
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {banSuccess}
+                                    </Alert>
+                                </Collapse>
+                            </Box>
+                        )}
+
+
+    <div className="flex flex-wrap gap-3">
+    <h6>Ban User?</h6>
+    <span className="text-red-500 block">{touched.ban_status && errors.ban_status}</span>
+
+        <div className="flex align-items-center">
+          <input
+            type="radio"
+            id="ban_status"
+            name="ban_status"
+            value="0"
+            onChange={handleChange}
+            checked={values.ban_status === '0'}
+          />
+          <label htmlFor="ban_status" className="ml-2">Unban</label>
+        </div>
+
+        <div className="flex align-items-center">
+          <input
+            type="radio"
+            id="ban_status_ban"
+            name="ban_status"
+            value="1"
+            onChange={handleChange}
+            checked={values.ban_status === '1'}
+          />
+          <label htmlFor="ban_status_ban" className="ml-2">Ban</label>
+        </div>
+
+
+      </div>
+
+      {bannedDetails && bannedDetails.length > 0 ? (
+  <>
+  </>
+) : (
+  <div className="flex flex-wrap gap-3">
+    <h6>Permanently Ban User?</h6>
+    <span className="text-red-500 block">{touched.permanent_ban && errors.permanent_ban}</span>
+
+    <div className="flex align-items-center">
+      
+      <input
+        type="radio"
+        id="permanent_ban"
+        name="permanent_ban"
+        value="0"
+        onChange={handleChange}
+        checked={values.permanent_ban === '0'}
+      />
+      <label htmlFor="ban_permanent_status" className="ml-2">
+        No
+      </label>
+    </div>
+
+    <div className="flex align-items-center">
+      <input
+        type="radio"
+        id="permanent_ban"
+        name="permanent_ban"
+        value="1"
+        onChange={handleChange}
+        checked={values.permanent_ban === '1'}
+      />
+      <label htmlFor="ban_status_ban" className="ml-2">
+        Yes
+      </label>
+    </div>
+
+    <div className="flex flex-wrap gap-3">
+      <label className="dark:text-white block">ban user until</label>
+      <input
+        type="date"
+        className="block dark:text-white"
+        id="banned_until"
+        name="banned_until"
+        onChange={handleChange}
+        onBlur={handleBlur}
+      />
+    </div>
+
+    <div className="flex flex-wrap gap-3">
+      <InputTextarea
+        rows={5}
+        cols={30}
+        id="ban_reason"
+        name="ban_reason"
+        onChange={handleChange}
+        onBlur={handleBlur}
+        placeholder="Why are you banning this user? This message will be shown to the user when they attempt to log in."
+      />
+    </div>
+  </div>
+)}
+
+
+ 
+
+               
+                          <div className="flex items-center gap-4">
+                          <Button
+                          type="submit"
+                          variant="contained"
+                          style={{
+                              color: 'white',
+                              width: '100%',
+                              backgroundColor: isSubmitting ? '#l66534' : '#3d5afe',
+                              padding: 15,
+                              marginTop: 10,
+                          }}
+                                       disabled={isSubmitting}
+                      >
+                          {isSubmitting ? (
+                             <CircularProgress size={24} style={{ color: '#fff' }} />
+                         ) : (
+                             <>Save</>
+                          )}
+                     </Button>
+               
+               
+                          </div>
+                      </form>
+                 )}
+</Formik>
+}
+
+             </Collapse>
+             </>
+              {/* End IP Ban Block */}
+             </>
+        
+           }
                         
                      
-                    </div>
+      </div>
               
                    
-                </div>
+   </div>
             </div>
             <div className="col-span-4 sm:col-span-9">
                 <div className="dark:bg-slate-800 bg-white shadow rounded-lg p-6">

@@ -60,6 +60,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'state',
         'zip',
         'password',
+        'client_ip'
     ];
 
     /**

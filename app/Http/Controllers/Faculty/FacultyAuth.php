@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Faculty;
 use Illuminate\Auth\AuthenticationException; // Catches Authentication Exceptions
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Crypt;
@@ -20,7 +21,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-
+use App\Models\Banned;
 
 class FacultyAuth extends Controller
 {
@@ -42,6 +43,15 @@ class FacultyAuth extends Controller
                 'email.exists' => 'An account for that email does not exist',
                 'password.required' => 'Your password is required',
             ]);
+
+            $user = Faculty::where('email', $request->email)->first();
+            $banned = $this->isBanned($user->faculty_id);
+
+            if ($banned !== null) {
+                return redirect()->back()->withErrors(['auth_error'=>$banned]);
+            }
+                        
+
     
             $rateLimitKey = $request->ip();
             $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
@@ -65,7 +75,13 @@ class FacultyAuth extends Controller
                     cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
                     cookie()->queue('password', $encryptedPassword, 60);
                 }
-    
+                $ip = Faculty::where('email', $request->email)->pluck('client_ip');
+
+                if ($request->ip() !== $ip) {
+                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => $request->ip()]);
+                }
+                
+
                 RateLimiter::clear($rateLimitKey);
                 //session(['faculty' => Auth::guard('faculty')->user()]);
                 $request->session()->regenerate();
@@ -74,10 +90,11 @@ class FacultyAuth extends Controller
                 RateLimiter::hit($rateLimitKey, $lockoutDuration);
                 return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
             }
+        
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['EXCEPTION' => $e->getMessage()]);
+            return redirect()->back()->withErrors(['auth_error', 'Something went wrong']);
         }
     }
 
@@ -120,6 +137,44 @@ class FacultyAuth extends Controller
             return response()->json(['errors' => 'Unexpected error occurred.']);
         }
     }
+
+    private function isBanned($userID)
+    {
+        try {
+            $status = Banned::where('faculty_id', $userID)->firstOrFail();
+    
+            if ($status && $status->ban_status === 1) {
+
+                $banReason = isset($status->ban_reason) ? $status->ban_reason : null;
+    
+                // Construct the ban message
+                $banMessage = '';
+                if ($status->permanent_ban === 1) {
+                    $banMessage = "You are permanently banned";
+                } else {
+                    $bannedUntil = isset($status->banned_until) ? Carbon::parse($status->banned_until)->format('l, F jS, Y') : null;
+                    $banMessage = $bannedUntil ? "You are banned until $bannedUntil." : '';
+                }
+    
+                // Add ban reason if available
+                if ($banReason) {
+                    $banMessage .= "The reason for the ban: $banReason";
+                }
+    
+                return $banMessage;
+            }
+        } catch (\Exception $e) {
+            \Log::error('Is Banned Method Error: ' . $e->getMessage());
+        } catch (ModelNotFoundException $e) {
+            \Log::error('Is Banned Method Error: ' . $e->getMessage());
+        }
+    
+        return null;
+    }
+    
+    
+    
+    
 
   
 

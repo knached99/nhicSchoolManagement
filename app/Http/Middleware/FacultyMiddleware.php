@@ -16,6 +16,7 @@ class FacultyMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
+
         if(!Auth::guard('faculty')->check()){
             return redirect('faculty/login');
         }

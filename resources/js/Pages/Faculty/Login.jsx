@@ -49,34 +49,35 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
-             {errors.auth_error && (
-                            <Box   style={{
-                              padding: '1rem',
-                              maxHeight: '80vh',
-                              overflowY: 'auto',
-                              width: '100%'
-                            }}>
-                                <Collapse in={errorOpen}>
-                                    <Alert
-                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
-                                        severity="error"
-                                        action={
-                                            <IconButton
-                                                aria-label="close"
-                                                color="inherit"
-                                                size="small"
-                                                onClick={handleCloseError}
-                                            >
-                                                <CloseIcon fontSize="inherit" />
-                                            </IconButton>
-                                        }
-                                        sx={{ mb: 2 }}
-                                    >
-                                        {errors.auth_error}
-                                    </Alert>
-                                </Collapse>
-                            </Box>
-                        )}
+            {errors && errors.auth_error && (
+    <Box style={{
+        padding: '1rem',
+        maxHeight: '80vh',
+        overflowY: 'auto',
+        width: '100%'
+    }}>
+        <Collapse in={errorOpen}>
+            <Alert
+                icon={<ErrorOutlineIcon fontSize="inherit" />}
+                severity="error"
+                action={
+                    <IconButton
+                        aria-label="close"
+                        color="inherit"
+                        size="small"
+                        onClick={handleCloseError}
+                    >
+                        <CloseIcon fontSize="inherit" />
+                    </IconButton>
+                }
+                sx={{ mb: 2 }}
+            >
+                {errors.auth_error}
+            </Alert>
+        </Collapse>
+    </Box>
+)}
+
 
                             {errors.RATE_LIMIT_THRESHOLD_EXCEEDED && (
                             <Box   style={{

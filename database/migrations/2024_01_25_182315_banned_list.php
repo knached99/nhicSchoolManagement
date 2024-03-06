@@ -17,9 +17,11 @@ return new class extends Migration
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('set null');
             $table->unsignedBigInteger('faculty_id')->nullable();
             $table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('set null');
+            $table->string('client_ip');
+            $table->boolean('ban_status')->default(0)->nullable(); // 0 not banned, 1 banned 
             $table->datetime('banned_until')->nullable();
             $table->string('ban_reason')->nullable();
-            $table->boolean('permenant_ban')->default(0); // 0 -> not banned forever, 1 -> banned forever
+            $table->boolean('permanent_ban')->default(0)->nullable(); // 0 -> not banned forever, 1 -> banned forever
             $table->timestamps();
         });
     }

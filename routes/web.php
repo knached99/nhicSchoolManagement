@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Faculty\FacultyAuth;
 use App\Http\Controllers\Faculty\FacultyDash;
+use App\Http\Controllers\BanSystem;
 use App\Http\Controllers\UserDashboard;
 use App\Http\Controllers\Faculty\FacultyProfileController;
 use App\Http\Middleware\FacultyMiddleware;
@@ -85,6 +86,10 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/getAttendance/{faculty_id}', [FacultyDash::class, 'getAttendance'])->name('getAttendance');
     // Submit Attendance 
     Route::post('/submitAttendance/{faculty_id}', [FacultyDash::class, 'submitAttendance'])->name('submitAttendance');
+
+    // User Routes 
+    Route::get('/getBanStatus/{user_id}', [BanSystem::class, 'getBanStatus'])->name('getBanStatus');
+    Route::put('/banOrUnbanUser/{userID}', [BanSystem::class, 'banOrUnbanUser'])->name('banOrUnbanUser');
 });
 
 Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');
