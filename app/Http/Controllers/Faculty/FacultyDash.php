@@ -127,12 +127,17 @@ public function deleteFacultyUser($faculty_id){
 public function fetchFacultyUsers()
 {
     try {
-        $admins = Faculty::all();
-        return response()->json(['admins'=>$admins]);
+        $admins = Faculty::with(['banned' => function ($query) {
+            // Use withDefault to ensure the relationship is always loaded
+            $query->withDefault();
+        }])->get();
+        \Log::info($admins);
+        return response()->json(['admins' => $admins]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error getting faculty users: ' . $e->getMessage()]);
     }
 }
+
 
 
 
@@ -609,9 +614,9 @@ public function submitAttendance(Request $request, $faculty_id)
         }
 
         return response()->json(['success' => 'Attendance data submitted']);
-    } catch (\Exception $e) {
-        \Log::error($e->getMessage());
-        return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()]);
+    } catch (ValidationException $e) {
+
+        return response()->json(['error' =>$e->getMessage()]);
     }
 }
 

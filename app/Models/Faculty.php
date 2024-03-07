@@ -9,6 +9,12 @@ use Illuminate\Notifications\Notifiable;
 // use Laravel\Scout\Attributes\SearchUsingPrefix;
 // use Laravel\Scout\Searchable;
 
+use App\Models\Students;
+
+use App\Models\Assignments;
+
+use App\Models\Banned;
+
 class Faculty extends Authenticatable
 {
     use HasFactory, Notifiable;
@@ -26,6 +32,7 @@ class Faculty extends Authenticatable
         'role',
         'room_number',
         'profile_pic',
+        'wallpaper_pic',
         'permissions',
         'client_ip',
         'teacher_student_id',
@@ -48,13 +55,19 @@ class Faculty extends Authenticatable
 
     public function assignments()
     {
-        return $this->hasMany(Assignment::class, 'faculty_id');
+        return $this->hasMany(Assignments::class, 'faculty_id');
     }
 
     public function teacherStudent()
     {
-        return $this->belongsTo(Student::class, 'teacher_student_id');
+        return $this->belongsTo(Students::class, 'teacher_student_id');
     }
+
+    public function banned()
+    {
+    return $this->hasOne(Banned::class, 'faculty_id');
+    }
+
 
     
 //     /**

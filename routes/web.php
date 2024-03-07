@@ -82,6 +82,9 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::put('/updateProfile', [FacultyProfileController::class, 'updateProfile'])->name('updateProfile');
     Route::put('/updateFacultyPassword', [FacultyProfileController::class, 'updatePassword'])->name('updateFacultyPassword');
     Route::post('/uploadProfilePic', [FacultyProfileController::class, 'uploadProfilePic'])->name('uploadProfilePic');
+    Route::post('/uploadWallpaperPic', [FacultyProfileController::class, 'uploadWallpaperPic'])->name('uploadWallpaperPic');
+    Route::delete('/removeWallpaper', [FacultyProfileController::class, 'removeWallpaper'])->name('removeWallpaper');
+    
     // Get Attendance Data 
     Route::get('/getAttendance/{faculty_id}', [FacultyDash::class, 'getAttendance'])->name('getAttendance');
     // Submit Attendance 

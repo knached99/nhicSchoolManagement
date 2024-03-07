@@ -19,7 +19,7 @@ import { InputMask } from "primereact/inputmask";
 import { InputText } from 'primereact/inputtext';
         
 
-export default function UpdateFacultyProfile({className = '' }) {
+export default function UpdateFacultyProfile({className = '' , style='' }) {
     const user = usePage().props.auth.faculty;
     // const { data, setData } = useForm({
     //     email: user.email,
@@ -96,7 +96,7 @@ export default function UpdateFacultyProfile({className = '' }) {
     };
 
     return (
-        <section className={className}>
+        <section className={className} style={style}>
             <header>
                 <h2 className="text-xl m-3 font-medium text-gray-900 dark:text-white">Profile Information</h2>
                 {errors && (

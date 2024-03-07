@@ -32,6 +32,7 @@ const columns = [
   { id: 'phone_number', label: 'Phone Number', minWidth: 80 },
   { id: 'role', label: 'Role', minWidth: 80 },
   {id: 'created_at', label: 'Created At', minWidth: 80},
+  {id:'ban_status', label: 'Ban Status', minWidth: 80},
   { id: 'view', label: 'View', minWidth: 80 },
   {field: 'delete', label: 'Delete', minWidth: 80}
 ];
@@ -45,7 +46,6 @@ export default function AdminsTable({auth}) {
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
 
   const viewFacultyDetails = (userID) => {
@@ -153,7 +153,7 @@ const deleteAdminUser = async (userId) => {
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="dark:bg-slate-800 bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      <div className="dark:bg-slate-800 bg-white p-5 rounded overflow-hidden sm:rounded-lg" style={{opacity: auth.faculty.wallpaper_pic ? 0.9 : null }}>
       {error && (
                             <Box   style={{
                               padding: '1rem',
@@ -260,6 +260,16 @@ const deleteAdminUser = async (userId) => {
                         <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                           {new Date(row.created_at).toLocaleString()}
                         </TableCell>
+
+                        <TableCell sx={{ color: isDarkMode ? 'white' : 'inherit' }}>
+                          {row.banned?.ban_status === 1 ? (
+                            <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-500 ring-1 ring-inset ring-red-700/10">Banned</span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-md font-medium text-indigo-500 ring-1 ring-inset ring-indigo-700/10">Not Banned</span>
+                          )}
+                        </TableCell>
+
+
                         <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                           <Tooltip title={`${row.name}'s details`}>
                             <IconButton

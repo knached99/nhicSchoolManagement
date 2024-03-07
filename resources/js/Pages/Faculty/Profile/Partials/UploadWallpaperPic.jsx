@@ -20,11 +20,12 @@ import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternate
 import Tooltip from '@mui/material/Tooltip';
 
 
-export default function UpdateProfilePic({ className = '' , style= ''}) {
-    const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
+export default function UploadWallpaperPic({ className = '', style='' }) {
+    const wallpaperPicPath = "http://localhost:8000/storage/wallpaper_pics"; 
+
     const user = usePage().props.auth.faculty;
     const { data, setData } = useForm({
-        profile_pic: user.profile_pic,
+        wallpaper_pic: user.wallpaper_pic,
     });
 
     const [errors, setErrors] = useState(null);
@@ -37,7 +38,7 @@ export default function UpdateProfilePic({ className = '' , style= ''}) {
     // const [previewImage, setPreviewImage] = useState(null);
 
     const initialValues = {
-        profile_pic: null,
+        wallpaper_pic: null,
     };
 
 
@@ -54,31 +55,48 @@ export default function UpdateProfilePic({ className = '' , style= ''}) {
     width: 1,
   });
     
-    
+  const removeWallpaper = () => {
+    // Send a DELETE request to your backend to remove the wallpaper
+    axios.delete(`/removeWallpaper`)
+      .then(response => {
+        // Assuming the backend returns a success message or updated user data
+        setSuccess(response.data.success);
+        setSuccessOpen(true);
 
+        window.setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+      })
+      .catch(error => {
+
+        console.error('Error removing wallpaper:', error);
+        setErrorOpen(`Error removing wallpaper: ${error}`);
+        setErrorOpen(true);
+      });
+  };
     const uploadPhoto = async (values, { setSubmitting }) => {
         
         try {
-            if (!values.profile_pic) {
+            if (!values.wallpaper_pic) {
                 setErrors('Photo is required');
                 setErrorOpen(true);
                 return;
             }
 
-            const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg'];
-            if (!allowedFileTypes.includes(values.profile_pic.type)) {
-                setErrors(`Invalid file type selected. The chosen file must be in JPG, JPEG, or PNG format, but you selected a file with a "${values.profile_pic.type}" type.`);
+            const allowedFileTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/webp', 'image/avif'];
+            if (!allowedFileTypes.includes(values.wallpaper_pic.type)) {
+                setErrors(`Invalid file type selected. The chosen file must be in JPG, JPEG, or PNG format, but you selected a file with a "${values.wallpaper_pic.type}" type.`);
                 setErrorOpen(true);
                 return;
             }
     
 
         
-            if (values.profile_pic.size > 2 * 1024 * 1024) {
+            if (values.wallpaper_pic.size > 2 * 1024 * 1024) {
                 setErrors(`File size exceeds the 2 MB limit. The file you selected is ${
-                    values.profile_pic.size > 1024 * 1024 * 1024
-                        ? `${(values.profile_pic.size / (1024 * 1024 * 1024)).toFixed(2)} GB`
-                        : `${(values.profile_pic.size / (1024 * 1024)).toFixed(2)} MB`
+                    values.wallpaper_pic.size > 1024 * 1024 * 1024
+                        ? `${(values.wallpaper_pic.size / (1024 * 1024 * 1024)).toFixed(2)} GB`
+                        : `${(values.wallpaper_pic.size / (1024 * 1024)).toFixed(2)} MB`
                 }`);
                                 setErrorOpen(true);
                 return;
@@ -86,9 +104,9 @@ export default function UpdateProfilePic({ className = '' , style= ''}) {
         
          
             const formData = new FormData();
-            formData.append('profile_pic', values.profile_pic);
+            formData.append('wallpaper_pic', values.wallpaper_pic);
     
-            const response = await axios.post('/uploadProfilePic', formData, {
+            const response = await axios.post('/uploadWallpaperPic', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -176,9 +194,59 @@ export default function UpdateProfilePic({ className = '' , style= ''}) {
     return (
         <section className={className} style={style}>
             <header>
-                <h2 className="text-2xl font-medium text-gray-900 dark:text-white">Profile Picture</h2>
+                <h2 className="text-2xl font-medium text-gray-900 dark:text-white">Wallpaper Picture</h2>
 
-                {errors && (
+              
+
+                <p className="mt-1 text-xl dark:text-slate-100 mb-3 text-gray-600">Your Wallpaper picture will replace your background theme.
+                For the most visually appealing wallpaper, we recommend downloading a wallpaper from  <a href="https://www.pexels.com/" className="text-blue-600 dark:text-blue-300 font-bold m-1" target="_blank" rel="noopener noreferrer">Pexels.com</a>
+                or <a href="https://www.unsplash.com/" className="text-blue-600 dark:text-blue-300 font-bold m-1" target="_blank" rel="noopener noreferrer">Unsplash.com</a>
+                 as the images there are 4k and crisp.
+                <span className="block mt-3 border-b-2 border-slate-500dark:border-slate-100 p-2 mb-3">
+                To download the image from the website:
+                </span>
+
+                <ol class="max-w-md space-y-1 text-gray-500 dark:text-white list-decimal list-inside ">
+                <li>right click on the image you like </li> 
+                <li>select "save Image as..."</li> 
+                <li>Rename image and download</li> 
+                <li>After downloading to your computer, upload the image here. </li>              
+                </ol>
+                </p>
+
+                {user.wallpaper_pic ? 
+                <>
+                <h6 className="font-medium text-xl mb-5 text-slate-500 dark:text-white">Your current wallpaper: </h6>
+                <img src={`${wallpaperPicPath}/${user.wallpaper_pic}`}/>
+                <button className="hover:text-orange-500 font-medium" onClick={removeWallpaper}>Remove Wallpaper</button>
+                </>
+                 : null}
+   
+            </header>
+
+            <Formik initialValues={initialValues} onSubmit={uploadPhoto}>
+            {({ handleSubmit, setSubmitting, setFieldValue }) => (
+                <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+                    <Tooltip title="Upload Profile Picture" arrow placement="right">
+                        <IconButton onClick={() => fileInputRef.current.click()}>
+                    <AddPhotoAlternateOutlinedIcon style={{ fontSize: 60, color: color }} />
+                    </IconButton>
+                    </Tooltip>
+
+                     <VisuallyHiddenInput
+                        ref={fileInputRef}
+                        type="file"
+                        name="wallpaper_pic" 
+                        id="wallpaper_pic"
+                        onChange={(e) => {
+                            setFieldValue('wallpaper_pic', e.currentTarget.files[0]); 
+                            uploadPhoto({ wallpaper_pic: e.currentTarget.files[0] }, { setSubmitting });
+                        }}
+                        />
+
+                               
+                    <span className="text-slate-500 dark:text-white">Supported Formats: (jpg, jpeg, png, webp, or avif)</span>
+                    {errors && (
                     <Box style={{ padding: '1rem', maxHeight: '80vh', overflowY: 'auto', width: '100%' }}>
                         <Collapse in={errorOpen}>
                             <Alert
@@ -225,58 +293,6 @@ export default function UpdateProfilePic({ className = '' , style= ''}) {
                         </Collapse>
                     </Box>
                 )}
-
-                <p className="mt-1 text-xl dark:text-slate-100 mb-3 text-gray-600">Upload your Profile picture </p>
-                {!user.profile_pic ? (
-                 <Avatar  sx={{ width: 56, height: 56 }} {...stringAvatar(user.name)} />
-
-                 )          
-                : 
-                (
-                    <img src={`${profilePicPath}/${user.profile_pic}`} className="w-40 h-40 p-1 mt-3 rounded-full" alt="User Profile Pic" />
-                )
-                }
-
-
-                {/* Image Preview Start */}
-                {/* <div className="mt-2">
-                    {previewImage && (
-                        <>
-                        <p className="font-semibold">Image Preview: </p>
-                        <img
-                            src={previewImage}
-                            alt="Profile Preview"
-                            className="w-50 h-50 object-cover rounded ring-2 ring-gray-300 dark:ring-gray-500"
-                        />
-                        </>
-                    )}
-                </div> */}
-                {/* Image Preview End */}
-            </header>
-
-            <Formik initialValues={initialValues} onSubmit={uploadPhoto}>
-            {({ handleSubmit, setSubmitting, setFieldValue }) => (
-                <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-                    <Tooltip title="Upload Profile Picture" arrow placement="right">
-                        <IconButton onClick={() => fileInputRef.current.click()}>
-                    <AddPhotoAlternateOutlinedIcon style={{ fontSize: 60, color: color }} />
-                    </IconButton>
-                    </Tooltip>
-
-                     <VisuallyHiddenInput
-                        ref={fileInputRef}
-                        type="file"
-                        name="profile_pic" 
-                        id="profile_pic"
-                        onChange={(e) => {
-                            setFieldValue('profile_pic', e.currentTarget.files[0]); 
-                            uploadPhoto({ profile_pic: e.currentTarget.files[0] }, { setSubmitting });
-                        }}
-                        />
-
-                               
-                    <span className="text-slate-500 dark:text-white">Supported Formats: (jpg, jpeg, or png)</span>
-
                     </form>
                 )}
             </Formik>

@@ -209,7 +209,7 @@ const columns = [
 
   return (
     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-      <div className="dark:bg-slate-800 bg-white p-5 rounded overflow-hidden sm:rounded-lg">
+      <div className="dark:bg-slate-800 bg-white p-5 rounded overflow-hidden sm:rounded-lg" style={{opacity: auth.faculty.wallpaper_pic ? 0.9 : null }}>
         <h1 className="m-3 text-center font-black text-xl dark:text-white">Parents</h1>
   
 {rows.length === 0 ? (

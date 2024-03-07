@@ -243,8 +243,7 @@ const handleBanCloseError = () => {
         user={auth}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">{user.name}'s Profile Page</h2>}
       >
-    <div className="bg-gray-100 dark:bg-slate-900">
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8" >
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
             <div className="col-span-4 sm:col-span-3">
                 <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
@@ -674,7 +673,7 @@ const handleBanCloseError = () => {
       <label className="dark:text-white block">ban user until</label>
       <input
         type="date"
-        className="block dark:text-white"
+        className="block dark:text-white border-slate-400 rounded dark:bg-slate-800 w-full"
         id="banned_until"
         name="banned_until"
         onChange={handleChange}
@@ -846,7 +845,6 @@ const handleBanCloseError = () => {
                 </div>
             </div>
         </div>
-    </div>
 </div>
 
 </AdminLayout>

@@ -366,8 +366,7 @@ export default function Student({auth, student}) {
         user={auth}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">{student.first_name} {student.last_name}'s Profile Page</h2>}
       >
-    <div className="bg-gray-100 dark:bg-slate-900">
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-8" >
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
             <div className="col-span-4 sm:col-span-3">
             
@@ -1151,7 +1150,6 @@ export default function Student({auth, student}) {
             </div>
         </div>
     </div>
-</div>
 
 </AdminLayout>
 </>

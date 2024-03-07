@@ -108,6 +108,63 @@ class FacultyProfileController extends Controller {
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
+
+
+    public function uploadWallpaperPic(Request $request)
+    {
+        try {
+            $user = Auth::guard('faculty')->user();
+    
+            $validated = $request->validate([
+                'wallpaper_pic' => ['required', 'image', 'mimes:jpeg,png,jpg,webp,avif|max:2048'],
+            ]);
+    
+            if ($user->wallpaper_pic && Storage::exists('public/wallpaper_pics/' . basename($user->wallpaper_pic))) {
+                Storage::delete('public/wallpaper_pics/' . basename($user->wallpaper_pic));
+            }
+    
+            $file = $request->file('wallpaper_pic');
+            $fileName = $file->hashName() . '.' . $file->extension();
+    
+            // Save the original image to storage without resizing
+            $saveWallpaper = Storage::putFileAs('public/wallpaper_pics', $file, $fileName);
+    
+            // Strip Exif data
+            $this->stripExifData(storage_path('app/public/wallpaper_pics/' . $fileName));
+    
+            $user->wallpaper_pic = $fileName;
+            $saveWallpaperDB = $user->save();
+    
+            if (!$saveWallpaper || !$saveWallpaperDB) {
+                \Log::error(['Image Upload Errors: ', 'Unable to save picture, something went wrong']);
+                return response()->json(['errors' => 'Unable to save picture, something went wrong']);
+            }
+    
+            return response()->json(['success' => 'Image uploaded successfully']);
+        } 
+        catch(ValidationException $validationException){
+            return response()->json(['errors' => $validationException->errors()]);
+        }
+        catch (\Exception $e) {
+            \Log::error(['Exception Caught: ' . $e->getMessage()]);
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+
+
+    public function removeWallpaper(){
+        try{
+            $user = Auth::guard('faculty')->user();
+            $user->wallpaper_pic = '';
+            $user->save();
+            Storage::delete('public/wallpaper_pics/' . basename($user->wallpaper_pic));
+            return response()->json(['success'=>'Wallpaper removed']);
+        }
+        catch(\Exception $e){
+            \Log::error(['Error Removing Wallpaper: ', $e->getMessage()]);
+            return response()->json(['error'=>'Something went wront removing that wallpaper']);
+        }
+    }
     
     private function stripExifData($filePath)
     {   
