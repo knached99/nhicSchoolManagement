@@ -143,6 +143,8 @@ class FacultyProfileController extends Controller {
             return response()->json(['success' => 'Image uploaded successfully']);
         } 
         catch(ValidationException $validationException){
+            \Log::error(['Validation Exception Caught: ' . $validationException->getMessage()]);
+
             return response()->json(['errors' => $validationException->errors()]);
         }
         catch (\Exception $e) {

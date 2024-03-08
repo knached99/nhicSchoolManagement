@@ -41,7 +41,7 @@ import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 
-export default function ViewProfile({auth, user, students, bannedDetails}) {
+export default function ViewProfile({auth, user, students, bannedDetails, clientIP}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -76,7 +76,7 @@ export default function ViewProfile({auth, user, students, bannedDetails}) {
   const banInitialValues = {
     ban_status: '',
     permanent_ban: '',
-    client_ip: user.client_ip,
+    client_ip: clientIP,
     banned_until: '',
     ban_reason: ''
   };
@@ -487,7 +487,7 @@ const handleBanCloseError = () => {
       <li className="flex items-center font-bold">
         Client IP Address:
         <span className="inline-block ml-2 text-black dark:text-white">
-          {bannedDetails[0].client_ip}
+        {clientIP}
         </span>
       </li>
 

@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -250,6 +251,18 @@ export default function SideBar({auth}) {
                 <ListItemText primary="My Profile" />
               </ListItemButton>
             </ListItem>
+              {auth.role === 'Teacher' && (
+         <ListItem key="Assignments" disablePadding style={{
+          backgroundColor: route().current('faculty.assignments') ? '#10b981' : '', color: route().current('faculty.assignments') ? '#fff' : '#000'}}>
+                 <ListItemButton component={Link} to={route('faculty.assignments')}>
+                   <ListItemIcon>
+                   <AssignmentOutlinedIcon style={{color: route().current('faculty.assignments') ? '#fff' : '#000'}}/>
+                   </ListItemIcon>
+                   <ListItemText primary="My Assignments" />
+                 </ListItemButton>
+               </ListItem>
+              )}
+   
 
         </List>
         <p className="text-start m-3 font-semibold">App Version <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-md font-medium text-orange-500 ring-1 ring-inset ring-orange-700/10">Beta</span></p>

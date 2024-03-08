@@ -75,10 +75,10 @@ class FacultyAuth extends Controller
                     cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
                     cookie()->queue('password', $encryptedPassword, 60);
                 }
-                $ip = Faculty::where('email', $request->email)->pluck('client_ip');
+                $ip = Faculty::where('email', $request->email)->value('client_ip');
 
-                if ($request->ip() !== $ip) {
-                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => $request->ip()]);
+                if (empty($ip) || $ip !== $request->ip()) {
+                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
                 }
                 
 
@@ -94,6 +94,7 @@ class FacultyAuth extends Controller
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
+            \Log::error(['Exception Caught: ', $e->getMessage()]);
             return redirect()->back()->withErrors(['auth_error', 'Something went wrong']);
         }
     }

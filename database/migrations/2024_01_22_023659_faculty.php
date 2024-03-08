@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('profile_pic')->nullable();
             $table->string('wallpaper_pic')->nullable();
             $table->json('permissions')->nullable();
-            $table->string('client_ip')->nullable();
+            $table->longText('client_ip')->nullable();
             $table->rememberToken();
             $table->timestamps();
 

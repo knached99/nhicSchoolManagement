@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
@@ -131,7 +132,6 @@ public function fetchFacultyUsers()
             // Use withDefault to ensure the relationship is always loaded
             $query->withDefault();
         }])->get();
-        \Log::info($admins);
         return response()->json(['admins' => $admins]);
     } catch (\Exception $e) {
         return response()->json(['error' => 'Error getting faculty users: ' . $e->getMessage()]);
@@ -213,7 +213,9 @@ public function viewFacultyUser($faculty_id){
     $user = Faculty::where('faculty_id',$faculty_id)->firstOrFail();
     $students = Students::where('faculty_id', $faculty_id)->get();
     $bannedDetails = Banned::where('faculty_id', $faculty_id)->get();
-    return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students, 'bannedDetails'=>$bannedDetails]);
+    $decryptedIP = isset($user->client_ip) ? Crypt::decryptString($user->client_ip) : null;
+
+return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students, 'bannedDetails'=>$bannedDetails, 'clientIP'=>$decryptedIP]);
   }
   catch(ModelNotFoundException $e) {
     return redirect('faculty/dash');

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Faculty\FacultyAuth;
 use App\Http\Controllers\Faculty\FacultyDash;
 use App\Http\Controllers\BanSystem;
+use App\Http\Controllers\AssignmentsController;
 use App\Http\Controllers\UserDashboard;
 use App\Http\Controllers\Faculty\FacultyProfileController;
 use App\Http\Middleware\FacultyMiddleware;
@@ -93,6 +94,10 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     // User Routes 
     Route::get('/getBanStatus/{user_id}', [BanSystem::class, 'getBanStatus'])->name('getBanStatus');
     Route::put('/banOrUnbanUser/{userID}', [BanSystem::class, 'banOrUnbanUser'])->name('banOrUnbanUser');
+
+    // Assignments Routes 
+
+    Route::get('/faculty/assignments', [AssignmentsController::class, 'myAssignments'])->name('faculty.assignments');
 });
 
 Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');

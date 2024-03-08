@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Banned; 
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Crypt;
 
 use Carbon\Carbon; 
 
@@ -42,7 +43,7 @@ class BanSystem extends Controller
             $banData = [
                 'ban_status' => 1,
                 'banned_until' => $request->input('banned_until') ? Carbon::parse($request->input('banned_until')) : null,
-                'client_ip' => $request->input('client_ip', null),
+                'client_ip' => Crypt::encryptString($request->input('client_ip', null)),
                 'ban_reason' => $request->input('ban_reason', null),
                 'permanent_ban' => $request->input('permanent_ban', null),
             ];
