@@ -1,9 +1,10 @@
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import Tooltip from '@mui/material/Tooltip';
+
 import { Link } from '@inertiajs/react';
+import EditAssignmentModal from '@/Components/AdminComponents/EditAssignmentModal';
 
 
 export default function AssignmentDetails({ auth, assignment }) {
@@ -16,10 +17,10 @@ export default function AssignmentDetails({ auth, assignment }) {
         <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
           <div className="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
             <h1 className="mb-4 text-3xl tracking-light font-black text-gray-900 dark:text-white text-center">Assignment Details</h1>
+            {/* MODAL GOES HERE */}
+            <EditAssignmentModal assignment={assignment}/>
             <h2 className="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">
-              <Tooltip title="Assignment Name" arrow>
-              <DriveFileRenameOutlineOutlinedIcon style={{ fontSize: 50, marginRight: 10 }} />
-              </Tooltip>
+  
                {assignment.assignment_name}</h2>
             <p className="mb-4 font-medium text-xl dark:text-white">
               <Tooltip title="Assignment Description" arrow>

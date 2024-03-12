@@ -101,6 +101,7 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     Route::get('/faculty/assignmentDetails/{assignment_id}', [AssignmentsController::class, 'assignmentDetails'])->name('faculty.assignmentDetails');
     Route::get('/getAssignments', [AssignmentsController::class, 'getAssignments'])->name('getAssignments');
     Route::post('/uploadAssignment', [AssignmentsController::class, 'uploadAssignment'])->name('uploadAssignment');
+    Route::put('/editAssignmentDetails/{assignment_id}', [AssignmentsController::class, 'editAssignmentDetails'])->name('editAssignmentDetails');
 });
 
 Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');

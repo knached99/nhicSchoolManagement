@@ -89,5 +89,29 @@ class AssignmentsController extends Controller
             return response()->json(['error' => 'Unable to create assignment, something went wrong']);
         }
     }
+
+    public function editAssignmentDetails(Request $request, $assignment_id){
+        try{
+            $data = $request->only([
+                'assignment_name',
+                'assignment_description',
+                'assignment_due_date'
+            ]);
+
+            $assignment = Assignments::findOrFail($assignment_id);
+            if(!$assignment){
+                return response()->json(['errors' => 'Assignment not found'], 404);
+            }
+
+            $assignment->update($data);
+            return response()->json(['success' => 'Assignment details updated successfully']);
+
+        }
+
+        catch(QueryException $error){
+            \Log::error(['Query Exception: ', $error->getMessage()]);
+            return response()->json(['errors'=>'Unable to update assignment details, something went wrong']);
+        }
+    }
     
 }

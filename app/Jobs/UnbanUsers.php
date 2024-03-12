@@ -1,5 +1,4 @@
-<?php
-
+<?php 
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -15,22 +14,20 @@ class UnbanUsers implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * Create a new job instance.
-     */
-    // public function __construct()
-    // {
-    //     //
-    // }
-
-    /**
      * Execute the job.
      */
     public function handle(): void
     {
-        $bannedUsers = Banned::where('banned_until', '=', now()->toDateString()->get());
+        $bannedUsers = Banned::where('banned_until', '<=', now()->toDateString())->get();
 
-        foreach($bannedUsers as $banned){
+        foreach ($bannedUsers as $banned) {
             $banned->delete();
+            \Log::info("User unbanned: {$banned->user_id}");
+
         }
+        \Log::info('UnbanUsers job completed');
+
     }
 }
+
+?>
