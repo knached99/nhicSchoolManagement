@@ -133,7 +133,7 @@ export default function CreateFacultyModal() {
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
-    <Tooltip title="Invite Team Member" TransitionComponent={Zoom}>
+    <Tooltip title="Invite Team Member" TransitionComponent={Zoom} arrow>
         <IconButton onClick={handleOpen} className="hover:text-slate-100">
             <PersonAddAltOutlinedIcon style={{color: '#fff', fontSize: 35}}/>
         </IconButton>
@@ -265,8 +265,8 @@ export default function CreateFacultyModal() {
             placeholder="Email"
             className="mb-3 mt-3"
             />
-           <span className="text-red-500">{touched.email && errors.email}</span>
-
+`           <span className="text-red-500">{touched.email && errors.email}</span>
+`
             
             {/* <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}} /> */}
             {/* <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}} /> */}

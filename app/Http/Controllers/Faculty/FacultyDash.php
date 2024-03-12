@@ -53,6 +53,7 @@ class FacultyDash extends Controller
         ]);
     }
 
+
     public function createFacultyRole(Request $request)
     {
         $rules = [
@@ -643,12 +644,6 @@ public function getAttendanceHistoryBystudentID($studentId){
       try {
           $query = $request->input('query');
           $authenticatedUser = Auth::guard('faculty')->user(); 
-
-          // Appears that the MYISAM DB engine is the only one that supports full text search 
-  
-        //   $facultyResults = Faculty::search($query)->get();
-        //   $studentResults = Students::search($query)->get();
-        //   $userResults = User::search($query)->get();
 
 
           $facultyResults = Faculty::where('name', 'LIKE', "%$query%")

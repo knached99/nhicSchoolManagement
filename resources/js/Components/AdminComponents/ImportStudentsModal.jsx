@@ -144,7 +144,7 @@ const style = {
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ">
-     <Tooltip title="Batch Import Students" TransitionComponent={Zoom} >
+     <Tooltip title="Batch Import Students" TransitionComponent={Zoom} arrow>
         <IconButton onClick={handleOpen} className="hover:text-slate-100">
         <FileDownloadOutlinedIcon style={{color: '#fff', fontSize: '35'}}/>
         </IconButton>

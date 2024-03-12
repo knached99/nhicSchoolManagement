@@ -213,7 +213,7 @@ const columns = [
     headerName: 'Details',
     width: 120,
     renderCell: (params) => (
-      <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
+      <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`} arrow>
         <IconButton disabled={auth.role === 'Teacher' || auth.role === 'Assistant Teacher'} className="hover:text-emerald-500" onClick={() => viewStudentDetails(params.row.student_id)}>
           <VisibilityOutlinedIcon className="dark:text-white"/>
         </IconButton>

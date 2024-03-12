@@ -271,7 +271,7 @@ const deleteAdminUser = async (userId) => {
 
 
                         <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
-                          <Tooltip title={`${row.name}'s details`}>
+                          <Tooltip title={`${row.name}'s details`} arrow>
                             <IconButton
                               sx={{color: isDarkMode ? 'white' : 'inherit'}}
                               className="hover:text-emerald-500"

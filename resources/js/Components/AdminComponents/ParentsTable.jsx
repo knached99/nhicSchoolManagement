@@ -185,7 +185,7 @@ const columns = [
     headerName: 'Details',
     width: 120,
     renderCell: (params) => (
-      <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
+      <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`} arrow>
         <IconButton className="hover:text-emerald-500" onClick={() => viewParentDetails(params.row.user_id)}>
           <VisibilityOutlinedIcon className="dark:text-white"/>
         </IconButton>
@@ -219,7 +219,7 @@ const columns = [
   // There is data
   auth.faculty && auth.faculty.role === 'Admin' && (
     <>
-      <Tooltip title="Once you delete all of your parents, there is no going back as this action will delete all of your parents and their associated data." arrow TransitionComponent={Zoom}>
+      <Tooltip title="Once you delete all of your parents, there is no going back as this action will delete all of your parents and their associated data." arrow TransitionComponent={Zoom} >
         <Button variant="contained" style={{ backgroundColor: '#ef4444', marginBottom: 20 }} onClick={deleteAllParents}>
           Delete All Parents
         </Button>

@@ -74,7 +74,7 @@ const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
     headerName: 'Details',
     width: 120,
     renderCell: (params) => (
-      <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`}>
+      <Tooltip title={`${params.row.first_name} ${params.row.last_name}'s details`} arrow>
         <IconButton className="hover:text-emerald-500" disabled={auth.faculty.faculty_id !== params.row.faculty_id} onClick={() => viewStudentDetails(params.row.student_id)}>
           <VisibilityOutlinedIcon style={{color: isDarkMode ? '#fff' : 'inherit'}} />
         </IconButton>

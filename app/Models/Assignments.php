@@ -1,25 +1,29 @@
-<?php
+<?php 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Students; 
 
 class Assignments extends Model
 {
     use HasFactory;
 
+    protected $table = 'assignments';
+    
+    protected $primaryKey = 'assignment_id';
+
     protected $fillable = [
+        'assignment_id',
         'assignment_name',
         'assignment_description',
         'assignment_due_date',
-        'assignment_grade',
-        'student_id',
-        'admin_id',
+        'faculty_id', 
     ];
 
-    public function student()
+    public function students()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsToMany(Students::class, 'assignment_student', 'assignment_id', 'student_id');
     }
 
     public function admin()
@@ -27,4 +31,5 @@ class Assignments extends Model
         return $this->belongsTo(Admin::class, 'faculty_id');
     }
 }
+
 ?>
