@@ -13,11 +13,13 @@ class CreateAssignmentStudentTable extends Migration
             $table->unsignedBigInteger('assignment_id');
             $table->unsignedBigInteger('student_id');
             $table->timestamps();
-
+    
+            // Correct foreign key references
             $table->foreign('assignment_id')->references('assignment_id')->on('assignments')->onDelete('cascade');
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');
         });
     }
+    
 
     public function down()
     {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\Faculty;
 use App\Models\Attendance;
-use App\Models\Assignments;
+use App\Models\AssignmentStudents;
 use App\Models\Grades;
 // Full Text Search using Scout
 // use Laravel\Scout\Attributes\SearchUsingFullText;
@@ -90,7 +90,7 @@ class Students extends Model
 
     public function assignments()
     {
-        return $this->hasMany(Assignments::class, 'student_id', 'student_id');
+        return $this->hasMany(AssignmentStudents::class, 'student_id', 'student_id');
     }
 
     public function grades()

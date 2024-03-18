@@ -8,6 +8,7 @@ use App\Http\Controllers\AssignmentsController;
 use App\Http\Controllers\UserDashboard;
 use App\Http\Controllers\Faculty\FacultyProfileController;
 use App\Http\Middleware\FacultyMiddleware;
+use App\Http\Middleware\BanMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,20 +24,24 @@ use Inertia\Inertia;
 |
 */
 /* Parents Routes */
-Route::get('/', function () {
-    return Inertia::render('Home', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+Route::middleware(['web','banMiddleware'])->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('Home', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+        ]);
+    });
 });
+
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['web', 'auth', 'verified', 'banMiddleware'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['web', 'auth', 'banMiddleware'])->group(function () {
     Route::get('/getStudents', [UserDashboard::class, 'getStudents'])->name('getStudents');
     Route::get('/studentDetails/{student_id}/view', [UserDashboard::class, 'viewStudentDetails'])->name('viewStudentDetails');
     Route::put('/updateStudentInformation/{student_id}', [UserDashboard::class, 'updateStudentInformation'])->name('updateStudentInformation');
@@ -50,9 +55,11 @@ These are protected routes and can only be
 accessed if the faculty user is authenticated  
 */ 
 
-Route::group(['middleware' => [FacultyMiddleware::class]], function () {
+Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]], function () {
     Route::get('/faculty/dash', [FacultyDash::class, 'loadDashboard'])->name('faculty.dash');
     Route::get('/faculty/profile', [FacultyDash::class, 'loadProfile'])->name('faculty.profile');
+    // Failed login attempts 
+    Route::get('/faculty/loginattempts', [FacultyDash::class, 'failedLoginAttempts'])->name('faculty.loginattempts');
     Route::post('/createFacultyRole', [FacultyDash::class, 'createFacultyRole'])->name('createFacultyRole');
     Route::get('/search', [FacultyDash::class, 'autocompleteSearch'])->name('faculty.autocomplete.search');
     Route::delete('/deleteFacultyUser/{faculty_id}', [FacultyDash::class, 'deleteFacultyUser'])->name('deleteFacultyUser');
@@ -94,14 +101,17 @@ Route::group(['middleware' => [FacultyMiddleware::class]], function () {
     // User Routes 
     Route::get('/getBanStatus/{user_id}', [BanSystem::class, 'getBanStatus'])->name('getBanStatus');
     Route::put('/banOrUnbanUser/{userID}', [BanSystem::class, 'banOrUnbanUser'])->name('banOrUnbanUser');
+    Route::post('/blockIP/{client_ip}', [BanSystem::class, 'blockIP'])->name('blockIP');
 
     // Assignments Routes 
 
     Route::get('/faculty/assignments', [AssignmentsController::class, 'myAssignments'])->name('faculty.assignments');
     Route::get('/faculty/assignmentDetails/{assignment_id}', [AssignmentsController::class, 'assignmentDetails'])->name('faculty.assignmentDetails');
+    Route::get('/faculty/studentassignment/{student_id}', [AssignmentsController::class, 'studentAssignment'])->name('faculty.studentassignment');
     Route::get('/getAssignments', [AssignmentsController::class, 'getAssignments'])->name('getAssignments');
     Route::post('/uploadAssignment', [AssignmentsController::class, 'uploadAssignment'])->name('uploadAssignment');
     Route::put('/editAssignmentDetails/{assignment_id}', [AssignmentsController::class, 'editAssignmentDetails'])->name('editAssignmentDetails');
+    Route::delete('/deleteAssignment/{assignment_id}', [AssignmentsController::class, 'deleteAssignment'])->name('deleteAssignment');
 });
 
 Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');
@@ -109,7 +119,12 @@ Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.lo
 
 /* Faculty Auth Routes */
 
-Route::get('/faculty/login', [FacultyAuth::class, 'viewLogin'])->name('faculty.login');
+Route::get('/faculty/login', [FacultyAuth::class, 'viewLogin'])->name('faculty.login')->middleware('web', 'banMiddleware');
 Route::post('/authenticate', [FacultyAuth::class, 'authenticate'])->name('authenticate');
+
+
+// Route for banned users
+
+Route::get('/banned', [BanSystem::class, 'banView'])->name('banned');
 
 require __DIR__.'/auth.php';

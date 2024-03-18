@@ -12,8 +12,12 @@ use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Faculty;
-use Illuminate\Auth\AuthenticationException; // Catches Authentication Exceptions
+
+// Catch Exceptions 
+use Illuminate\Auth\AuthenticationException; 
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\QueryException;
+
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Cookie;
 use Carbon\Carbon;
@@ -22,6 +26,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use App\Models\Banned;
+use Illuminate\Support\Facades\DB;
+
 
 class FacultyAuth extends Controller
 {
@@ -50,8 +56,7 @@ class FacultyAuth extends Controller
             if ($banned !== null) {
                 return redirect()->back()->withErrors(['auth_error'=>$banned]);
             }
-                        
-
+           
     
             $rateLimitKey = $request->ip();
             $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
@@ -86,17 +91,32 @@ class FacultyAuth extends Controller
                 //session(['faculty' => Auth::guard('faculty')->user()]);
                 $request->session()->regenerate();
                 return redirect()->intended(RouteServiceProvider::DASH);
+                
             } else {
                 RateLimiter::hit($rateLimitKey, $lockoutDuration);
+
+                DB::table('failed_login_attempts')->insert([
+                    'email_used'=>$request->email, 
+                    'client_ip'=>$request->ip(),
+                    'user_agent'=>$request->header('User-Agent'),
+                    'attempted_at'=>now()
+                ]);
+                // \Log::error([
+                //     'Failed Login Attempt', 
+                //     'Email Entered' => $request->email,
+                //     'IP Address' => $request->ip(),
+                //     'User Agent' => $request->header('User-Agent'),
+                //     'Time' => Carbon::now()->format('l, F jS, Y, h:i:s A'),
+                // ]);     
+
                 return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
             }
         
+        
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (\Exception $e) {
-            \Log::error(['Exception Caught: ', $e->getMessage()]);
-            return redirect()->back()->withErrors(['auth_error', 'Something went wrong']);
-        }
+        } 
+        
     }
 
 
@@ -141,8 +161,8 @@ class FacultyAuth extends Controller
 
     private function isBanned($userID)
     {
-        try {
-            $status = Banned::where('faculty_id', $userID)->firstOrFail();
+
+            $status = Banned::where('faculty_id', $userID)->first();
     
             if ($status && $status->ban_status === 1) {
 
@@ -163,11 +183,7 @@ class FacultyAuth extends Controller
                 }
     
                 return $banMessage;
-            }
-        } catch (\Exception $e) {
-            \Log::error('Is Banned Method Error: ' . $e->getMessage());
-        } catch (ModelNotFoundException $e) {
-            \Log::error('Is Banned Method Error: ' . $e->getMessage());
+            
         }
     
         return null;

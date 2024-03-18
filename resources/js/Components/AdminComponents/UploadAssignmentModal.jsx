@@ -25,7 +25,7 @@ import Zoom from '@mui/material/Zoom';
 
 import { InputText } from 'primereact/inputtext';
 
-export default function UploadAssignmentModal({auth}) {
+export default function UploadAssignmentModal({auth, refreshData}) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
@@ -40,7 +40,6 @@ export default function UploadAssignmentModal({auth}) {
         assignment_name: '',
         assignment_description: '',
         assignment_due_date: '',
-        student_id: ''
     };
 
     const validate = Yup.object().shape({
@@ -66,6 +65,7 @@ export default function UploadAssignmentModal({auth}) {
             } else if (response.data.success) {
                 setSuccess(response.data.success);
                 setSuccessOpen(true);
+                refreshData();
     
                 Object.keys(values).forEach((key) => {
                     values[key] = '';
@@ -266,31 +266,6 @@ export default function UploadAssignmentModal({auth}) {
              />
           <span className="text-red-500">{touched.assignment_due_date && errors.assignment_due_date}</span>
 
-            {students.length === 0 ? (
-                <>
-                </>
-            )
-            :
-            <>
-            <label className="mb-4 mt-3 font-medium dark:text-white">Assign To: </label>
-
-            <select
-            name="student_id"
-            className="w-full p-3 rounded border-2 border-slate-300 dark:bg-slate-900 dark:text-white"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.student_id} // Ensure the selected value is controlled by the form state
-            >
-            <option value="none">No One</option>
-            <option value="all_students">All Students</option>
-            {students.map((student) => (
-                <option key={student.student_id} value={student.student_id}>
-                {student.first_name} {student.last_name}
-                </option>
-            ))}
-            </select>
-            </>
-            }
            
 
 

@@ -6,7 +6,7 @@ export default function Guest({ children }) {
       <>
         <HomeNav/>
       
-        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-tr from-purple-600 to-sky-500">
+        <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-tr from-purple-600 to-indigo-500">
           
 
             <div className="dark:bg-slate-800 w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-lg overflow-hidden sm:rounded-lg">

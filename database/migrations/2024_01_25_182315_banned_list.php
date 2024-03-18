@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('banned_list', function(Blueprint $table){
-                $table->id('banID');
+            $table->id('banID');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('set null');
             $table->unsignedBigInteger('faculty_id')->nullable();

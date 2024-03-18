@@ -19,6 +19,7 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import FormHelperText  from '@mui/material/FormHelperText';
+import Tooltip from '@mui/material/Tooltip';
 
 // Prime React Components 
 
@@ -36,7 +37,7 @@ import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
-
+import ComputerIcon from '@mui/icons-material/Computer';
 // Table 
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
@@ -272,8 +273,25 @@ const handleBanCloseError = () => {
                         <span className="dark:text-white text-gray-700 uppercase font-bold tracking-wider mb-2">Team Member's Bio</span>
                         <ul>
                         {/* <li className="mb-2">Permissions:  <span className="font-normal">{user.role==='Admin' && 'All Permissions' || user.role==='Teacher' && formatPermissions(user.permissions)}</span></li>                       */}
-                        <li className="mb-2"><SmartphoneOutlinedIcon/> {user.phone ?? 'N/A'}</li>
-                        <li className="mb-2"><WorkOutlineOutlinedIcon/> {user.role}</li>  
+                        <li className="mb-2">
+                          <Tooltip title="Phone Number" arrow>
+                          <SmartphoneOutlinedIcon/>
+                          </Tooltip>
+                           {user.phone ?? 'N/A'}
+                           </li>
+                        <li className="mb-2">
+                          <Tooltip title="Role" arrow>
+                          <WorkOutlineOutlinedIcon/>
+                          </Tooltip>
+                           {user.role}
+                           </li>
+
+                        <li className="mb-2">
+                          <Tooltip title="Detected IP Address" arrow>
+                          <ComputerIcon/>
+                          </Tooltip>
+                          {clientIP ?? 'N/A'}
+                          </li>
                         </ul>
 
                         {auth.role === 'Admin' && 

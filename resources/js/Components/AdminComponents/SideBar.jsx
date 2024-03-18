@@ -14,7 +14,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
-import ListItem from '@mui/material/ListItem';
+import GppMaybeOutlinedIcon from '@mui/icons-material/GppMaybeOutlined';import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -251,6 +251,19 @@ export default function SideBar({auth}) {
                 <ListItemText primary="My Profile" />
               </ListItemButton>
             </ListItem>
+
+            {auth.role === 'Admin' && (
+              <ListItem key="Failed Login Attempts" disablePadding style={{
+                backgroundColor: route().current('faculty.loginattempts') ? '#10b981' : '', color: route().current('faculty.loginattempts') ? '#fff' : '#000'}}>
+                       <ListItemButton component={Link} to={route('faculty.loginattempts')}>
+                         <ListItemIcon>
+                         <GppMaybeOutlinedIcon style={{color: route().current('faculty.loginattempts') ? '#fff' : '#000'}}/>
+                         </ListItemIcon>
+                         <ListItemText primary="Failed Login Attempts" />
+                       </ListItemButton>
+                     </ListItem>
+            )}
+
               {auth.role === 'Teacher' && (
          <ListItem key="Assignments" disablePadding style={{
           backgroundColor: route().current('faculty.assignments') ? '#10b981' : '', color: route().current('faculty.assignments') ? '#fff' : '#000'}}>

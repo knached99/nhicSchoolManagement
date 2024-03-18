@@ -62,7 +62,7 @@ import { InputText } from 'primereact/inputtext';
 
 import AttendanceHistory from '@/Components/AdminComponents/AttendanceHistory';
 
-export default function Student({auth, student}) {
+export default function Student({auth, student, assignments}) {
     const [error, setError] = useState(null);
     const [teachers, setTeachers] = useState([]);
     const [parents, setParents] = useState([]);
@@ -1066,7 +1066,7 @@ export default function Student({auth, student}) {
           Assignments
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
-          <p class="font-bold text-2xl text-center">6</p>
+          <p class="font-bold text-2xl text-center">{assignments.length}</p>
         </p>
       </div>
     </div>

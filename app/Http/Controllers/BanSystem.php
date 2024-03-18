@@ -6,25 +6,55 @@ use Illuminate\Http\Request;
 use App\Models\Banned; 
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Crypt;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Session;
 
 use Carbon\Carbon; 
 
 class BanSystem extends Controller
-{   // : bool declares method signature type to specify the return being a boolean value 
-    public function checkIfBanned(Request $request) : bool {
+{  
+  
+    public function blockIP($client_ip){
         try{
-        $user = $request->has('user_id') ?
-        $request->user_id : 
-        ($request->has('faculty_id') ? 
-        $request->faculty_id : null);
-      return  $isBanned = Banned::where('user_id', $user)->orWhere('faculty_id', $user)->exists();
+            Banned::create($client_ip);
+            return response()->json(['success'=>'IP '.$client_ip.' is now blocked']);
         }
-        catch(QueryException $e){
-            \Log::error(['Query Exception Caught: ', $e->getMessage()]);
-            return response()->json(['errors'=>'Something went wrong.']);
+        catch(\Exception $e){
+            return response()->json(['errors'=>'Unable to block IP '.$client_ip]);
+            \Log::critical(['Unable to block IP', $e->getMessage()]);
         }
-
     }
+
+    public function isBanned($clientIP)
+    {
+        $banMessages = ''; // Initialize an empty string to accumulate ban messages
+    
+        $bannedIPs = Banned::all();
+        foreach ($bannedIPs as $bannedIP) {
+            $decryptedDBIP = Crypt::decryptString($bannedIP->client_ip);
+            if ($decryptedDBIP === $clientIP && $bannedIP->ban_status === 1) {
+                $banReason = isset($bannedIP->ban_reason) ? $bannedIP->ban_reason : null;
+                if ($bannedIP->permanent_ban === 1) {
+                    $banMessages .= "You are permanently banned";
+                } else {
+                    $bannedUntil = isset($bannedIP->banned_until) ? Carbon::parse($bannedIP->banned_until)->format('l, F jS, Y') : null;
+                    $banMessages .= $bannedUntil ? "You are banned until $bannedUntil." : '';
+                }
+                if ($banReason) {
+                    $banMessages .= " The reason for the ban: $banReason";
+                }
+            }
+        }
+    
+        // Check if any ban messages were accumulated
+        if (!empty($banMessages)) {
+            return $banMessages; // Return accumulated ban messages
+        }
+    
+        return null; // Return null if no ban messages were found
+    }
+    
+    
 
     public function banOrUnbanUser(Request $request, $userID)
     {
@@ -88,5 +118,22 @@ class BanSystem extends Controller
             \Log::error('getBanStatus Exception Caught: '.$e->getMessage());
         }
     }
+
+    // Display this page to banned users 
+
+    public function banView(Request $request)
+    {
+        // Retrieve the encrypted message from the URL query parameter
+        $encryptedMessage = $request->query('message');
+    
+        // Decrypt the message
+        $bannedMessage = $encryptedMessage ? Crypt::decryptString($encryptedMessage) : null;
+    
+        // Pass the message to the view
+        return Inertia::render('Banned', [
+            'message' => $bannedMessage
+        ]);
+    }
+    
     
 }

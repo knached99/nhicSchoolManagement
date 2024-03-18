@@ -227,8 +227,8 @@ const columns = [
     width: 120, 
     renderCell: (params) => (
       <Tooltip title={`Delete ${params.row.first_name} ${params.row.last_name} from the system`}>
-        <IconButton disabled={auth.role === 'Teacher' || auth.role === 'Assistant Teacher'} className="hover:text-red-500" onClick={()=> deleteStudent(params.row.student_id)}>
-          <DeleteOutlineOutlinedIcon className="dark:text-white"/>
+        <IconButton  disabled={auth.role === 'Teacher' || auth.role === 'Assistant Teacher'} onClick={()=> deleteStudent(params.row.student_id)}>
+          <DeleteOutlineOutlinedIcon sx={{ color: isDarkMode ? 'white' : 'inherit' }} />
         </IconButton>
       </Tooltip>
     )

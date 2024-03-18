@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Assignments; 
+use App\Models\AssignmentAnswers;
 use App\Models\Students; 
 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Exceptions\InsufficientStudentsException; 
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Validator;
 
@@ -43,11 +45,26 @@ class AssignmentsController extends Controller
             return redirect()->back()->withErrors(['errors' => 'Unable to get assignment details']);
         }
     }
+
+    public function studentAssignment($student_id){
+        $assignment = Students::with(['assignments'])->where('student_id', $student_id)->get();
+        $answers = AssignmentAnswers::with(['student'])->where('student_id', $student_id);
+
+        return Inertia::render('Faculty/StudentAssignment', [
+            'auth' => Auth::guard('faculty')->user(),
+            'assignment' => $assignment,
+            'answers'=>$answers 
+        ]);
+    }
     
 
     public function uploadAssignment(Request $request)
     {
         try {
+               
+            $facultyId = Auth::guard('faculty')->id();
+            $students = Students::where('faculty_id', $facultyId)->pluck('student_id')->toArray();
+
             $validate = Validator::make($request->only([
                 'assignment_name',
                 'assignment_due_date',
@@ -61,8 +78,10 @@ class AssignmentsController extends Controller
             if ($validate->fails()) {
                 return response()->json(['errors' => $validate->errors()], 419);
             }
-    
-            $facultyId = Auth::guard('faculty')->id();
+ 
+               if(empty($students)){
+                   throw new InsufficientStudentsException();
+               }
     
             $assignment = Assignments::create([
                 'assignment_name' => $request->assignment_name,
@@ -70,23 +89,25 @@ class AssignmentsController extends Controller
                 'assignment_description' => $request->assignment_description,
                 'faculty_id' => $facultyId,
             ]);
-    
-            if ($request->student_id == 'none') {
-                $assignment->students()->detach(); // Remove all students
-            } elseif ($request->student_id == 'all_students') {
-                $students = Students::where('faculty_id', $facultyId)->pluck('student_id')->toArray();
-                $assignment->students()->attach($students); // Attach all students
-            } else {
-                $assignment->students()->attach($request->student_id); // Attach the selected student
-            }
+            
+                // Assign to all students 
+                $assignment->students()->attach($students); 
+         
     
             return response()->json(['success' => 'Assignment uploaded successfully']);
         } catch (ValidationException $e) {
             \Log::error(['Validation Exception: ', $e->getMessage()]);
-            return response()->json(['error' => $e->getMessage()]);
-        } catch (QueryException $e) {
+            return response()->json(['errors' => $e->getMessage()]);
+        } 
+
+        catch(InsufficientStudentsException $e){
+            return response()->json(['errors'=>$e->getMessage()]);
+
+        }
+        
+        catch (QueryException $e) {
             \Log::error(['Query Exception: ', $e->getMessage()]);
-            return response()->json(['error' => 'Unable to create assignment, something went wrong']);
+            return response()->json(['errors' => 'Unable to create assignment, something went wrong']);
         }
     }
 
@@ -113,5 +134,21 @@ class AssignmentsController extends Controller
             return response()->json(['errors'=>'Unable to update assignment details, something went wrong']);
         }
     }
+
+    public function deleteAssignment($assignment_id)
+    {
+        try {
+            $assignment = Assignments::findOrFail($assignment_id);
+    
+            // (remove associations)
+            $assignment->students()->detach();
+            $assignment->delete();
+    
+            return response()->json(['success' => 'Assignment with ID: ' . $assignment_id . ' was successfully deleted']);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()]);
+        }
+    }
+    
     
 }

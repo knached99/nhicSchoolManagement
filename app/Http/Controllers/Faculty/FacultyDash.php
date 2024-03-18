@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\DB;
+
 use App\Notifications\AccountCreated;
 use App\Notifications\StudentAssigned;
 use App\Notifications\NotifyUserOfStudentAssigned;
@@ -20,6 +22,8 @@ use App\Models\Students;
 use App\Models\User;
 use App\Models\Banned;
 use App\Models\Attendance;
+use App\Models\AssignmentStudents; 
+
 use Carbon\Carbon;
 
 use Illuminate\Notifications\NotificationException; 
@@ -37,10 +41,38 @@ class FacultyDash extends Controller
 
     public function loadDashboard()
     {
+        $facultyCount = Faculty::count();
+        $studentsCount = Students::count();
+        $parentsCount = User::count();
+
+    
         return Inertia::render('Faculty/Dash', [
-            'auth' => function () {
-                return ['faculty' => auth('faculty')->user()];
+            'auth' => function () use ($facultyCount, $studentsCount, $parentsCount) {
+                return [
+                    'faculty' => auth('faculty')->user(),
+                    'facultyCount' => $facultyCount,
+                    'studentsCount' => $studentsCount,
+                    'parentsCount' => $parentsCount
+                ];
             },
+        ]);
+    }
+    
+    public function failedLoginAttempts(){
+        try{
+            if(Auth::guard('faculty')->user()->role !== 'Admin'){
+                return redirect('faculty/dash');
+            }
+            
+        $attempts = DB::table('failed_login_attempts')->get();
+        }
+        catch(QueryException $e){
+            \Log::error(['Login Attempts Query Error: ', $e->getMessage()]);
+            return redirect('faculty/dash');
+        }
+        return Inertia::render('Faculty/LoginAttempts', [
+            'auth' => auth('faculty')->user(),
+            'attempts'=>$attempts
         ]);
     }
 
@@ -509,8 +541,8 @@ public function showStudentsForTeacher($faculty_id)
 
 public function viewStudentDetails($student_id) {
     try {
-        $student = Students::with('faculty', 'user')->findOrFail($student_id);
-        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student]);
+        $student = Students::with('faculty', 'user', 'assignments')->findOrFail($student_id);
+        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student, 'assignments'=>$student->assignments]);
     } catch (ModelNotFoundException $e) {
         return redirect('faculty/dash');
     }

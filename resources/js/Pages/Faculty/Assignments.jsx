@@ -41,7 +41,8 @@ const columns = [
   {id: 'assignment_name', label: 'Assignment', minWidth: 50},
   {id: 'assignment_description', label: 'Description', minWidth: 80},
   {id: 'assignment_due_date', label: 'Due Date', minWidth: 80},
-  {id: 'view', label: 'Assignment Details', minWidth: 80}
+  {id: 'view', label: 'Assignment Details', minWidth: 80},
+  {id: 'delete', label: 'Delete Assignment', minWidth: 80}
   ];
 
   const getAssignments = async () => {
@@ -71,7 +72,7 @@ const columns = [
       }
     };
     fetchData();
-  }, []);
+  }, [success]);
 
 
   useEffect(() => {
@@ -93,6 +94,49 @@ const handleCloseError = () => {
     setError(null);
 };
 
+const refreshData = async () => {
+  setLoading(true);
+  try {
+    const response = await axios.get('/getAssignments');
+    const { assignments, error } = await response.data;
+
+    if (error) {
+      setError(error);
+    } else if (assignments) {
+      setRows(assignments.map(row => ({ ...row, id: row.assignment_id })));
+    } else {
+      setError('Unexpected response format from the server');
+    }
+
+    setLoading(false);
+  } catch (error) {
+    setError('Error fetching assignments: ' + error.message);
+    setLoading(false);
+  }
+};
+
+
+const deleteAssignment = async (assignment_id) => {
+  try {
+      const response = await axios.delete(`/deleteAssignment/${assignment_id}`);
+
+      if (response.data.errors) {
+          setError(response.data.errors);
+          setErrorOpen(true);
+      } else if (response.data.success) {
+          setSuccess(response.data.success);
+          setSuccessOpen(true);
+          refreshData();
+
+      }
+  } catch (error) {
+      setError(error.message || 'An error occurred deleting that student');
+      setErrorOpen(true);
+  } finally {
+      setSubmitting(false);
+  }
+};
+
 
   return (
     <AdminLayout
@@ -103,7 +147,7 @@ const handleCloseError = () => {
     <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div className="dark:bg-slate-600 bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <UploadAssignmentModal auth={auth}/>
+            <UploadAssignmentModal auth={auth} refreshData={refreshData}/>
             <h1 className="font-bold text-start text-2xl p-6 text-gray-900 dark:text-white">
             My Uploaded Assignments
             </h1>
@@ -199,6 +243,13 @@ const handleCloseError = () => {
                           <VisibilityOutlinedIcon/>
                           </Link>
                         </TableCell>
+
+                        <TableCell sx={{ color: isDarkMode ? 'white' : 'inherit' }}>
+                          <IconButton onClick={() => deleteAssignment(row.assignment_id)}>
+                            <DeleteOutlineOutlinedIcon sx={{ color: isDarkMode ? 'white' : 'inherit' }} />
+                          </IconButton>
+                        </TableCell>
+
                        
                       </TableRow>
                     ))}

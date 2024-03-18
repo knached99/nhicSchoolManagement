@@ -5,9 +5,11 @@ import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import ParentsTable from '@/Components/AdminComponents/ParentsTable';
 import MyStudentsTable from '@/Components/AdminComponents/MyStudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
-export default function Dash({ auth }) {
+import Cards from '@/Components/AdminComponents/Cards';
+export default function Dash({ auth, facultyCount, studentsCount, parentsCount }) {
   // Check if auth object is defined before accessing its properties
   const userName = auth && auth.faculty ? auth.faculty.name : 'Guest';
+  console.log('Props received in Dash:', auth, facultyCount, studentsCount, parentsCount);
 
   return (
     <AdminLayout
@@ -17,14 +19,15 @@ export default function Dash({ auth }) {
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-          <div className="dark:bg-slate-600 bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div className="p-6 text-gray-900 dark:text-white text-lg">
-              Welcome back, {userName}!
-            </div>
-          </div>
+         
           {auth.faculty && (
           (auth.faculty.role === 'Admin') && (
               <>
+               {/* <div className="dark:bg-slate-600 bg-white overflow-hidden shadow-sm sm:rounded-lg">  */}
+             <div className="p-6 text-gray-900 dark:text-white text-lg">
+             {/* <Cards facultyCount={facultyCount} studentsCount={studentsCount} parentsCount={parentsCount} /> */}
+            </div>
+          {/* </div> */}
                   <AdminsTable auth={auth} />
                   <StudentsTable auth={auth} path="/showAllStudents"/>
                   <ParentsTable auth={auth} />

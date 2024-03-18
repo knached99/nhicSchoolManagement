@@ -7,7 +7,7 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
   return (
     <>
     <HomeNav/>
-    <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-tr from-purple-600 to-sky-500">
+    <div className="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gradient-to-tr from-purple-600 to-indigo-500">
       <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
       </div>
       <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">

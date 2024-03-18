@@ -26,7 +26,7 @@ class UserDashboard extends Controller
     public function viewStudentDetails($student_id) {
         try {
             if (auth()->check()) {
-                $student = Students::with('faculty', 'user')->findOrFail($student_id);
+                $student = Students::with('faculty', 'user', 'assignments')->findOrFail($student_id);
                 return Inertia::render('StudentDetails', ['auth' => Auth::user(), 'student' => $student]);
             } else {
                 // Handle unauthenticated user
