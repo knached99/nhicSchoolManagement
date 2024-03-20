@@ -30,11 +30,17 @@ class BanMiddleware
          $banSystem = new BanSystem();
          $clientIP = $request->ip();
 
+         $blocked = $banSystem->isBlocked($clientIP);
+
  
          $banMessage = $banSystem->isBanned($clientIP);
 
          if ($banMessage) {
              return redirect('/banned?message='.Crypt::encryptString($banMessage));
+         }
+
+         if($blocked){
+            return redirect('/banned');
          }
  
          return $next($request);

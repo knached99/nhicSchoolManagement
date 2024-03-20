@@ -1,4 +1,6 @@
 import react, {useState} from 'react';
+import { Link } from '@inertiajs/react';
+
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -66,7 +68,7 @@ function HomeNav() {
               textDecoration: 'none',
             }}
           >
-            <a href="/" className="text-emerald-400 font-black hover:text-white">NHIC</a>
+            <Link href="/" className="text-green-500 font-black hover:text-white ">NHIC</Link>
             
           </Typography>
 

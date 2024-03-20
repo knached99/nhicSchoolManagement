@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Banned; 
+use App\Models\LoginAttempts;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Crypt;
 use Inertia\Inertia;
@@ -16,13 +17,32 @@ class BanSystem extends Controller
   
     public function blockIP($client_ip){
         try{
-            Banned::create($client_ip);
+
+            LoginAttempts::where('client_ip', $client_ip)->update(['is_blocked' => 1]);
+
             return response()->json(['success'=>'IP '.$client_ip.' is now blocked']);
         }
-        catch(\Exception $e){
+        catch(QueryException $e){
             return response()->json(['errors'=>'Unable to block IP '.$client_ip]);
             \Log::critical(['Unable to block IP', $e->getMessage()]);
         }
+    }
+
+    // Checks if failed login attempt is blocked 
+    public function isBlocked($client_ip){
+        try {
+        $blocked = LoginAttempts::where('client_ip', $client_ip)->where('is_blocked', 1)->first();
+
+        if($blocked){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    catch(\Exception $e){
+        \Log::error(['Cannot determine if IP address: '.$client_ip. ' is blocked']);
+    }
     }
 
     public function isBanned($clientIP)

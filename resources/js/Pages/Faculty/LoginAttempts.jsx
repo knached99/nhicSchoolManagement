@@ -30,33 +30,33 @@ export default function LoginAttempts({ auth, attempts }) {
     };
 
     const handleBlockIP = async (clientIp) => {
-        try {
-          const response = await axios.post(`/blockIP/${clientIp}`, {}, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-        
-          console.log(response); // Log the entire response to the console
-        
-          if (response.data.errors) {
-            // Handle errors
-            setError(response.data.errors);
-            setErrorOpen(true);
-          } else if (response.data.success) {
-            // Handle success
-            setSuccess(response.data.success);
-            setSuccessOpen(true);
-            refreshData(); // Assuming refreshData is a function to update the data
-          }
-        } catch (error) {
-          // Handle errors
-          console.error(error);
-          setError(error.message || 'Whoops, something went wrong blocking the IP');
-          setErrorOpen(true);
-        }
-      };
+      try {
+        const response = await axios.post(`/blockIP/${clientIp}`, {}, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
       
+        console.log(response); // Log the entire response to the console
+      
+        if (response.data.errors) {
+          // Handle errors
+          setError(response.data.errors);
+          setErrorOpen(true);
+        } else if (response.data.success) {
+          // Handle success
+          setSuccess(response.data.success);
+          setSuccessOpen(true);
+          // refreshData(); // Assuming refreshData is a function to update the data
+        }
+      } catch (error) {
+        // Handle errors
+        console.error(error);
+        setError(error.message || 'Whoops, something went wrong blocking the IP');
+        setErrorOpen(true);
+      }
+    };
+    
       
 
   const columns = [
@@ -64,20 +64,43 @@ export default function LoginAttempts({ auth, attempts }) {
     { field: 'Email', headerName: 'Email Used', width: 200 },
     { field: 'IPAddress', headerName: 'IP Address', width: 200 },
     { field: 'UserAgent', headerName: 'User Agent', width: 1000 },
-    {
-        field: 'Block',
-        headerName: 'Block',
-        width: 200,
-        renderCell: (params) => (
+  //   {
+  //     field: 'created_at',
+  //     headerName: 'Attempted At',
+  //     width: 200,
+  //     valueGetter: (params) => {
+  //       const timestamp = params.row.created_at;
+  //       console.log(timestamp); // Add this line to check the value of timestamp
+  //       const [datePart, timePart] = timestamp.split(' ');
+  //       const [year, month, day] = datePart.split('-');
+  //       const [hour, minute, second] = timePart.split(':');
+  //       return new Date(year, month - 1, day, hour, minute, second).toLocaleString();
+  //   }
+    
+  // },
+  
+  {
+    field: 'Block',
+    headerName: 'Block IP',
+    width: 200,
+    renderCell: (params) => {
+      if (params.row.is_blocked === '1') { // Use strict equality
+        return <div>IP is blocked</div>;
+      } else {
+        return (
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => handleBlockIP(params.row.client_ip)}
+            onClick={() => handleBlockIP(params.row.IPAddress)}
           >
             Block IP
           </Button>
-        ),
+        );
       }
+    },
+  },
+  
+    
        ];
 
   // Transform attempts data into rows
@@ -94,8 +117,9 @@ export default function LoginAttempts({ auth, attempts }) {
     user={auth}
     header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Faculty Dashboard</h2>}
   >
-    <div style={{ height: 400, width: '100%' }}>
-    {error && (
+ <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
+  <h1 className="text-center m-3 font-black text-2xl">Failed Login Attempts</h1>
+      {error && (
                         <Box   style={{
                           padding: '1rem',
                           maxHeight: '80vh',

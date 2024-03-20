@@ -21,6 +21,7 @@ use App\Models\Faculty;
 use App\Models\Students;
 use App\Models\User;
 use App\Models\Banned;
+use App\Models\LoginAttempts;
 use App\Models\Attendance;
 use App\Models\AssignmentStudents; 
 
@@ -64,7 +65,7 @@ class FacultyDash extends Controller
                 return redirect('faculty/dash');
             }
             
-        $attempts = DB::table('failed_login_attempts')->get();
+        $attempts = LoginAttempts::all();
         }
         catch(QueryException $e){
             \Log::error(['Login Attempts Query Error: ', $e->getMessage()]);

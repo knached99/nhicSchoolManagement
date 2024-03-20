@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Faculty;
+use App\Models\LoginAttempts;
 
 // Catch Exceptions 
 use Illuminate\Auth\AuthenticationException; 
@@ -94,13 +95,21 @@ class FacultyAuth extends Controller
                 
             } else {
                 RateLimiter::hit($rateLimitKey, $lockoutDuration);
+                $data = [
+                    'email_used' => $request->email, 
+                    'client_ip' => $request->ip(),
+                    'user_agent' => $request->header('User-Agent'),
+                ];
+    
 
-                DB::table('failed_login_attempts')->insert([
-                    'email_used'=>$request->email, 
-                    'client_ip'=>$request->ip(),
-                    'user_agent'=>$request->header('User-Agent'),
-                    'attempted_at'=>now()
-                ]);
+                LoginAttempts::updateOrCreate(['email_used' => $request->email, 'client_ip' => $request->ip()], $data);
+
+                // DB::table('failed_login_attempts')->updateOrInsert([
+                //     'email_used'=>$request->email, 
+                //     'client_ip'=>$request->ip(),
+                //     'user_agent'=>$request->header('User-Agent'),
+                //     'attempted_at'=>now()
+                // ]);
                 // \Log::error([
                 //     'Failed Login Attempt', 
                 //     'Email Entered' => $request->email,
