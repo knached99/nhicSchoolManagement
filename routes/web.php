@@ -13,6 +13,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+use App\Http\Controllers\Auth\TwoStepVerification;
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -102,6 +105,7 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     Route::get('/getBanStatus/{user_id}', [BanSystem::class, 'getBanStatus'])->name('getBanStatus');
     Route::put('/banOrUnbanUser/{userID}', [BanSystem::class, 'banOrUnbanUser'])->name('banOrUnbanUser');
     Route::post('/blockIP/{client_ip}', [BanSystem::class, 'blockIP'])->name('blockIP');
+    Route::delete('/deleteIP/{client_ip}', [BanSystem::class, 'deleteIP'])->name('deleteIP');
 
     // Assignments Routes 
 
@@ -112,6 +116,14 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     Route::post('/uploadAssignment', [AssignmentsController::class, 'uploadAssignment'])->name('uploadAssignment');
     Route::put('/editAssignmentDetails/{assignment_id}', [AssignmentsController::class, 'editAssignmentDetails'])->name('editAssignmentDetails');
     Route::delete('/deleteAssignment/{assignment_id}', [AssignmentsController::class, 'deleteAssignment'])->name('deleteAssignment');
+
+    // Two-Step Verification 
+    // Route::get('/faculty/profile/two-factor-authentication', [TwoStepVerification::class, 'display'])->name('two-factor-authentication.show');
+    // Route::post('/faculty/profile/enable-two-factor-authentication', [TwoStepVerification::class, 'enable']);
+    // Route::delete('/faculty/profile/disable-two-factor-authentication', [TwoStepVerification::class, 'disable']);
+    // Route::post('/faculty/profile/confirm-two-factor-authentication', [TwoStepVerification::class, 'confirm']);
+    // Route::get('/faculty/profile/two-factor-recovery-codes', [TwoStepVerification::class, 'showRecoveryCodes']);
+    // Route::post('/faculty/profile/regenerate-recovery-codes', [TwoStepVerification::class, 'regenerateRecoveryCodes']);
 });
 
 Route::post('/faculty/logout', [FacultyAuth::class, 'logout'])->name('faculty.logout');

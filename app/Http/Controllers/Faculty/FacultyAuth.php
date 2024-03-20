@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use App\Models\Banned;
 use Illuminate\Support\Facades\DB;
+use Laravel\Fortify\Fortify;
 
 
 class FacultyAuth extends Controller
@@ -38,95 +39,183 @@ class FacultyAuth extends Controller
         ]);
     }
 
-    public function authenticate(Request $request)
-    {
-        try {
-            $request->validate([
-                'email' => 'required|email|exists:faculty',
-                'password' => 'required',
-            ], [
-                'email.required' => 'Your email is required',
-                'email.email' => 'You\'ve entered an invalid email',
-                'email.exists' => 'An account for that email does not exist',
-                'password.required' => 'Your password is required',
-            ]);
+    // public function authenticate(Request $request)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'email' => 'required|email|exists:faculty',
+    //             'password' => 'required',
+    //         ], [
+    //             'email.required' => 'Your email is required',
+    //             'email.email' => 'You\'ve entered an invalid email',
+    //             'email.exists' => 'An account for that email does not exist',
+    //             'password.required' => 'Your password is required',
+    //         ]);
 
-            $user = Faculty::where('email', $request->email)->first();
-            $banned = $this->isBanned($user->faculty_id);
+    //         $user = Faculty::where('email', $request->email)->first();
+    //         $banned = $this->isBanned($user->faculty_id);
 
-            if ($banned !== null) {
-                return redirect()->back()->withErrors(['auth_error'=>$banned]);
-            }
+    //         if ($banned !== null) {
+    //             return redirect()->back()->withErrors(['auth_error'=>$banned]);
+    //         }
            
     
-            $rateLimitKey = $request->ip();
-            $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
+    //         $rateLimitKey = $request->ip();
+    //         $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
     
-            // Set the lockout duration to 10 minutes (600 seconds)
-            $lockoutDuration = 600;
+    //         // Set the lockout duration to 10 minutes (600 seconds)
+    //         $lockoutDuration = 600;
     
-            if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
-                $minutesRemaining = ceil(RateLimiter::availableIn($rateLimitKey) / 60);
-                return $this->rateLimitExceededResponse($minutesRemaining);
-            }
+    //         if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+    //             $minutesRemaining = ceil(RateLimiter::availableIn($rateLimitKey) / 60);
+    //             return $this->rateLimitExceededResponse($minutesRemaining);
+    //         }
     
-            $rememberMe = $request->input('remember');
+    //         $rememberMe = $request->input('remember');
     
-            if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-                if ($rememberMe) {
-                    $encryptedEmail = Crypt::encryptString($request->input('email'));
-                    $encryptedPassword = Crypt::encryptString($request->input('password'));
+    //         if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
+               
+    //             if ($request->expectsJson()) {
+    //                 // Check if two factor authentication is required
+    //                 if (Fortify::twoFactorAuthenticationEnabled() &&
+    //                     Auth::guard('faculty')->user()->two_factor_secret) {
+    //                     return response()->json(['two_factor' => true]);
+    //                 }
+    //             }
+               
+    //             if ($rememberMe) {
+    //                 $encryptedEmail = Crypt::encryptString($request->input('email'));
+    //                 $encryptedPassword = Crypt::encryptString($request->input('password'));
     
-                    // Use secure cookies instead of regular cookies
-                    cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
-                    cookie()->queue('password', $encryptedPassword, 60);
-                }
-                $ip = Faculty::where('email', $request->email)->value('client_ip');
+    //                 // Use secure cookies instead of regular cookies
+    //                 cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
+    //                 cookie()->queue('password', $encryptedPassword, 60);
+    //             }  
 
-                if (empty($ip) || $ip !== $request->ip()) {
-                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
-                }
+    //             $ip = Faculty::where('email', $request->email)->value('client_ip');
+
+    //             if (empty($ip) || $ip !== $request->ip()) {
+    //                 $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+    //             }
                 
 
-                RateLimiter::clear($rateLimitKey);
-                //session(['faculty' => Auth::guard('faculty')->user()]);
-                $request->session()->regenerate();
-                return redirect()->intended(RouteServiceProvider::DASH);
+    //             RateLimiter::clear($rateLimitKey);
+    //             //session(['faculty' => Auth::guard('faculty')->user()]);
+    //             $request->session()->regenerate();
+    //             return redirect()->intended(RouteServiceProvider::DASH);
                 
-            } else {
-                RateLimiter::hit($rateLimitKey, $lockoutDuration);
-                $data = [
-                    'email_used' => $request->email, 
-                    'client_ip' => $request->ip(),
-                    'user_agent' => $request->header('User-Agent'),
-                ];
+    //         } else {
+    //             RateLimiter::hit($rateLimitKey, $lockoutDuration);
+    //             $data = [
+    //                 'email_used' => $request->email, 
+    //                 'client_ip' => $request->ip(),
+    //                 'user_agent' => $request->header('User-Agent'),
+    //             ];
     
 
-                LoginAttempts::updateOrCreate(['email_used' => $request->email, 'client_ip' => $request->ip()], $data);
+    //             LoginAttempts::updateOrCreate(['email_used' => $request->email, 'client_ip' => $request->ip()], $data);
 
-                // DB::table('failed_login_attempts')->updateOrInsert([
-                //     'email_used'=>$request->email, 
-                //     'client_ip'=>$request->ip(),
-                //     'user_agent'=>$request->header('User-Agent'),
-                //     'attempted_at'=>now()
-                // ]);
-                // \Log::error([
-                //     'Failed Login Attempt', 
-                //     'Email Entered' => $request->email,
-                //     'IP Address' => $request->ip(),
-                //     'User Agent' => $request->header('User-Agent'),
-                //     'Time' => Carbon::now()->format('l, F jS, Y, h:i:s A'),
-                // ]);     
+    //             // DB::table('failed_login_attempts')->updateOrInsert([
+    //             //     'email_used'=>$request->email, 
+    //             //     'client_ip'=>$request->ip(),
+    //             //     'user_agent'=>$request->header('User-Agent'),
+    //             //     'attempted_at'=>now()
+    //             // ]);
+    //             // \Log::error([
+    //             //     'Failed Login Attempt', 
+    //             //     'Email Entered' => $request->email,
+    //             //     'IP Address' => $request->ip(),
+    //             //     'User Agent' => $request->header('User-Agent'),
+    //             //     'Time' => Carbon::now()->format('l, F jS, Y, h:i:s A'),
+    //             // ]);     
 
-                return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
+    //             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
+    //         }
+        
+        
+    //     } catch (ValidationException $e) {
+    //         return redirect()->back()->withErrors($e->errors())->withInput();
+    //     } 
+        
+    // }
+
+    public function authenticate(Request $request)
+{
+    try {
+        $request->validate([
+            'email' => 'required|email|exists:faculty',
+            'password' => 'required',
+        ], [
+            'email.required' => 'Your email is required',
+            'email.email' => 'You\'ve entered an invalid email',
+            'email.exists' => 'An account for that email does not exist',
+            'password.required' => 'Your password is required',
+        ]);
+
+        $user = Faculty::where('email', $request->email)->first();
+        $banned = $this->isBanned($user->faculty_id);
+
+        if ($banned !== null) {
+            return redirect()->back()->withErrors(['auth_error'=>$banned]);
+        }
+       
+        $rateLimitKey = $request->ip();
+        $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
+
+        // Set the lockout duration to 10 minutes (600 seconds)
+        $lockoutDuration = 600;
+
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+            $minutesRemaining = ceil(RateLimiter::availableIn($rateLimitKey) / 60);
+            return $this->rateLimitExceededResponse($minutesRemaining);
+        }
+
+        $rememberMe = $request->input('remember');
+
+        if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
+            if ($rememberMe) {
+                $encryptedEmail = Crypt::encryptString($request->input('email'));
+                $encryptedPassword = Crypt::encryptString($request->input('password'));
+
+                // Use secure cookies instead of regular cookies
+                cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
+                cookie()->queue('password', $encryptedPassword, 60);
             }
-        
-        
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } 
-        
-    }
+            $ip = Faculty::where('email', $request->email)->value('client_ip');
+
+            if (empty($ip) || $ip !== $request->ip()) {
+                $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+            }
+            
+
+            RateLimiter::clear($rateLimitKey);
+            //session(['faculty' => Auth::guard('faculty')->user()]);
+            $request->session()->regenerate();
+            
+            if(Auth::guard('faculty')->user()->two_factor_secret){
+                return response()->json(['two_factor'=>true]);
+            }
+      
+
+            return redirect()->intended(RouteServiceProvider::DASH);
+            
+        } else {
+            RateLimiter::hit($rateLimitKey, $lockoutDuration);
+            $data = [
+                'email_used' => $request->email, 
+                'client_ip' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+            ];
+
+            LoginAttempts::updateOrCreate(['email_used' => $request->email, 'client_ip' => $request->ip()], $data);
+
+            return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
+        }
+    
+    } catch (ValidationException $e) {
+        return redirect()->back()->withErrors($e->errors())->withInput();
+    } 
+}
 
 
     public function logout(Request $request): RedirectResponse

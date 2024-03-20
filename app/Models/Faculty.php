@@ -4,6 +4,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+
 // Full Text Search using Scout
 // use Laravel\Scout\Attributes\SearchUsingFullText;
 // use Laravel\Scout\Attributes\SearchUsingPrefix;
@@ -17,7 +19,7 @@ use App\Models\Banned;
 
 class Faculty extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
     
     protected $table = "faculty";
     protected $primaryKey = "faculty_id";

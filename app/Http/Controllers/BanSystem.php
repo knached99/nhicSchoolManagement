@@ -28,6 +28,17 @@ class BanSystem extends Controller
         }
     }
 
+    public function deleteIP($client_ip){
+        try{
+        LoginAttempts::where('client_ip', $client_ip)->delete();
+        return response()->json(['success'=>'IP '.$client_ip.' was deleted from the log entries']);
+        }
+        catch(QueryException $e){
+            return response()->json(['errors'=>'Unable to delete IP '.$client_ip]);
+            \Log::critical(['Unable to delete IP', $e->getMessage()]);
+        }
+    }
+
     // Checks if failed login attempt is blocked 
     public function isBlocked($client_ip){
         try {

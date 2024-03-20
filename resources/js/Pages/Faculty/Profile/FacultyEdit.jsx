@@ -3,7 +3,8 @@ import UpdatePasswordForm from './Partials/UpdateFacultyPasswordForm';
 import UpdateFacultyProfile from './Partials/UpdateFacultyProfile';
 import UpdateProfilePic from './Partials/UpdateProfilePic';
 import UploadWallpaperPic from './Partials/UploadWallpaperPic';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
+import TwoFactorSetup from './Partials/TwoFactorSetup';
 
 export default function FacultyEdit({ auth }) {
     return (
@@ -32,6 +33,11 @@ export default function FacultyEdit({ auth }) {
 
                     <div className="p-4 sm:p-8 bg-white dark:bg-slate-800 shadow sm:rounded-lg">
                         <UpdatePasswordForm className="max-w-xl dark:bg-slate-800 dark:text-white" style={{opacity: auth.faculty.wallpaper_pic ? 0.9 : null }} />
+                    </div>
+
+                    <div className="p-4 sm:p-8 bg-white dark:bg-slate-800 shadow sm:rounded-lg">
+                     <h4 className="text-xl font-bold dark:text-white">Two-Step Verification</h4>
+                        <TwoFactorSetup auth={auth}/>
                     </div>
                 </div>
             </div>

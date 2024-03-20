@@ -18,6 +18,7 @@ export default function LoginAttempts({ auth, attempts }) {
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
     const [open, setOpen] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     const handleCloseSuccess = () => {
         setSuccessOpen(false);
@@ -56,6 +57,44 @@ export default function LoginAttempts({ auth, attempts }) {
         setErrorOpen(true);
       }
     };
+
+    const deleteIP = async (clientIp) => {
+      try {
+        const response = await axios.delete(`/deleteIP/${clientIp}`, {}, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      
+        console.log(response); // Log the entire response to the console
+      
+        if (response.data.errors) {
+          // Handle errors
+          setError(response.data.errors);
+          setErrorOpen(true);
+        } else if (response.data.success) {
+          // Handle success
+          setSuccess(response.data.success);
+          setSuccessOpen(true);
+          // refreshData(); // Assuming refreshData is a function to update the data
+        }
+      } catch (error) {
+        // Handle errors
+        console.error(error);
+        setError(error.message || 'Whoops, something went wrong deleting the IP');
+        setErrorOpen(true);
+      }
+      
+    };
+
+    useEffect(() => {
+      // Check if the system is in dark mode
+      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+      setIsDarkMode(prefersDarkMode);
+    }, []);
+
+    
     
       
 
@@ -99,6 +138,25 @@ export default function LoginAttempts({ auth, attempts }) {
       }
     },
   },
+
+  {
+    field: 'delete',
+    headerName: 'Delete IP',
+    width: 200,
+    renderCell: (params) => {
+     
+        return (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => deleteIP(params.row.IPAddress)}
+          >
+            Delete IP
+          </Button>
+        );
+      
+    },
+  }
   
     
        ];
@@ -118,7 +176,7 @@ export default function LoginAttempts({ auth, attempts }) {
     header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Faculty Dashboard</h2>}
   >
  <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-  <h1 className="text-center m-3 font-black text-2xl">Failed Login Attempts</h1>
+  <h1 className="text-center m-3 font-black text-2xl dark:text-white">Failed Login Attempts</h1>
       {error && (
                         <Box   style={{
                           padding: '1rem',
@@ -173,7 +231,8 @@ export default function LoginAttempts({ auth, attempts }) {
                     )}
 
       <DataGrid
-        rows={rows}
+              sx={{backgroundColor: isDarkMode ? '#334155' : 'inherit', color: isDarkMode ? '#fff' : 'inherit'}}
+              rows={rows}
         columns={columns}
         pagination
         pageSize={5}
