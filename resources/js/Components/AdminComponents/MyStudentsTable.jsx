@@ -44,7 +44,14 @@ const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
     { field: 'student_id', headerName: 'Student ID', width: 120 },
     { field: 'first_name', headerName: 'First Name', width: 120 },
     { field: 'last_name', headerName: 'Last Name', width: 120 },
-    { field: 'parent_guardian_email', headerName: 'Parent/Guardian Email', width: 200 },
+    { field: 'user_id',
+    headerName: 'Parent/Guardian',
+    renderCell: (params) => (
+      <div>
+        {params.row.user && params.row.user.name ? params.row.user.name : 'N/A'}
+      </div>
+    ),
+    width: 200 },
     { field: 'date_of_birth', headerName: 'Date Of Birth', width: 150 },
     { field: 'address', headerName: 'Address', width: 150 },
     {field: 'street_address_2', headerName: 'Apt/Unit', width: 150},

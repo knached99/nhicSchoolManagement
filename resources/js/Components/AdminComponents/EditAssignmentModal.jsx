@@ -117,7 +117,7 @@ const style = {
         <>
     <Tooltip title="Edit Assignment Details" arrow>
     <IconButton onClick={handleOpen}>
-    <DriveFileRenameOutlineOutlinedIcon style={{ fontSize: 40, marginRight: 10 }} />
+    <DriveFileRenameOutlineOutlinedIcon style={{ fontSize: 40, marginRight: 10, color: isDarkMode ? '#fff' : 'inherit' }} />
     </IconButton>
     </Tooltip>
 

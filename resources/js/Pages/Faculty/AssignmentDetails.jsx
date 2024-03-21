@@ -1,3 +1,5 @@
+import React, {useState, useEffect} from 'react';
+
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -8,6 +10,15 @@ import EditAssignmentModal from '@/Components/AdminComponents/EditAssignmentModa
 
 
 export default function AssignmentDetails({ auth, assignment }) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    // Check if the system is in dark mode
+    const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+    setIsDarkMode(prefersDarkMode);
+  }, []);
+
   return (
     <AdminLayout
       user={auth}
