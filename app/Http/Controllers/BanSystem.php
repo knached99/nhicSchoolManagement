@@ -28,14 +28,14 @@ class BanSystem extends Controller
         }
     }
 
-    public function deleteIP($client_ip){
+    public function deleteFailedAttempt($loginID){
         try{
-        LoginAttempts::where('client_ip', $client_ip)->delete();
-        return response()->json(['success'=>'IP '.$client_ip.' was deleted from the log entries']);
+        LoginAttempts::where('loginID', $loginID)->delete();
+        return response()->json(['success'=>'Attempt ID: '.$loginID.' was deleted from the log entries']);
         }
         catch(QueryException $e){
-            return response()->json(['errors'=>'Unable to delete IP '.$client_ip]);
-            \Log::critical(['Unable to delete IP', $e->getMessage()]);
+            return response()->json(['errors'=>'Unable to delete attempt ID: '.$loginID]);
+            \Log::critical(['Unable to delete attempt ID', $e->getMessage()]);
         }
     }
 

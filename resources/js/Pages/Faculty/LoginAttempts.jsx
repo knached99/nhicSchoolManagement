@@ -58,9 +58,9 @@ export default function LoginAttempts({ auth, attempts }) {
       }
     };
 
-    const deleteIP = async (clientIp) => {
+    const deleteFailedAttempt = async (loginID) => {
       try {
-        const response = await axios.delete(`/deleteIP/${clientIp}`, {}, {
+        const response = await axios.delete(`/deleteFailedAttempt/${loginID}`, {}, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -141,7 +141,7 @@ export default function LoginAttempts({ auth, attempts }) {
 
   {
     field: 'delete',
-    headerName: 'Delete IP',
+    headerName: 'Delete Attempt',
     width: 200,
     renderCell: (params) => {
      
@@ -149,7 +149,7 @@ export default function LoginAttempts({ auth, attempts }) {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => deleteIP(params.row.IPAddress)}
+            onClick={() => deleteFailedAttempt(params.row.AttemptID)}
           >
             Delete IP
           </Button>

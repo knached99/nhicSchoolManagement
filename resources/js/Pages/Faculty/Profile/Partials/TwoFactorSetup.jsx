@@ -89,7 +89,7 @@ const TwoFactorSetup = ({auth}) => {
     <div>
               {error && <div className="text-red-500 dark:text-red-400 mt-4">{error}</div>}
       {success && <div className="text-emerald-500 dark:text-emerald-400 mt-4">{success}</div>}
-      <p className="dark:text-white m-3 text-lg">Two-step verification adds an extra lock to your online accounts. You need to enter two secret codes to get in, making it harder for bad guys to access your stuff. It keeps your accounts safe and your information private.</p>
+      <p className="dark:text-white m-3 text-lg">Two-step verification adds an extra lock to your online accounts. You need to enter two secret codes to get in, making it harder for malicious adversaries to access your data. It keeps your accounts safe and your information private.</p>
 
       {status === 'disabled' && (
         <div className="mt-3">

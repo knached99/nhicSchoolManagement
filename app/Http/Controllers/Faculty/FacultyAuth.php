@@ -173,6 +173,15 @@ class FacultyAuth extends Controller
         $rememberMe = $request->input('remember');
 
         if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
+            
+            $user = Auth::guard('faculty')->user();
+
+            // if($user->two_factor_secret){
+            //     return $request->wantsJson() 
+            //     ? response()->json(['two_factor'=>true]) 
+            //     : redirect()->route('faculty.login');
+            // }
+           
             if ($rememberMe) {
                 $encryptedEmail = Crypt::encryptString($request->input('email'));
                 $encryptedPassword = Crypt::encryptString($request->input('password'));
@@ -181,6 +190,7 @@ class FacultyAuth extends Controller
                 cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
                 cookie()->queue('password', $encryptedPassword, 60);
             }
+
             $ip = Faculty::where('email', $request->email)->value('client_ip');
 
             if (empty($ip) || $ip !== $request->ip()) {
@@ -192,9 +202,7 @@ class FacultyAuth extends Controller
             //session(['faculty' => Auth::guard('faculty')->user()]);
             $request->session()->regenerate();
             
-            if(Auth::guard('faculty')->user()->two_factor_secret){
-                return response()->json(['two_factor'=>true]);
-            }
+        
       
 
             return redirect()->intended(RouteServiceProvider::DASH);

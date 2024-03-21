@@ -105,7 +105,7 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     Route::get('/getBanStatus/{user_id}', [BanSystem::class, 'getBanStatus'])->name('getBanStatus');
     Route::put('/banOrUnbanUser/{userID}', [BanSystem::class, 'banOrUnbanUser'])->name('banOrUnbanUser');
     Route::post('/blockIP/{client_ip}', [BanSystem::class, 'blockIP'])->name('blockIP');
-    Route::delete('/deleteIP/{client_ip}', [BanSystem::class, 'deleteIP'])->name('deleteIP');
+    Route::delete('/deleteFailedAttempt/{loginID}', [BanSystem::class, 'deleteFailedAttempt'])->name('deleteFailedAttempt');
 
     // Assignments Routes 
 

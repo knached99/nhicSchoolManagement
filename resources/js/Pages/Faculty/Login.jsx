@@ -33,13 +33,7 @@ export default function Login({ errors, RATE_LIMIT_THRESHOLD_EXCEEDED, auth_erro
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('authenticate'))
-        .then(response => {
-            if(response.data.two_factor){
-                window.location.href="/auth/two-factor-challenge";
-            }
-
-        }); 
+        post(route('authenticate'));
     };
 
     const handleCloseError = () => {
