@@ -61,6 +61,7 @@ import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
 import { InputText } from 'primereact/inputtext';
 
 import AttendanceHistory from '@/Components/AdminComponents/AttendanceHistory';
+import AssignmentsTable from '@/Components/AdminComponents/AssignmentsTable';
 
 export default function Student({auth, student, assignments}) {
     const [error, setError] = useState(null);
@@ -1104,48 +1105,9 @@ export default function Student({auth, student, assignments}) {
 </div>
                     <h2 className="text-xl font-bold mt-6 mb-4 dark:text-white">Student Metrics</h2>
                     <AttendanceHistory studentID={student.student_id}/>
-                    {/* <div className="mb-6">
-                        <div className="flex justify-between flex-wrap gap-2 w-full">
-                            <span className="text-gray-700 font-bold">Web Developer</span>
-                            <p>
-                                <span className="text-gray-700 mr-2">at ABC Company</span>
-                                <span className="text-gray-700">2017 - 2019</span>
-                            </p>
-                        </div>
-                        <p className="mt-2">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed finibus est vitae
-                            tortor ullamcorper, ut vestibulum velit convallis. Aenean posuere risus non velit egestas
-                            suscipit.
-                        </p>
-                    </div>
-                    <div className="mb-6">
-                        <div className="flex justify-between flex-wrap gap-2 w-full">
-                            <span className="text-gray-700 font-bold">Web Developer</span>
-                            <p>
-                                <span className="text-gray-700 mr-2">at ABC Company</span>
-                                <span className="text-gray-700">2017 - 2019</span>
-                            </p>
-                        </div>
-                        <p className="mt-2">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed finibus est vitae
-                            tortor ullamcorper, ut vestibulum velit convallis. Aenean posuere risus non velit egestas
-                            suscipit.
-                        </p>
-                    </div>
-                    <div className="mb-6">
-                        <div className="flex justify-between flex-wrap gap-2 w-full">
-                            <span className="text-gray-700 font-bold">Web Developer</span>
-                            <p>
-                                <span className="text-gray-700 mr-2">at ABC Company</span>
-                                <span className="text-gray-700">2017 - 2019</span>
-                            </p>
-                        </div>
-                        <p className="mt-2">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed finibus est vitae
-                            tortor ullamcorper, ut vestibulum velit convallis. Aenean posuere risus non velit egestas
-                            suscipit.
-                        </p>
-                    </div> */}
+                    <AssignmentsTable studentID={student.student_id} />
+                    {/* Assignments Table Goes Here */}
+                   
                 </div>
             </div>
         </div>

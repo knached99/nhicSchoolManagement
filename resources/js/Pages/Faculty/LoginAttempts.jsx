@@ -30,9 +30,9 @@ export default function LoginAttempts({ auth, attempts }) {
         setError(null);
     };
 
-    const handleBlockIP = async (clientIp) => {
+    const handleBlockIP = async (AttemptID) => {
       try {
-        const response = await axios.post(`/blockIP/${clientIp}`, {}, {
+        const response = await axios.post(`/blockAttempt/${AttemptID}`, {}, {
           headers: {
             'Content-Type': 'application/json',
           },
@@ -130,7 +130,7 @@ export default function LoginAttempts({ auth, attempts }) {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => handleBlockIP(params.row.IPAddress)}
+            onClick={() => handleBlockIP(params.row.AttemptID)}
           >
             Block IP
           </Button>

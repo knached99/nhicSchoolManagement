@@ -15,16 +15,17 @@ use Carbon\Carbon;
 class BanSystem extends Controller
 {  
   
-    public function blockIP($client_ip){
+    public function blockAttempt($loginID){
         try{
+            $clientIP = LoginAttempts::select('client_ip')->where('loginID', $loginID)->first();
 
-            LoginAttempts::where('client_ip', $client_ip)->update(['is_blocked' => 1]);
+            LoginAttempts::where('loginID', $loginID)->update(['is_blocked' => 1]);
 
-            return response()->json(['success'=>'IP '.$client_ip.' is now blocked']);
+            return response()->json(['success'=>'IP '.$clientIP.' is now blocked']);
         }
         catch(QueryException $e){
-            return response()->json(['errors'=>'Unable to block IP '.$client_ip]);
-            \Log::critical(['Unable to block IP', $e->getMessage()]);
+            return response()->json(['errors'=>'Unable to block IP '.$clientIP]);
+            \Log::critical(['Unable to block IP: '.$clientIP.'', $e->getMessage()]);
         }
     }
 

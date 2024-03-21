@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Assignments; 
 use App\Models\AssignmentAnswers;
+use App\Models\AssignmentStudents;
 use App\Models\Students; 
 
 use Illuminate\Validation\ValidationException;
@@ -47,15 +48,21 @@ class AssignmentsController extends Controller
     }
 
     public function studentAssignment($student_id){
-        $assignment = Students::with(['assignments'])->where('student_id', $student_id)->get();
-        $answers = AssignmentAnswers::with(['student'])->where('student_id', $student_id);
+        $student = Students::where('student_id', $student_id)->first();
+        \Log::info(['Student: ', $student]);
+
+        $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->get();
+
+        $answer = AssignmentAnswers::where('student_id', $student_id)->first();
 
         return Inertia::render('Faculty/StudentAssignment', [
             'auth' => Auth::guard('faculty')->user(),
-            'assignment' => $assignment,
-            'answers'=>$answers 
+            'student'=>$student,
+            'assignments' => $assignment, 
+            'answer' => $answer 
         ]);
     }
+    
     
 
     public function uploadAssignment(Request $request)

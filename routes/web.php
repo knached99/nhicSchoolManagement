@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Faculty\FacultyAuth;
 use App\Http\Controllers\Faculty\FacultyDash;
+use App\Http\Controllers\Faculty\StudentManagement;
 use App\Http\Controllers\BanSystem;
 use App\Http\Controllers\AssignmentsController;
 use App\Http\Controllers\UserDashboard;
@@ -73,21 +74,22 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     Route::delete('/deleteAllParents', [FacultyDash::class, 'deleteAllParents'])->name('deleteAllParents');
     Route::delete('/deleteParent/{user_id}', [FacultyDash::class, 'deleteParent'])->name('deleteParent');
     Route::get('/faculty/profile/{faculty_id}/view', [FacultyDash::class, 'viewFacultyUser'])->name('faculty.profile.view');
-    Route::post('/studentBatchImport', [FacultyDash::class, 'studentBatchImport'])->name('studentBatchImport');
-    Route::post('/addStudent', [FacultyDash::class, 'addStudent'])->name('addStudent');
-    Route::put('/editStudentInformation/{student_id}', [FacultyDash::class, 'editStudentInformation'])->name('editStudentInformation');
-    Route::delete('/deleteStudent/{student_id}', [FacultyDash::class, 'deleteStudent'])->name('deleteStudent');
-    Route::delete('/deleteAllStudents', [FacultyDash::class, 'deleteAllStudents'])->name('deleteAllStudents');
-    Route::delete('/deleteMyStudents', [FacultyDash::class, 'deleteMyStudents'])->name('deleteMyStudents');
+    Route::post('/studentBatchImport', [StudentManagement::class, 'studentBatchImport'])->name('studentBatchImport');
+    Route::post('/addStudent', [StudentManagement::class, 'addStudent'])->name('addStudent');
+    Route::put('/editStudentInformation/{student_id}', [StudentManagement::class, 'editStudentInformation'])->name('editStudentInformation');
+    Route::delete('/deleteStudent/{student_id}', [StudentManagement::class, 'deleteStudent'])->name('deleteStudent');
+    Route::delete('/deleteAllStudents', [StudentManagement::class, 'deleteAllStudents'])->name('deleteAllStudents');
+    Route::delete('/deleteMyStudents', [StudentManagement::class, 'deleteMyStudents'])->name('deleteMyStudents');
     Route::delete('/deleteParents', [FacultyDash::class, 'deleteParents'])->name('deleteParents');
     Route::delete('/deleteParent/{user_id}', [FacultyDash::class, 'deleteParent'])->name('deleteParent');
-    Route::get('/showAllStudents', [FacultyDash::class, 'showAllStudents'])->name('showAllStudents');
-    Route::get('/showStudentsForTeacher/{faculty_id}', [FacultyDash::class, 'showStudentsForTeacher'])->name('showStudentsForTeacher');
-    Route::get('/student/{student_id}/view', [FacultyDash::class, 'viewStudentDetails'])->name('studentDetails');
-    Route::get('/getAttendanceHistoryBystudentID/{student_id}', [FacultyDash::class, 'getAttendanceHistoryBystudentID'])
+    Route::get('/showAllStudents', [StudentManagement::class, 'showAllStudents'])->name('showAllStudents');
+    Route::get('/showStudentsForTeacher/{faculty_id}', [StudentManagement::class, 'showStudentsForTeacher'])->name('showStudentsForTeacher');
+    Route::get('/student/{student_id}/view', [StudentManagement::class, 'viewStudentDetails'])->name('studentDetails');
+    Route::get('/getAttendanceHistoryBystudentID/{student_id}', [StudentManagement::class, 'getAttendanceHistoryBystudentID'])
     ->name('getAttendanceHistoryBystudentID');
-    Route::put('/assignTeacherToStudent/{student_id}/{faculty_id}', [FacultyDash::class, 'assignTeacherToStudent'])->name('assignTeacherToStudent');
-    Route::put('/assignParentToStudent/{student_id}/{user_id}', [FacultyDash::class, 'assignParentToStudent'])->name('assignParentToStudent');
+    Route::get('/getAssignmentsForStudent/{student_id}', [StudentManagement::class, 'getAssignmentsForStudent'])->name('getAssignmentsForStudent');
+    Route::put('/assignTeacherToStudent/{student_id}/{faculty_id}', [StudentManagement::class, 'assignTeacherToStudent'])->name('assignTeacherToStudent');
+    Route::put('/assignParentToStudent/{student_id}/{user_id}', [StudentManagement::class, 'assignParentToStudent'])->name('assignParentToStudent');
     Route::put('/updateUserInformation/{faculty_id}', [FacultyDash::class, 'updateUserInformation'])->name('updateUserInformation');
     // Profile Update Routes
     Route::put('/updateProfile', [FacultyProfileController::class, 'updateProfile'])->name('updateProfile');
@@ -104,7 +106,7 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     // User Routes 
     Route::get('/getBanStatus/{user_id}', [BanSystem::class, 'getBanStatus'])->name('getBanStatus');
     Route::put('/banOrUnbanUser/{userID}', [BanSystem::class, 'banOrUnbanUser'])->name('banOrUnbanUser');
-    Route::post('/blockIP/{client_ip}', [BanSystem::class, 'blockIP'])->name('blockIP');
+    Route::post('/blockAttempt/{loginID}', [BanSystem::class, 'blockAttempt'])->name('blockAttempt');
     Route::delete('/deleteFailedAttempt/{loginID}', [BanSystem::class, 'deleteFailedAttempt'])->name('deleteFailedAttempt');
 
     // Assignments Routes 
