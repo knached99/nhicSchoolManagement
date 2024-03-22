@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
+import PrivacyTipOutlinedIcon from '@mui/icons-material/PrivacyTipOutlined';
+import Tooltip from '@mui/material/Tooltip';
 
 const TwoFactorSetup = ({auth}) => {
   const [status, setStatus] = useState('disabled');
@@ -87,19 +90,38 @@ const TwoFactorSetup = ({auth}) => {
 
   return (
     <div>
+      <h4 className="text-xl font-bold dark:text-white">
+        {status === 'disabled' && 
+        <Tooltip title="You are less secure when two-step verification is disabled" arrow>
+        <PrivacyTipOutlinedIcon style={{color: 'red', marginRight: 10, fontSize: 30}}/>
+        </Tooltip>
+         }
+         
+         {status === 'enabled' && 
+        <Tooltip title="You are now more secure with two-step verification" arrow>
+        <GppGoodOutlinedIcon style={{color: 'green', marginRight: 10, fontSize: 30}}/>
+        </Tooltip>
+         }
+
+         {}
+        Two-Step Verification</h4>
+
               {error && <div className="text-red-500 dark:text-red-400 mt-4">{error}</div>}
       {success && <div className="text-emerald-500 dark:text-emerald-400 mt-4">{success}</div>}
       <p className="dark:text-white m-3 text-lg">Two-step verification adds an extra lock to your online accounts. You need to enter two secret codes to get in, making it harder for malicious adversaries to access your data. It keeps your accounts safe and your information private.</p>
 
       {status === 'disabled' && (
         <div className="mt-3">
-          <p className="dark:text-orange-300 text-orange-400 mt-4 mb-4">Two-step authentication is disabled</p>
+          <p className="dark:text-orange-300 text-orange-400 mt-4 mb-4">
+           Two-step authentication is disabled</p>
           <Button onClick={handleToggle} label="Enable" />
         </div>
       )}
      {status === 'enabled' && (
   <div className="mt-3">
-    <p className="text-emerald-600 dark:text-emerald-400 text-lg mb-3 text-wrap">Two-step authentication is currently enabled. Whenever you login, you will be prompted to enter a 6 digit code from your authenticator app.</p>
+    <p className="text-emerald-600 dark:text-emerald-400 text-lg mb-3 text-wrap">
+      
+     Two-step authentication is currently enabled. Whenever you login, you will be prompted to enter a 6 digit code from your authenticator app.</p>
     <Button onClick={handleToggle} label="Disable" />       
     {auth.faculty.two_factor_secret === null ? (
       <>

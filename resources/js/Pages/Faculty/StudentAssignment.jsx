@@ -40,7 +40,7 @@ export default function StudentAssignment({ auth, student, assignments, answer }
                         
                          <div className="block">
                            <h1 className="font-medium text-2xl mt-3 dark:text-white text-black">Answer:</h1>  
-                           {answer ? answer.assignment_answer : 'No Answer Provided Yet'}   
+                          <p className="mt-3 text-pretty dark:text-white text-lg"> {answer ? answer.assignment_answer : 'No Answer Provided Yet'} </p>
                           </div>
                     </div>
                 </div>
