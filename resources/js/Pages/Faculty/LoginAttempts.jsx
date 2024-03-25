@@ -102,7 +102,7 @@ export default function LoginAttempts({ auth, attempts }) {
     { field: 'AttemptID', headerName: 'Attempt ID', width: 130 },
     { field: 'Email', headerName: 'Email Used', width: 200 },
     { field: 'IPAddress', headerName: 'IP Address', width: 200 },
-    { field: 'UserAgent', headerName: 'User Agent', width: 1000 },
+    { field: 'UserAgent', headerName: 'User Agent', width: 400 },
   //   {
   //     field: 'created_at',
   //     headerName: 'Attempted At',
@@ -151,7 +151,7 @@ export default function LoginAttempts({ auth, attempts }) {
             color="primary"
             onClick={() => deleteFailedAttempt(params.row.AttemptID)}
           >
-            Delete IP
+            Delete Attempt
           </Button>
         );
       

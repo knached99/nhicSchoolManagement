@@ -209,7 +209,7 @@ const deleteAssignment = async (assignment_id) => {
           <CircularProgress color="primary"/>
 
         ) : rows.length === 0 ? (
-          <div className="text-slate-500 text-xl text-center p-3 m-3">
+          <div className="text-red-500 dark:text-red-400 text-2xl text-center p-3 m-3">
             No Assignments Uploaded Yet
           </div>
         ) : (

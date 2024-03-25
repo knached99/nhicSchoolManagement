@@ -77,6 +77,63 @@ class FacultyDash extends Controller
         ]);
     }
 
+    public function analytics()
+{
+    if(auth('faculty')->user()->role !=='Admin'){
+        return redirect('faculty/dash');
+    }
+    $currentMonth = Carbon::now()->format('m');
+    $currentYear = Carbon::now()->format('Y');
+    $facultyData = [];
+    $studentData = [];
+    $parentData = [];
+
+    $facultyMembers = Faculty::whereYear('created_at', $currentYear)
+        ->get()
+        ->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+    foreach ($facultyMembers as $month => $users) {
+        // Count users for each month
+        $facultyData[] = count($users);
+    }
+
+    $students = Students::whereYear('created_at', $currentYear)
+        ->get()
+        ->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+    foreach ($students as $month => $users) {
+        // Count users for each month
+        $studentData[] = count($users);
+    }
+
+    $parents = User::whereYear('created_at', $currentYear)
+        ->get()
+        ->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('m');
+        });
+
+    foreach ($parents as $month => $users) {
+        // Count users for each month
+        $parentData[] = count($users);
+    }
+
+    return Inertia::render('Faculty/Analytics', [
+        'auth' => function () use ($facultyData, $studentData, $parentData) {
+            return [
+                'faculty' => auth('faculty')->user(),
+                'facultyData' => $facultyData,
+                'studentsData' => $studentData,
+                'parentsData' => $parentData,
+            ];
+        },
+    ]);
+}
+
+
     public function loadProfile()
     {
         return Inertia::render('Faculty/Profile/FacultyEdit', [

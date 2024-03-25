@@ -64,6 +64,7 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     Route::get('/faculty/profile', [FacultyDash::class, 'loadProfile'])->name('faculty.profile');
     // Failed login attempts 
     Route::get('/faculty/loginattempts', [FacultyDash::class, 'failedLoginAttempts'])->name('faculty.loginattempts');
+    Route::get('/faculty/analytics', [FacultyDash::class, 'analytics'])->name('faculty.analytics');
     Route::post('/createFacultyRole', [FacultyDash::class, 'createFacultyRole'])->name('createFacultyRole');
     Route::get('/search', [FacultyDash::class, 'autocompleteSearch'])->name('faculty.autocomplete.search');
     Route::delete('/deleteFacultyUser/{faculty_id}', [FacultyDash::class, 'deleteFacultyUser'])->name('deleteFacultyUser');

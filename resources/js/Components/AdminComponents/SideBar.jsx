@@ -36,7 +36,7 @@ import SearchBar from '@/Components/AdminComponents/SearchBar';
 import AutoCompleteSearch from '@/Components/AdminComponents/AutoCompleteSearch';
 import ApplicationLogo from '../ApplicationLogo';
 import Avatar from '@mui/material/Avatar';
-
+import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 
 const drawerWidth = 240;
 
@@ -253,6 +253,7 @@ export default function SideBar({auth}) {
             </ListItem>
 
             {auth.role === 'Admin' && (
+              <>
               <ListItem key="Failed Login Attempts" disablePadding style={{
                 backgroundColor: route().current('faculty.loginattempts') ? '#10b981' : '', color: route().current('faculty.loginattempts') ? '#fff' : '#000'}}>
                        <ListItemButton component={Link} to={route('faculty.loginattempts')}>
@@ -262,7 +263,19 @@ export default function SideBar({auth}) {
                          <ListItemText primary="Failed Login Attempts" />
                        </ListItemButton>
                      </ListItem>
+
+          <ListItem key="Analytics" disablePadding style={{
+            backgroundColor: route().current('faculty.analytics') ? '#10b981' : '', color: route().current('faculty.analytics') ? '#fff' : '#000'}}>
+                  <ListItemButton component={Link} to={route('faculty.analytics')}>
+                    <ListItemIcon>
+                    <TrendingUpOutlinedIcon style={{color: route().current('faculty.analytics') ? '#fff' : '#000'}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Analytics" />
+                  </ListItemButton>
+                </ListItem>
+                </>
             )}
+
 
               {auth.role === 'Teacher' && (
          <ListItem key="Assignments" disablePadding style={{

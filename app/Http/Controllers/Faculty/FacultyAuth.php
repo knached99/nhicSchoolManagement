@@ -209,10 +209,55 @@ class FacultyAuth extends Controller
             
         } else {
             RateLimiter::hit($rateLimitKey, $lockoutDuration);
+
+            $userAgent = $request->header('User-Agent');
+
+            $device = 'Unknown';
+            $browser = 'Unknown';
+
+            // Common Devices & Browsers
+
+            $devices  = [
+                'iPhone' => 'iPhone',
+                'iPad' => 'iPad',
+                'Android' => 'Android',
+                'Windows Phone' => 'Windows Phone',
+                'Windows' => 'Windows',
+                'Macintosh' => 'Macintosh',
+                'Linux' => 'Linux',
+            ];
+
+            $browsers = [
+                'Chrome' => 'Chrome',
+                'Firefox' => 'Firefox',
+                'Safari' => 'Safari',
+                'Opera' => 'Opera',
+                'MSIE' => 'Internet Explorer',
+                'Trident' => 'Internet Explorer',
+            ];
+
+
+                        // Determine the device
+                foreach ($devices as $key => $value) {
+                    if (strpos($userAgent, $key) !== false) {
+                        $device = $value;
+                        break;
+                    }
+                }
+
+                // Determine the browser
+                foreach ($browsers as $key => $value) {
+                    if (strpos($userAgent, $key) !== false) {
+                        $browser = $value;
+                        break;
+                    }
+                }
+
+
             $data = [
                 'email_used' => $request->email, 
                 'client_ip' => $request->ip(),
-                'user_agent' => $request->header('User-Agent'),
+                'user_agent' => 'Device: ' .$device . ' Browser: '. $browser,
             ];
 
             LoginAttempts::updateOrCreate(['email_used' => $request->email, 'client_ip' => $request->ip()], $data);
