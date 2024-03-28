@@ -18,6 +18,7 @@ class LoginAttempts extends Model
         'email_used',
         'client_ip',
         'user_agent',
+        'location_information',
         'created_at'
     ];
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('assignment_answers', function(Blueprint $table){
             $table->id('assignment_answer_id');
-            $table->string('assignment_answer');
+            $table->text('assignment_answer');
             $table->unsignedBigInteger('student_id')->nullable();
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('set null');
             $table->timestamps();

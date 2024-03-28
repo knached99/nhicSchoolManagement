@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { DataGrid } from '@mui/x-data-grid';
+// import { DataGrid } from '@mui/x-data-grid';
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -19,6 +19,7 @@ export default function LoginAttempts({ auth, attempts }) {
     const [successOpen, setSuccessOpen] = useState(true);
     const [open, setOpen] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
+    const [locationData, setLocationData] = useState({});
 
     const handleCloseSuccess = () => {
         setSuccessOpen(false);
@@ -87,79 +88,12 @@ export default function LoginAttempts({ auth, attempts }) {
       
     };
 
-    useEffect(() => {
-      // Check if the system is in dark mode
-      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-      setIsDarkMode(prefersDarkMode);
-    }, []);
+
 
     
     
       
 
-  const columns = [
-    { field: 'AttemptID', headerName: 'Attempt ID', width: 130 },
-    { field: 'Email', headerName: 'Email Used', width: 200 },
-    { field: 'IPAddress', headerName: 'IP Address', width: 200 },
-    { field: 'UserAgent', headerName: 'User Agent', width: 400 },
-  //   {
-  //     field: 'created_at',
-  //     headerName: 'Attempted At',
-  //     width: 200,
-  //     valueGetter: (params) => {
-  //       const timestamp = params.row.created_at;
-  //       console.log(timestamp); // Add this line to check the value of timestamp
-  //       const [datePart, timePart] = timestamp.split(' ');
-  //       const [year, month, day] = datePart.split('-');
-  //       const [hour, minute, second] = timePart.split(':');
-  //       return new Date(year, month - 1, day, hour, minute, second).toLocaleString();
-  //   }
-    
-  // },
-  
-  {
-    field: 'Block',
-    headerName: 'Block IP',
-    width: 200,
-    renderCell: (params) => {
-      if (params.row.is_blocked === '1') { // Use strict equality
-        return <div>IP is blocked</div>;
-      } else {
-        return (
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => handleBlockIP(params.row.AttemptID)}
-          >
-            Block IP
-          </Button>
-        );
-      }
-    },
-  },
-
-  {
-    field: 'delete',
-    headerName: 'Delete Attempt',
-    width: 200,
-    renderCell: (params) => {
-     
-        return (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => deleteFailedAttempt(params.row.AttemptID)}
-          >
-            Delete Attempt
-          </Button>
-        );
-      
-    },
-  }
-  
-    
-       ];
 
   // Transform attempts data into rows
   const rows = attempts.map((attempt, index) => ({
@@ -168,16 +102,19 @@ export default function LoginAttempts({ auth, attempts }) {
     Email: attempt.email_used,
     IPAddress: attempt.client_ip,
     UserAgent: attempt.user_agent,
+    isBlocked: attempt.is_blocked, 
+    locationData: attempt.location_information,
+    created_at: attempt.created_at
   }));
 
   return (
     <AdminLayout
     user={auth}
-    header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Faculty Dashboard</h2>}
+    header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Failed Login Attempts</h2>}
   >
  <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
-  <h1 className="text-center m-3 font-black text-2xl dark:text-white">Failed Login Attempts</h1>
-      {error && (
+  <h1 className="text-center mb-5 font-black text-2xl dark:text-white">Failed Login Attempts</h1>
+   {error && (
                         <Box   style={{
                           padding: '1rem',
                           maxHeight: '80vh',
@@ -228,16 +165,133 @@ export default function LoginAttempts({ auth, attempts }) {
                                 </Alert>
                             </Collapse>
                         </Box>
-                    )}
+                    )} 
 
-      <DataGrid
-              sx={{backgroundColor: isDarkMode ? '#334155' : 'inherit', color: isDarkMode ? '#fff' : 'inherit'}}
-              rows={rows}
-        columns={columns}
-        pagination
-        pageSize={5}
-        rowsPerPageOptions={[5, 10, 20]}
-      />
+  
+
+      
+
+<div className="relative overflow-x-auto">
+    <table className="w-full shadow-lg text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-slate-100 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" className="px-6 py-3">
+                    Attempt ID
+                </th>
+                <th scope="col" className="px-6 py-3">
+                    Email Used
+                </th>
+                <th scope="col" className="px-6 py-3">
+                    IP Address 
+                </th>
+                <th scope="col" className="px-6 py-3">
+                    Device/Browser
+                </th>
+                <th scope="col" className="px-6 py-3">
+                    Attempt Made On
+                </th>
+
+                <th scope="col" className="px-6 py-3">
+                    Block Attempt 
+                </th>
+
+                <th scope="col" className="px-6 py-3">
+                    Delete Attempt
+                </th>
+
+                <th scope="col" className="px-6 py-3">
+                   Approximate Location 
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+        {rows.map(row => (
+                <tr key={row.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {row.AttemptID}
+                    </td>
+                    <td className="px-6 py-4">
+                        {row.Email}
+                    </td>
+                    <td className="px-6 py-4">
+                        {row.IPAddress}
+                    </td>
+                    <td className="px-6 py-4">
+                        {row.UserAgent}
+                    </td>
+                    <td className="px-6 py-4">
+                    {new Date(row.created_at).toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true })}
+                    </td>
+                    <td className="px-6 py-4">
+                    {row.isBlocked === 1 ? 
+                     <span className="text-orange-500">IP Address Blocked</span>
+                     :
+                    <button onClick={()=>handleBlockIP(row.AttemptID)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                      Block 
+                    </button>
+                    }
+                    
+                    </td>
+
+                    <td className="px-6 py-4">
+                    <button onClick={()=>deleteFailedAttempt(row.AttemptID)} className="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded">
+                      Delete 
+                    </button>
+                    </td>
+
+                    <td className="px-6 py-4">
+                                      {row.locationData ? row.locationData : 'Not Available'}
+                                    </td>
+                </tr>
+            ))}
+
+            {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Apple MacBook Pro 17"
+                </th>
+                <td className="px-6 py-4">
+                    Silver
+                </td>
+                <td className="px-6 py-4">
+                    Laptop
+                </td>
+                <td className="px-6 py-4">
+                    $2999
+                </td>
+            </tr>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Microsoft Surface Pro
+                </th>
+                <td className="px-6 py-4">
+                    White
+                </td>
+                <td className="px-6 py-4">
+                    Laptop PC
+                </td>
+                <td className="px-6 py-4">
+                    $1999
+                </td>
+            </tr>
+            <tr className="bg-white dark:bg-gray-800">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Magic Mouse 2
+                </th>
+                <td className="px-6 py-4">
+                    Black
+                </td>
+                <td className="px-6 py-4">
+                    Accessories
+                </td>
+                <td className="px-6 py-4">
+                    $99
+                </td>
+            </tr> */}
+        </tbody>
+    </table>
+</div>
+
     </div>
     </AdminLayout>
   );

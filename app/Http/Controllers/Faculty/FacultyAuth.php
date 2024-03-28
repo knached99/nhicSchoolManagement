@@ -193,8 +193,19 @@ class FacultyAuth extends Controller
 
             $ip = Faculty::where('email', $request->email)->value('client_ip');
 
-            if (empty($ip) || $ip !== $request->ip()) {
+            if ($ip !== null) {
+                $decryptedIP = Crypt::decryptString($ip);
+                if ($decryptedIP !== $request->ip()) {
+                    // Update the IP address to the correct one
+                    // $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString('71.192.87.83')]);
+                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+
+                }
+            } else {
+                // If IP is null, set it to the default value
                 $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+
+                // $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString('71.192.87.83')]);
             }
             
 
@@ -253,14 +264,23 @@ class FacultyAuth extends Controller
                     }
                 }
 
+            // Get Approximate Location 
+            $locationData = json_decode(file_get_contents("http://ip-api.com/json/{$request->ip()}"));
 
             $data = [
                 'email_used' => $request->email, 
-                'client_ip' => $request->ip(),
+                'client_ip' => Crypt::encryptString($request->ip()),
                 'user_agent' => 'Device: ' .$device . ' Browser: '. $browser,
-            ];
+                'location_information' => $locationData ? 
+                ($locationData->city ?? '') . ', ' . 
+                ($locationData->regionName ?? '') . ', ' . 
+                ($locationData->zip ?? '') . ', ' . 
+                ($locationData->country ?? '') . ', ' . 
+                ($locationData->timezone ?? '') : 
+                null
+                ];
 
-            LoginAttempts::updateOrCreate(['email_used' => $request->email, 'client_ip' => $request->ip()], $data);
+            LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
 
             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
         }

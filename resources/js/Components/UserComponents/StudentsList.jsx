@@ -24,6 +24,7 @@ export default function StudentsList() {
   const [success, setSuccess] = useState(null);
   const [errorOpen, setErrorOpen] = useState(true);
   const [successOpen, setSuccessOpen] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const getStudents = async () => {
@@ -63,14 +64,21 @@ const handleCloseError = () => {
 const viewStudentDetails = (student_id) => {
   window.location.href = `/studentDetails/${student_id}/view`;
 }
+
+useEffect(() => {
+  // Check if the system is in dark mode
+  const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  setIsDarkMode(prefersDarkMode);
+}, []);
     
   return (
     <>
     <CssBaseline />
     <Container maxWidth="lg">
         
-    <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-        <h1 className="text-xl font-black text-indigo-500 text-center">My Students</h1>
+    <List sx={{ width: '100%', maxWidth: '100%', bgcolor: isDarkMode ? '#334155' : 'background.paper' }}>
+        <h1 className="text-xl font-black text-indigo-500 text-center dark:text-indigo-300">My Students</h1>
     {loading && (
     <Box sx={{ width: '100%' }}>
         <LinearProgress />
@@ -96,10 +104,11 @@ const viewStudentDetails = (student_id) => {
         }}
         onClick={() => viewStudentDetails(row.student_id)}
       >
-            <ListItemAvatar>
+            <ListItemAvatar sx={{color: isDarkMode ? '#eee' : 'inherit'}}>
                 {row.gender === 'Male' ? <Face6OutlinedIcon /> : <Face3OutlinedIcon />}
             </ListItemAvatar>
             <ListItemText
+              sx={{color: isDarkMode ? '#eee' : 'inherit'}}
                 primary={`${row.first_name} ${row.last_name}`}
                 secondary={
                     <>
@@ -107,7 +116,7 @@ const viewStudentDetails = (student_id) => {
                             sx={{ display: 'inline' }}
                             component="span"
                             variant="body2"
-                            color="text.primary"
+                            color={isDarkMode ? '#eee' : "text.primary"}
                         >
                             <span className="block">{row.date_of_birth}</span>
                             <span className="block">{`${row.address} ${row.street_address_2 ? row.street_address_2 : ''}, ${row.city} ${row.state}, ${row.zip}`}</span>

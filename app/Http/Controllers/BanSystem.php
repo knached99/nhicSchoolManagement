@@ -21,11 +21,11 @@ class BanSystem extends Controller
 
             LoginAttempts::where('loginID', $loginID)->update(['is_blocked' => 1]);
 
-            return response()->json(['success'=>'IP '.$clientIP.' is now blocked']);
+            return response()->json(['success'=>'That IP address is now blocked']);
         }
         catch(QueryException $e){
             return response()->json(['errors'=>'Unable to block IP '.$clientIP]);
-            \Log::critical(['Unable to block IP: '.$clientIP.'', $e->getMessage()]);
+            \Log::critical(['Unable to block IP: ', $e->getMessage()]);
         }
     }
 
@@ -40,22 +40,31 @@ class BanSystem extends Controller
         }
     }
 
-    // Checks if failed login attempt is blocked 
     public function isBlocked($client_ip){
         try {
-        $blocked = LoginAttempts::where('client_ip', $client_ip)->where('is_blocked', 1)->first();
+            // \Log::info('Checking if IP: '.$client_ip.' is blocked');
 
-        if($blocked){
-            return true;
+            $blockedIPs = LoginAttempts::where('is_blocked', 1)->get();
+    
+            foreach($blockedIPs as $blockedIP) {
+                // \Log::info('Going through list.');
+                $decryptedDBIP = Crypt::decryptString($blockedIP->client_ip);
+                // \Log::info('Found IP: '.$decryptedDBIP);
+                
+                // Check if decrypted IP matches the provided client IP
+                if ($decryptedDBIP === $client_ip) {
+                    \Log::info($decryptedDBIP. ' is blocked');
+                    return true; // IP is blocked
+                }
+            }
+            // \Log::info($client_ip. ' is not blocked');
+            return false; // IP is not blocked
+        } catch(\Exception $e){
+            \Log::error('Cannot determine if IP address: '.$client_ip.' is blocked. Error: '.$e->getMessage());
+            return false; // Error occurred, assume IP is not blocked
         }
-        else{
-            return false;
-        }
     }
-    catch(\Exception $e){
-        \Log::error(['Cannot determine if IP address: '.$client_ip. ' is blocked']);
-    }
-    }
+    
 
     public function isBanned($clientIP)
     {

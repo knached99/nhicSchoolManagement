@@ -11,7 +11,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Tooltip from '@mui/material/Tooltip';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
-export default function AssignmentsTable({ studentID }) {
+export default function StudentAssignments({ studentID }) {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
@@ -21,7 +21,7 @@ export default function AssignmentsTable({ studentID }) {
   useEffect(() => {
     const fetchAssignments = async () => {
       try {
-        const response = await fetch(`/getAssignmentsForStudent/${studentID}`);
+        const response = await fetch(`/fetchStudentAssignments/${studentID}`);
         const { assignments, error } = await response.json();
 
         if (error) {
@@ -64,7 +64,7 @@ export default function AssignmentsTable({ studentID }) {
   };
 
   const viewAssignmentDetails = (studentID) => {
-    window.location.href = `/faculty/studentassignment/${studentID}`;
+    window.location.href = `/student/studentassignment/${studentID}`;
   }
   
 

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('email_used');
             $table->string('client_ip')->nullable();
             $table->string('user_agent')->nullable();
+            $table->string('location_information')->nullable();
             $table->boolean('is_blocked')->default(0);
             $table->timestamps();
         });

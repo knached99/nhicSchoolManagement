@@ -9,7 +9,7 @@ class CreateAssignmentStudentTable extends Migration
     public function up()
     {
         Schema::create('assignment_student', function (Blueprint $table) {
-            $table->id();
+            $table->id('assignment_student_id');
             $table->unsignedBigInteger('assignment_id');
             $table->unsignedBigInteger('student_id');
             $table->timestamps();

@@ -48,6 +48,9 @@ Route::get('/dashboard', function () {
 Route::middleware(['web', 'auth', 'banMiddleware'])->group(function () {
     Route::get('/getStudents', [UserDashboard::class, 'getStudents'])->name('getStudents');
     Route::get('/studentDetails/{student_id}/view', [UserDashboard::class, 'viewStudentDetails'])->name('viewStudentDetails');
+    Route::get('/fetchStudentAssignments/{student_id}', [UserDashboard::class, 'fetchStudentAssignments'])->name('fetchStudentAssignments');
+    Route::get('/student/studentassignment/{student_id}', [UserDashboard::class, 'studentAssignment'])->name('student.studentassignment');
+    Route::post('/submitAssignment/{student_id}', [UserDashboard::class, 'submitAssignment'])->name('submitAssignment');
     Route::put('/updateStudentInformation/{student_id}', [UserDashboard::class, 'updateStudentInformation'])->name('updateStudentInformation');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -117,6 +120,8 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     Route::get('/faculty/studentassignment/{student_id}', [AssignmentsController::class, 'studentAssignment'])->name('faculty.studentassignment');
     Route::get('/getAssignments', [AssignmentsController::class, 'getAssignments'])->name('getAssignments');
     Route::post('/uploadAssignment', [AssignmentsController::class, 'uploadAssignment'])->name('uploadAssignment');
+    Route::post('/submitGrade/{assignment_student_id}/{assignment_id}', [AssignmentsController::class, 'submitGrade'])->name('submitGrade');
+    
     Route::put('/editAssignmentDetails/{assignment_id}', [AssignmentsController::class, 'editAssignmentDetails'])->name('editAssignmentDetails');
     Route::delete('/deleteAssignment/{assignment_id}', [AssignmentsController::class, 'deleteAssignment'])->name('deleteAssignment');
 

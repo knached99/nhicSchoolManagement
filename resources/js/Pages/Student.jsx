@@ -382,7 +382,7 @@ export default function Student({auth, student, assignments}) {
                         <p className="text-gray-700 dark:text-white text-center font-bold mt-3">
                         Student Since: 
                         <span className="font-normal ml-1">
-                          {new Date(student.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        {new Date(student.created_at).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                         </span>
                       </p>
                                   

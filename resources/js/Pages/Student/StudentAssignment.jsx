@@ -1,98 +1,96 @@
-import React, {useState} from 'react';
-import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
+import React, {useState, useEffect} from 'react';
+
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import Tooltip from '@mui/material/Tooltip';
 import { Link } from '@inertiajs/react';
-
-import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
-  
-import { Button } from 'primereact/button';
-import FormHelperText  from '@mui/material/FormHelperText';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Collapse from '@mui/material/Collapse';
+import Box from '@mui/material/Box';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Alert from '@mui/material/Alert';
-import axios from 'axios';  
+import IconButton from '@mui/material/IconButton';
+
+import { InputTextarea } from 'primereact/inputtextarea';
+import { Button } from 'primereact/button';
+        
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-import Box from '@mui/material/Box';
-
-export default function StudentAssignment({ auth, student, assignments, answer }) {
+export default function StudentAssignment({ auth, student, assignments,  answer }) {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
-    const [parents, setParents] = useState([]);
-    const [teachers, setTeachers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    
-    const initialValues = {
-        grade: '',
-        feedback: '',
-    };
+    const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+   
+    useEffect(() => {
+        // Check if the system is in dark mode
+        const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+        setIsDarkMode(prefersDarkMode);
+      }, []);
 
-    const validation = Yup.object().shape({
-        grade: Yup.number()
-        .integer('Grade must be an integer')
-        .min(0, 'Grade must be greater than or equal to 0')
-        .max(100, 'Grade must be less than or equal to 100')
-        .required('Grade is required'),
+      // Assignment Form 
 
-        feedback: Yup.string()
-    });
+      const initialValues = {
+        assignment_answer: ''
+      };
 
-    const gradeAssignment = async(values, {setSubmitting}) =>{
-        try{
-            const response = await axios.post(`/submitGrade/${assignments[0].assignment_student_id}/${assignments[0].assignment_id}`, values, {
+      const validation = Yup.object().shape({
+        assignment_answer: Yup.string().required('Answer is required')
+      });
+
+      const submitAssignment = async (values, { setSubmitting }) => {
+        try {
+            const response = await axios.post(`/submitAssignment/${student.student_id}`, values, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-
-            if(response.data.success){
+    
+            if (response.data.errors) {
+                setError(response.data.errors);
+                setErrorOpen(true);
+            } else if (response.data.success) {
                 setSuccess(response.data.success);
                 setSuccessOpen(true);
                 Object.keys(values).forEach((key) => {
                     values[key] = '';
-                  });
-                  window.location.refresh; 
+                });
+    
+                setTimeout(() => {
+                    window.location.href = window.location.href;
+                }, 1000);
             }
-            else if(response.data.errors){
-                setError(response.data.errors);
-                setErrorOpen(true);
-            }
-           
-        }
-        catch(error){
-            setError(error.message);
+        } catch (error) {
+            setError(error.message || 'An unexpected error occurred');
             setErrorOpen(true);
-        }
-        finally{
+        } finally {
             setSubmitting(false);
         }
     };
-
     
-    const handleCloseSuccess = () => {
+
+      const handleCloseSuccess = () => {
         setSuccessOpen(false);
         setSuccess(null);
     };
-  
+
     const handleCloseError = () => {
         setErrorOpen(false);
         setError(null);
     };
 
+   
+
     return (
-        <AdminLayout
+        <AuthenticatedLayout
             user={auth}
-            header={<h2 className="font-medium text-xl text-gray-800 leading-tight text-start">Assignment Details</h2>}
+            header={<h2 className="font-medium text-xl text-gray-800 leading-tight text-start dark:text-white">Assignment Details</h2>}
         >
             <section className="bg-white dark:bg-gray-900 shadow-lg">
                 <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
@@ -123,18 +121,14 @@ export default function StudentAssignment({ auth, student, assignments, answer }
 
                         
                          <div className="block">
-                           <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>  
-                           {answer && (
-                                <p className="dark:text-slate-100">
-                                    Submitted On: {new Date(answer.created_at).toLocaleString(undefined, { hour12: true, year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                                )}
-
-                          <p className="mt-3 text-pretty dark:text-slate-300 text-lg"> {answer ? answer.assignment_answer : 'No Answer Provided Yet'} </p>
-                          <div className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer && !answer.grade ? 
-                          <>
-                          <p className="dark:text-slate-200 text-slate-900 mt-3 mb-3">Enter a grade for this submission</p>
-                          {error && (
+                           <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>
+                           {answer && <p className="dark:text-slate-300">Submitted On: {new Date(answer.created_at).toLocaleString()}</p>}
+                           {answer && !answer.grade ? <p className="dark:text-red-400 text-red-500 text-2xl mt-3 mb-3">Pending Grading</p> : <p className="dark:text-slate-300 text-black">Grade:</p>}
+                          <p className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer ? answer.assignment_answer 
+  : (
+  <>
+    <div class="container mx-auto py-8">
+    {error && (
                             <Box sx={{ width: '100%' }}>
                                 <Collapse in={errorOpen}>
                                     <Alert
@@ -181,47 +175,51 @@ export default function StudentAssignment({ auth, student, assignments, answer }
                                 </Collapse>
                             </Box>
                         )}
-                
-               <Formik initialValues={initialValues} validationSchema={validation} onSubmit={gradeAssignment}>
-                    {({
-                        values, 
-                        errors,
-                        touched,
-                        handleSubmit,
-                        handleBlur,
-                        handleChange,
-                        isValid,
-                        dirty,
-                        isSubmitting,
-                    }) => (
-                        <Form onSubmit={handleSubmit} autoComplete="off">
-                        <InputText
-                        style={{
-                            width: '100%',
-                            margin: 10,
-                            ...(touched.grade && errors.grade && { border: '1px solid #ef4444' }),
-                        }}
-                        id="grade"
-                        name="grade"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Enter Grade" />
-                        
-                        <span className="text-red-500 block mb-3">{touched.grade && errors.grade}</span>
-
-                        <InputTextarea id="feedback" name="feedback" onChange={handleChange} onBlur={handleBlur} placeholder="Provide feedback to the student (optional)..." rows={5} cols={30}/>
-                        <Button label="Submit" className="ml-3 inline-block" />
-                        </Form>
-                    )}
-                    </Formik>
-
-           
-                          </>
-                          : answer.grade }</div>
+      <Formik initialValues={initialValues} validationSchema={validation} onSubmit={submitAssignment}>
+        {({
+          values, 
+          errors,
+          touched,
+          handleSubmit,
+          handleBlur,
+          handleChange,
+          isValid,
+          dirty,
+          isSubmitting,
+        }) => (
+          <Form onSubmit={handleSubmit} autoComplete="off">
+            <div className="max-w-md mx-auto rounded px-8 pt-6 pb-8 mb-4">
+              <div className="mb-6">
+                <InputTextarea 
+                value={values.assignment_answer} 
+                style={{
+                   width: '100%',
+                   ...(touched.assignment_answer && errors.assignment_answer && { border: '1px solid #ef4444' }),
+               }}
+                onChange={handleChange} 
+                onBlur={handleBlur} 
+                id="assignment_answer" name="assignment_answer" rows="5" cols="30" placeholder="Enter your answer" />
+                <span className="text-red-500 dark:text-red-400">{touched.assignment_answer && errors.assignment_answer}</span>
+              </div>
+              <div className="flex justify-center">
+                <Button label="Submit Answer" 
+                disabled={isSubmitting || !isValid || !dirty}
+                loading={isSubmitting}
+                type="submit"
+                />
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  </>
+)}
+</p>
                           </div>
                     </div>
                 </div>
             </section>
-        </AdminLayout>
+        </AuthenticatedLayout>
     );
 }

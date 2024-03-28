@@ -61,7 +61,7 @@ import Divider from '@mui/material/Divider';
 import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import { styled } from '@mui/system';
 import states from '@/constants/states';
-
+import StudentAssignments from '@/Components/UserComponents/StudentAssignments';
 
 const style = {
   position: 'absolute',
@@ -143,8 +143,8 @@ export default function StudentDetails({auth, student}) {
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
-    
   
     const initialValues = {
         student_id: student.student_id, 
@@ -172,6 +172,15 @@ export default function StudentDetails({auth, student}) {
         emergency_contact_person: Yup.string().nullable(),
         emergency_contact_hospital: Yup.string().nullable()
     });
+
+    
+useEffect(() => {
+  // Check if the system is in dark mode
+  const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  setIsDarkMode(prefersDarkMode);
+}, []);
+    
     
 
     const updateStudentInformation = async (values, {setSubmitting})=>{
@@ -250,32 +259,32 @@ export default function StudentDetails({auth, student}) {
     <>
      <AuthenticatedLayout
             user={auth}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{student.first_name} {student.last_name}'s profile</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight dark:text-white">{student.first_name} {student.last_name}'s profile</h2>}
         >
-    <Head title={`${student.first_name} ${student.last_name}'s information`} />
-    <div className="bg-gray-100">
-    <div className="container mx-auto py-8">
+    <Head title={`${student.first_name} ${student.last_name}'s Bio`} />
+    <div className="bg-gray-100 dark:bg-gray-900">
+    <div className="container mx-auto py-8 ">
         <div className="grid grid-cols-4 sm:grid-cols-12 gap-6 px-4">
             <div className="col-span-4 sm:col-span-3">
-                <div className="bg-white shadow rounded-lg p-6">
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
                     <div className="flex flex-col items-center">
                     <Link href="/dashboard" class="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
                     <ArrowBackOutlinedIcon/>  Back
                   </Link>
 
                     <Avatar sx={{ width: 100, height: 100 }} {...stringAvatar(`${student.first_name} ${student.last_name}`)} />
-                        <h1 className="text-xl font-bold">{student.first_name} {student.last_name}</h1>
-                        <p className="text-gray-700 text-center font-bold mt-3">Student Since: <span className="font-normal">{new Date(student.created_at).toLocaleDateString()}</span></p>
+                        <h1 className="text-xl font-bold dark:text-white">{student.first_name} {student.last_name}</h1>
+                        <p className="text-gray-700 dark:text-white text-xl text-center font-bold mt-3">Student Since: <span className="font-normal">{new Date(student.created_at).toLocaleDateString()}</span></p>
     
                     </div>
                     <hr className="my-6 border-t border-gray-300" />
                     <div className="flex flex-col">
-                        <span className="text-gray-700 uppercase font-bold tracking-wider mb-2">Student Bio</span>
+                        <span className="text-gray-700 dark:text-white uppercase font-bold tracking-wider mb-2">Student Bio</span>
                        
-                        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                        <Box sx={{ width: '100%', maxWidth: 360, bgcolor: isDarkMode ? '#1e293b' : 'background.paper', color: isDarkMode ? '#fff' : 'inherit' }}>
                         <Tooltip title="Edit Information" arrow>
                         <IconButton onClick={handleOpen}>
-                            <EditOutlinedIcon/>
+                            <EditOutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/>
                         </IconButton>
                         </Tooltip>
                         {/* Modal Start */}
@@ -447,7 +456,7 @@ export default function StudentDetails({auth, student}) {
             <ListItemButton>
               <ListItemIcon>
                 <Tooltip title="Street Address" arrow>
-                <HomeOutlinedIcon/> 
+                <HomeOutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/> 
                 </Tooltip>
               </ListItemIcon>
               <ListItemText primary={`${student.address}${student.street_address_2 ? `, ${student.street_address_2}` : ''}, ${student.city}, ${student.state}, ${student.zip}`} />
@@ -462,7 +471,7 @@ export default function StudentDetails({auth, student}) {
                 student.gender === 'Male' && (
                   <>
                   <Tooltip title="Gender" arrow>
-                  <Face6OutlinedIcon/>
+                  <Face6OutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/>
                   </Tooltip>
                   </>
                 )
@@ -471,7 +480,7 @@ export default function StudentDetails({auth, student}) {
                 student.gender === 'Female' && (
                   <>
                   <Tooltip title="Gender" arrow>
-                  <Face3OutlinedIcon/>
+                  <Face3OutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/>
                   </Tooltip>
                   </>
                   
@@ -487,7 +496,7 @@ export default function StudentDetails({auth, student}) {
             <ListItemButton>
               <ListItemIcon>
                 <Tooltip title="Birthday" arrow>
-                <CakeOutlinedIcon/> 
+                <CakeOutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/> 
                 </Tooltip>
               </ListItemIcon>
               <ListItemText primary={student.date_of_birth ? student.date_of_birth : 'N/A'} />
@@ -500,7 +509,7 @@ export default function StudentDetails({auth, student}) {
             <ListItemButton>
               <ListItemIcon>
                 <Tooltip title="Level" arrow>
-                <GradeOutlinedIcon/> 
+                <GradeOutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/> 
                 </Tooltip>
               </ListItemIcon>
               <ListItemText primary={student.level ? student.level : 'N/A'} />
@@ -512,7 +521,7 @@ export default function StudentDetails({auth, student}) {
             <ListItemButton>
               <ListItemIcon>
                 <Tooltip title="Allergies or Special Needs" arrow>
-                <PsychologyAltOutlinedIcon/> 
+                <PsychologyAltOutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/> 
                 </Tooltip>
               </ListItemIcon>
               <ListItemText primary={student.allergies_or_special_needs ? student.allergies_or_special_needs : 'N/A'} />
@@ -524,7 +533,7 @@ export default function StudentDetails({auth, student}) {
             <ListItemButton>
               <ListItemIcon>
                 <Tooltip title="Emergency Contact Person" arrow>
-                <ContactEmergencyOutlinedIcon/> 
+                <ContactEmergencyOutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/> 
                 </Tooltip>
               </ListItemIcon>
               <ListItemText primary={student.emergency_contact_person ? student.emergency_contact_person : 'N/A'} />
@@ -536,7 +545,7 @@ export default function StudentDetails({auth, student}) {
             <ListItemButton>
               <ListItemIcon>
                 <Tooltip title="Emergency Contact Hospital" arrow>
-                <LocalHospitalOutlinedIcon/> 
+                <LocalHospitalOutlinedIcon sx={{color: isDarkMode ? '#fff' : 'inherit'}}/> 
                 </Tooltip>
               </ListItemIcon>
               <ListItemText primary={student.emergency_contact_hospital ? student.emergency_contact_hospital : 'N/A'} />
@@ -555,14 +564,14 @@ export default function StudentDetails({auth, student}) {
                 </div>
             </div>
             <div className="col-span-4 sm:col-span-9">
-                <div className="bg-white shadow rounded-lg p-6">
-                    <h2 className="text-xl font-bold mb-4">Student Information</h2>
+                <div className="bg-white dark:bg-slate-800 shadow rounded-lg p-6">
+                    <h2 className="text-xl font-bold mb-4 dark:text-white">Student Information</h2>
                  
                 
                         
-<div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
+<div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6 ">
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-800 dark:text-white border-slate-900 dark:border-indigo-400 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Assignments
@@ -575,7 +584,7 @@ export default function StudentDetails({auth, student}) {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-800 dark:text-white border-slate-900 dark:border-indigo-400 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Average Grade
@@ -588,7 +597,7 @@ export default function StudentDetails({auth, student}) {
   </div>
 
   <div class="flex flex-col w-full md:w-96">
-    <div class="relative mt-6 text-gray-700 bg-white border-slate-900 border-2 shadow-md bg-clip-border rounded-xl">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-800 dark:text-white border-slate-900 dark:border-indigo-400 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
         <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
           Teacher
@@ -604,6 +613,7 @@ export default function StudentDetails({auth, student}) {
   </div>
   
 </div>
+<StudentAssignments studentID={student.student_id} />
 
                 </div>
             </div>

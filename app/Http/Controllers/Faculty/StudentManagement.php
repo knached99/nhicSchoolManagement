@@ -307,7 +307,6 @@ public function viewStudentDetails($student_id) {
 public function getAssignmentsForStudent($student_id){
     try{
     $assignments = AssignmentStudents::where('student_id', $student_id)->with(['assignment'])->get();
-    \Log::info($assignments);
 
     return response()->json(['assignments' => $assignments]);
     }

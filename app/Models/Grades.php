@@ -14,7 +14,8 @@ class Grades extends Model
     protected $fillable = [
         'assignment_id',
         'student_id',
-        'score',
+        'grade',
+        'feedback'
     ];
 
     public function assignment()

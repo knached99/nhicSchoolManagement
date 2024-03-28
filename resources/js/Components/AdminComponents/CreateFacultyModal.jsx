@@ -82,7 +82,7 @@ export default function CreateFacultyModal() {
         } else if (response.data.success) {
             setSuccess(response.data.success);
             setSuccessOpen(true);
-            window.location.reload();
+         //   window.location.reload();
 
             // Reset form values
             Object.keys(values).forEach((key) => {
@@ -265,8 +265,8 @@ export default function CreateFacultyModal() {
             placeholder="Email"
             className="mb-3 mt-3"
             />
-`           <span className="text-red-500">{touched.email && errors.email}</span>
-`
+           <span className="text-red-500">{touched.email && errors.email}</span>
+
             
             {/* <Field as={TextField} value={values.name} helperText={touched.name && errors.name} error={touched.name && Boolean(errors.name)} onBlur={handleBlur} id="name" name="name" placeholder="Name" fullWidth style={{margin: 5}} /> */}
             {/* <Field as={TextField} value={values.email} helperText={touched.email && errors.email} error={touched.email && Boolean(errors.email)} onBlur={handleBlur} id="email" name="email" placeholder="Email" fullWidth style={{margin: 5}} /> */}

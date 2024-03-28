@@ -66,7 +66,14 @@ class FacultyDash extends Controller
             }
             
         $attempts = LoginAttempts::all();
+        
+
+        foreach($attempts as $attempt){
+            $attempt->client_ip = Crypt::decryptString($attempt->client_ip);
         }
+        
+    }
+
         catch(QueryException $e){
             \Log::error(['Login Attempts Query Error: ', $e->getMessage()]);
             return redirect('faculty/dash');
