@@ -223,8 +223,8 @@ export default function StudentAssignment({ auth, student, assignments, answer, 
     </>
 ) : (
     <>
-    <p className="dark:text-slate-300 text-black">Grade: {grade.grade}/100</p>
-    <p className="dark:text-slate-300 text-black text-pretty">Feedback: {grade.feedback ? grade.feedback : 'None'}</p>
+<p className="dark:text-slate-300 text-black">Grade: {grade ? `${grade.grade}/100` : "N/A"}</p>
+<p className="dark:text-slate-300 text-black text-pretty">Feedback: {grade ? grade.feedback : "N/A"}</p>
     </>
 )}
 
