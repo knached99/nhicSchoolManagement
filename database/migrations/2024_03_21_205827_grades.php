@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('grade_id');
             $table->unsignedBigInteger('assignment_id');
             $table->unsignedBigInteger('assignment_student_id'); // Use the same name as in the referenced table
-            $table->unsignedBigInteger('student_id');
+            //$table->unsignedBigInteger('student_id');
             $table->integer('grade');
             $table->text('feedback')->nullable();
            
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->foreign('assignment_student_id')->references('assignment_student_id')->on('assignment_student')->onDelete('cascade');
             
             $table->foreign('assignment_id')->references('assignment_id')->on('assignments')->onDelete('cascade');
-            $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');
+           // $table->foreign('student_id')->references('student_id')->on('students')->onDelete('cascade');
         });
     
     }

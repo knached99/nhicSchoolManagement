@@ -926,7 +926,8 @@ export default function Student({auth, student, assignments}) {
             :
             <>
             <span className="text-indigo-500">
-            A parent is not yet assigned to {student.first_name} {student.last_name}
+            A parent is not yet associated with {student.first_name} {student.last_name}. 
+            Assign {student.first_name}'s parent to this student.
           </span>
 
             <Formik

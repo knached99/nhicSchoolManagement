@@ -123,7 +123,15 @@ export default function StudentAssignment({ auth, student, assignments,  answer 
                          <div className="block">
                            <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>
                            {answer && <p className="dark:text-slate-300">Submitted On: {new Date(answer.created_at).toLocaleString()}</p>}
-                           {answer && !answer.grade ? <p className="dark:text-red-400 text-red-500 text-2xl mt-3 mb-3">Pending Grading</p> : <p className="dark:text-slate-300 text-black">Grade:</p>}
+                           {answer && answer.grade !== undefined ? (
+                            answer.grade !== null ? (
+                                <p className="dark:text-slate-300 text-black">Grade:</p>
+                            ) : (
+                                <p className="dark:text-orange-400 text-orange-500">Pending Grading</p>
+                            )
+                        ) : null}
+
+                          
                           <p className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer ? answer.assignment_answer 
   : (
   <>

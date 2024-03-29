@@ -13,6 +13,7 @@ class Grades extends Model
 
     protected $fillable = [
         'assignment_id',
+        'assignment_student_id',
         'student_id',
         'grade',
         'feedback'

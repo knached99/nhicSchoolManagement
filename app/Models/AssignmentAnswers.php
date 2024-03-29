@@ -17,7 +17,8 @@ class AssignmentAnswers extends Model
 
     protected $fillable = [
         'assignment_answer',
-        'student_id'
+        'student_id',
+        'grade_id'
     ];
 
     public function student(){
@@ -25,7 +26,7 @@ class AssignmentAnswers extends Model
     }
 
     public function grade(){
-        return $this->belongsTo(Grades::class, 'grade_id');
+        return $this->belongsTo(Grades::class, 'assignment_student_id');
     }
 
 }

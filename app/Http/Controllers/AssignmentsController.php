@@ -52,13 +52,16 @@ class AssignmentsController extends Controller
 
         $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->get();
 
-        $answer = AssignmentAnswers::where('student_id', $student_id)->first();
+        $answer = AssignmentAnswers::with(['grade'])->where('student_id', $student_id)->first();
+
+        $grade = Grades::where('assignment_student_id', $student_id)->where('assignment_id', $assignment[0]->assignment_id)->first();
 
         return Inertia::render('Faculty/StudentAssignment', [
             'auth' => Auth::guard('faculty')->user(),
             'student'=>$student,
             'assignments' => $assignment, 
-            'answer' => $answer 
+            'answer' => $answer ?? null,
+            'grade' => $grade ?? null,
         ]);
     }
     
@@ -160,7 +163,7 @@ class AssignmentsController extends Controller
 
     public function submitGrade(Request $request, $assignment_student_id, $assignment_id){
 
-        try{
+         try{
         $validate = Validator::make($request->only([
             'grade',
             'feedback',

@@ -82,7 +82,7 @@ class UserDashboard extends Controller
     public function studentAssignment($student_id){
         $student = Students::where('student_id', $student_id)->first();
         $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->get();
-        $answer = AssignmentAnswers::where('student_id', $student_id)->first();
+        $answer = AssignmentAnswers::with(['grade'])->where('student_id', $student_id)->first();
         $assignmentID = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->pluck('assignment_id')->toArray();
         return Inertia::render('Student/StudentAssignment', [
             'auth'=> Auth::user(),

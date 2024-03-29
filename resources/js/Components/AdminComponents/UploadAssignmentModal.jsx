@@ -252,18 +252,20 @@ export default function UploadAssignmentModal({auth, refreshData}) {
             <span className="text-red-500">{touched.assignment_name && errors.assignment_name}</span>
            
            <label className="dark:text-white">Assignment Due Date</label>
-            <InputText 
-             type="date"
-             id="assignment_due_date"
-             name="assignment_due_date"
-             style={{
+           <InputText 
+            type="datetime-local"
+            id="assignment_due_date"
+            name="assignment_due_date"
+            style={{
                 width: '100%',
                 ...(touched.assignment_due_date && errors.assignment_due_date && { border: '1px solid #ef4444' }),
             }}
             onChange={handleChange} 
             onBlur={handleBlur} 
             className="mb-3 mt-3"
-             />
+            min={new Date().toISOString().slice(0, 16)} // Set minimum datetime to now
+        />
+
           <span className="text-red-500">{touched.assignment_due_date && errors.assignment_due_date}</span>
 
            
