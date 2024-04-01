@@ -11,9 +11,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('attendance', function (Blueprint $table) {
-            $table->id('attendance_id');
-            $table->unsignedBigInteger('student_id'); // Foreign key to link to students table
-            $table->unsignedBigInteger('faculty_id');
+            $table->uuid('attendance_id')->primary();
+            $table->uuid('student_id'); // Foreign key to link to students table
+            $table->uuid('faculty_id');
             $table->boolean('is_present')->nullable(); // 0 -> not present 1 -> present
             $table->string('reason_for_abscence')->nullable(); 
             $table->timestamps();

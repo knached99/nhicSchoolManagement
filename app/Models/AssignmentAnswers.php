@@ -16,10 +16,14 @@ class AssignmentAnswers extends Model
     protected $primaryKey = 'assignment_answer_id';
 
     protected $fillable = [
+        'assignment_answer_id',
         'assignment_answer',
         'student_id',
         'grade_id'
     ];
+
+    protected $casts = ['assignment_answer_id'=>'string'];
+
 
     public function student(){
         return $this->belongsTo(Student::class, 'student_id');

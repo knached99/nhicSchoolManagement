@@ -89,12 +89,6 @@ export default function LoginAttempts({ auth, attempts }) {
     };
 
 
-
-    
-    
-      
-
-
   // Transform attempts data into rows
   const rows = attempts.map((attempt, index) => ({
     id: index + 1,
@@ -172,7 +166,11 @@ export default function LoginAttempts({ auth, attempts }) {
       
 
 <div className="relative overflow-x-auto">
-    <table className="w-full shadow-lg text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+    {attempts.length === 0 ? 
+    <h1 className="text-center text-2xl mt-4 text-orange-500 dark:text-orange-400">No Failed Login Attempts Yet</h1>
+    :
+    <>
+     <table className="w-full shadow-lg text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-slate-100 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" className="px-6 py-3">
@@ -290,6 +288,9 @@ export default function LoginAttempts({ auth, attempts }) {
             </tr> */}
         </tbody>
     </table>
+    </>
+    }
+   
 </div>
 
     </div>

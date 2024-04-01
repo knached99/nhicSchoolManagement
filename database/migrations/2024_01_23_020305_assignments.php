@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('assignments', function (Blueprint $table) {
-            $table->id('assignment_id');
+            $table->uuid('assignment_id')->primary();
             $table->string('assignment_name');
             $table->text('assignment_description');
              //may consider the following:
@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('assignment_video')->nullable();
             
             $table->datetime('assignment_due_date');
-            $table->unsignedBigInteger('student_id')->nullable();
-            $table->unsignedBigInteger('faculty_id')->nullable();
+            $table->uuid('student_id')->nullable();
+            $table->uuid('faculty_id')->nullable();
                 
             // Foreign key constraints with explicit data types
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('set null');

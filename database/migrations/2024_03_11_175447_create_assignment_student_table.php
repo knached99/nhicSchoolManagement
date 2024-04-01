@@ -9,9 +9,9 @@ class CreateAssignmentStudentTable extends Migration
     public function up()
     {
         Schema::create('assignment_student', function (Blueprint $table) {
-            $table->id('assignment_student_id');
-            $table->unsignedBigInteger('assignment_id');
-            $table->unsignedBigInteger('student_id');
+            $table->uuid('assignment_student_id')->primary();
+            $table->uuid('assignment_id');
+            $table->uuid('student_id');
             $table->timestamps();
     
             // Correct foreign key references

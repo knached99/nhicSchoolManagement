@@ -52,6 +52,7 @@ class Students extends Model
 
 
     protected $fillable = [
+        'student_id',
         'first_name',
         'last_name',
         'date_of_birth',
@@ -67,6 +68,10 @@ class Students extends Model
         'emergency_contact_hospital',
         'user_id',
         'faculty_id'
+    ];
+
+    protected $casts = [
+        'student_id'=>'string',
     ];
     
     protected $dates = ['date_of_birth'];

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
 {
     Schema::create('students', function(Blueprint $table){
-        $table->id('student_id'); 
+        $table->uuid('student_id')->primary(); 
         $table->string('first_name')->nullable();
         $table->string('last_name')->nullable();
         $table->date('date_of_birth')->nullable(); // Change the type to date
@@ -28,7 +28,7 @@ return new class extends Migration
         $table->string('emergency_contact_hospital')->nullable();
         $table->unsignedBigInteger('user_id')->nullable();
         $table->foreign('user_id')->references('user_id')->on('users')->onDelete('set null');
-        $table->unsignedBigInteger('faculty_id')->nullable();
+        $table->uuid('faculty_id')->nullable();
         $table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('set null');
         $table->timestamps();
         // $table->index('first_name');

@@ -26,7 +26,7 @@ import Avatar from '@mui/material/Avatar';
 
 
 const columns = [
-  { id: 'id', label: 'ID', minWidth: 50 },
+  // { id: 'id', label: 'ID', minWidth: 50 },
   { id: 'name', label: 'Name', minWidth: 80 },
   { id: 'email', label: 'Email', minWidth: 80 },
   { id: 'phone_number', label: 'Phone Number', minWidth: 80 },
@@ -232,8 +232,6 @@ const deleteAdminUser = async (userId) => {
                   {Array.isArray(rows) &&
                     rows.map((row, index) => (
                       <TableRow key={row.faculty_id}>
-
-                        <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>{row.faculty_id}</TableCell>
                         <TableCell sx={{color: isDarkMode ? 'white' : 'inherit'}}>
                         {row.profile_pic ? (
                           <>

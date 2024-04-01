@@ -230,8 +230,8 @@ const style = {
           }}
         
       />
-      
-      <Button
+      {!isSubmitting ? (
+        <Button
         component="label"
         role={undefined}
         variant="contained"
@@ -241,6 +241,14 @@ const style = {
       >
         Import
       </Button>
+      )
+    :
+    <>
+    <p>Importing..</p>
+    <CircularProgress/>
+    </>
+    }
+      
 
     </Form>
   )}

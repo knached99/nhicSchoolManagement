@@ -101,6 +101,7 @@ public function addStudent(Request $request){
         }
 
         $data = [
+            'student_id'=>Str::uuid(),
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
             'parent_guardian_email' => $request->parent_guardian_email,

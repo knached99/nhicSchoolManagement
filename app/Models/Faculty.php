@@ -27,6 +27,7 @@ class Faculty extends Authenticatable
 
 
     protected $fillable = [
+        'faculty_id',
         'name',
         'email',
         'phone',
@@ -51,6 +52,7 @@ class Faculty extends Authenticatable
     ];
 
     protected $casts = [
+        'faculty_id'=>'string',
         'password' => 'hashed',
         'permissions' => 'json'
     ];

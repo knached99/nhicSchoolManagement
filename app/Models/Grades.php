@@ -12,12 +12,15 @@ class Grades extends Model
     protected $primaryKey = 'grade_id';
 
     protected $fillable = [
+        'grade_id',
         'assignment_id',
         'assignment_student_id',
         'student_id',
         'grade',
         'feedback'
     ];
+
+    protected $casts = ['grade_id'=>'string'];
 
     public function assignment()
     {

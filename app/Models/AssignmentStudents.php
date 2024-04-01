@@ -14,9 +14,12 @@ class AssignmentStudents extends Model
     public $timestamps = true;
 
     protected $fillable = [
+        'assignment_student_id',
         'assignment_id',
         'student_id',
     ];
+
+    protected $casts = ['assignment_student_id'=>'string'];
 
 
     // Relationships 

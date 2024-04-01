@@ -60,6 +60,9 @@ import Divider from '@mui/material/Divider';
 import { Inplace, InplaceDisplay, InplaceContent } from 'primereact/inplace';
 import { InputText } from 'primereact/inputtext';
 
+import { Dropdown } from 'primereact/dropdown';
+        
+
 import AttendanceHistory from '@/Components/AdminComponents/AttendanceHistory';
 import AssignmentsTable from '@/Components/AdminComponents/AssignmentsTable';
 
@@ -79,12 +82,12 @@ export default function Student({auth, student, assignments}) {
         try {
           const response = await fetch('/fetchTeachers');
           const { teachers, error } = await response.json();
-
           if (error) {
             throw new Error(error);
           }
       
           return teachers || [];
+         
         } catch (error) {
           throw new Error('Error fetching teachers: ' + error.message);
         }
@@ -343,7 +346,6 @@ export default function Student({auth, student, assignments}) {
     }
   };
 
-  
 
   if(auth.role!== 'Admin' && auth.faculty_id !==student.faculty_id){
     return (
@@ -359,7 +361,6 @@ export default function Student({auth, student, assignments}) {
       </>
     );
   }
-
 
   return (
     <>
@@ -457,30 +458,16 @@ export default function Student({auth, student, assignments}) {
                             </Box>
                         )}
                           <input type="hidden" name="student_id" id="student_id" value={student.student_id}/>
-                          <FormControl sx={{ m: 1, width: '100%' }}>
-                            <InputLabel id="faculty_id">{!student.faculty_id ? 'Select Teacher' : 'Switch Teacher'}</InputLabel>
-                            <Select
-                              labelId="faculty_id"
-                              id="faculty_id"
-                              name="faculty_id"
-                              value={values.faculty_id || ''}
-                              onChange={handleChange}
-                              style={{ width: 300,
-                                backgroundColor: isDarkMode ? '#475569' : 'inherit'
-                              
-                              }}
-                            >
-                              <MenuItem value="">
-                                <em>Select Teacher</em>
-                              </MenuItem>
-                    
-                              {teachers.map((teacher) => (
-                                <MenuItem key={teacher.faculty_id} value={teacher.faculty_id}>
-                                  {teacher.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
+                          <Dropdown 
+                            value={values.faculty_id || ''} 
+                            onChange={handleChange}
+                            id="faculty_id"
+                            name="faculty_id"
+                            options={teachers.map(teacher => ({ value: teacher.faculty_id, label: teacher.name }))}
+                            placeholder={!student.faculty_id ? 'Select Teacher' : 'Switch Teacher'}
+                        />
+
+                       
                           <Button
                             type="submit"
                             variant="contained"
@@ -1003,29 +990,15 @@ export default function Student({auth, student, assignments}) {
                   )}
 
                   <input type="hidden" name="student_id" id="student_id" value={student.student_id} />
-                  <FormControl sx={{ m: 1, width: '100%' }}>
-                    <InputLabel id="user_id">Select Parent</InputLabel>
-                    <Select
-                      labelId="user_id"
-                      id="user_id"
-                      name="user_id"
-                      value={values.user_id || ''}
-                      onChange={handleChange}
-                      style={{ width: 300,
-                      backgroundColor: backgroundColor
-                      }}
-                    >
-                      <MenuItem value="">
-                        <em>Select Parent</em>
-                      </MenuItem>
-
-                      {parents.map((parent) => (
-                        <MenuItem key={parent.user_id} value={parent.user_id}>
-                          {parent.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
+                  <Dropdown 
+                            value={values.user_id || ''} 
+                            onChange={handleChange}
+                            id="user_id"
+                            name="user_id"
+                            options={parents.map(parent => ({ value: parent.user_id, label: parent.name }))}
+                            placeholder="Select Parent"
+                        />
+               
                   <Button
                     type="submit"
                     variant="contained"

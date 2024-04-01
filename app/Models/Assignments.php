@@ -21,6 +21,9 @@ class Assignments extends Model
         'faculty_id', 
     ];
 
+    protected $casts = ['assignment_id'=>'string'];
+
+
     public function students()
     {
         return $this->belongsToMany(Students::class, 'assignment_student', 'assignment_id', 'student_id');

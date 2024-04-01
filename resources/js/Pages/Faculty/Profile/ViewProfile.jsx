@@ -26,8 +26,8 @@ import Tooltip from '@mui/material/Tooltip';
 import { InputMask } from 'primereact/inputmask';
 import { InputText } from 'primereact/inputtext';
 import { InputTextarea } from 'primereact/inputtextarea';
-        
-        
+import { Dropdown } from 'primereact/dropdown';
+
 
 // Icons 
 import Avatar from '@mui/material/Avatar';
@@ -42,6 +42,8 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 
+import { Calendar } from 'primereact/calendar';
+        
 export default function ViewProfile({auth, user, students, bannedDetails, clientIP}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -238,6 +240,13 @@ const handleBanCloseError = () => {
     }
   }, [user, banSuccess]); // Add any other dependencies as needed
 
+  const roles = [
+    { name: 'Admin', value: 'Admin' },
+    { name: 'Teacher', value: 'Teacher' },
+    { name: 'Assistant Teacher', value: 'Assistant Teacher' }
+  ];
+  
+
   return (
     <>
       <AdminLayout
@@ -423,34 +432,17 @@ const handleBanCloseError = () => {
                                        </div>
 
                                        <div>
-                                       <FormControl sx={{ m: 1, width: '100%', }}>
-                                      <InputLabel id="role" style={{color: isDarkMode ? '#fff' : 'inherit', margin: 'auto'}}>Select Role</InputLabel>
-                                      <Select
-                                      style={{backgroundColor: isDarkMode ? '#475569' : 'inherit'}}
-                                      labelId="role"
+                                       <Dropdown 
+                                      className={`${touched.role && errors.role ? 'border-red-500 border-1' : ''}`}
+                                      value={values.role} 
+                                      onChange={handleChange}
                                       id="role"
                                       name="role"
-                                      value={values.role}
-                                      onChange={handleChange}
-                                    >
-                                      <MenuItem value="">
-                                        <em>Make a Selection</em>
-                                      </MenuItem>
-                                      <MenuItem value="Admin">Admin</MenuItem>
-                                      <MenuItem value="Teacher">Teacher</MenuItem>
-                                      <MenuItem value="Assistant Teacher">Assistant Teacher</MenuItem>
-                                      {values.role && (
-                                        <MenuItem value={values.role} disabled>
-                                          {values.role}
-                                        </MenuItem>
-                                      )}
-                                    </Select>
+                                      placeholder="Select Role"
+                                      options={roles.map(role => ({ value: role.value, label: role.name }))}
+                                  />
 
-                                      {touched.role && errors.role && (
-                                          <FormHelperText>{errors.role}</FormHelperText>
-                                      )}
-                                  </FormControl>
-                                     
+                              
                                        </div>
                
                                        <div className="flex items-center gap-4">
@@ -688,15 +680,23 @@ const handleBanCloseError = () => {
     </div>
 
     <div className="flex flex-wrap gap-3">
+    <div className="card flex justify-content-center">
       <label className="dark:text-white block">ban user until</label>
-      <input
+      <Calendar onChange={handleChange} 
+      type="date"
+      id="banned_until"
+      name="banned_until"
+      onBlur={handleBlur}
+      />
+      {/* <input
         type="date"
         className="block dark:text-white border-slate-400 rounded dark:bg-slate-800 w-full"
         id="banned_until"
         name="banned_until"
         onChange={handleChange}
         onBlur={handleBlur}
-      />
+      /> */}
+      </div>
     </div>
 
     <div className="flex flex-wrap gap-3">

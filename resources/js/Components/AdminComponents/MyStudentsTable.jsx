@@ -41,7 +41,7 @@ const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
 
   const columns = [
-    { field: 'student_id', headerName: 'Student ID', width: 120 },
+    // { field: 'student_id', headerName: 'Student ID', width: 120 },
     { field: 'first_name', headerName: 'First Name', width: 120 },
     { field: 'last_name', headerName: 'Last Name', width: 120 },
     { field: 'user_id',

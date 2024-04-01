@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('banID');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('set null');
-            $table->unsignedBigInteger('faculty_id')->nullable();
+            $table->uuid('faculty_id')->nullable();
             $table->foreign('faculty_id')->references('faculty_id')->on('faculty')->onDelete('set null');
             $table->longText('client_ip')->nullable();
             $table->boolean('ban_status')->default(0)->nullable(); // 0 not banned, 1 banned 

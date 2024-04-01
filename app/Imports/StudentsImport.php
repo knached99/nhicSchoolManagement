@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\ImportFailed;
 use App\Notifications\ImportHasFailedNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 
 class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, WithUpserts{
@@ -37,6 +38,7 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
     
         return Students::firstOrNew(
             [
+                'student_id'=>Str::uuid(),
                 'first_name' => $row[0] ?? null,
                 'last_name' => $row[1] ?? null,
             ],

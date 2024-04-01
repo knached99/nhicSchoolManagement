@@ -23,6 +23,11 @@ class Banned extends Model
         'permanent_ban'
     ];
 
+    protected $casts = [
+        'user_id' =>'string',
+        'faculty_id' =>'string',
+    ];
+
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }

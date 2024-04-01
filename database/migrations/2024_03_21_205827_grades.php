@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('grades', function (Blueprint $table) {
-            $table->id('grade_id');
-            $table->unsignedBigInteger('assignment_id');
-            $table->unsignedBigInteger('assignment_student_id'); // Use the same name as in the referenced table
+            $table->uuid('grade_id')->primary();
+            $table->uuid('assignment_id');
+            $table->uuid('assignment_student_id'); // Use the same name as in the referenced table
             //$table->unsignedBigInteger('student_id');
             $table->integer('grade');
             $table->text('feedback')->nullable();

@@ -17,11 +17,15 @@ class Attendance extends Model
     protected $primaryKey='attendance_id';
 
     protected $fillable = [
+        'attendance_id',
         'student_id',
         'faculty_id',
         'is_present',
         'reason_for_absence'
     ];
+
+    protected $casts = ['attendance_id'=>'string'];
+
 
     public function student()
     {

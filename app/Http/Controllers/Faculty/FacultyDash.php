@@ -176,6 +176,7 @@ class FacultyDash extends Controller
     
             $password = Str::random(10);
             $data = [
+                'faculty_id'=>Str::uuid(),
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
