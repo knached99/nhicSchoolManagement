@@ -16,6 +16,8 @@ return new class extends Migration
             $table->text('assignment_answer');
             $table->uuid('student_id')->nullable();
             $table->uuid('grade_id')->nullable();
+            $table->unsignedBigInteger('assignment_id');
+            $table->foreign('assignment_id')->references('assignment_id')->on('assignments')->onDelete('cascade');
             $table->foreign('student_id')->references('student_id')->on('students')->onDelete('set null');
             $table->foreign('grade_id')->references('grade_id')->on('grades')->onDelete('set null'); 
             $table->timestamps();

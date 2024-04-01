@@ -15,7 +15,6 @@ class Grades extends Model
         'grade_id',
         'assignment_id',
         'assignment_student_id',
-        'student_id',
         'grade',
         'feedback'
     ];
@@ -29,7 +28,7 @@ class Grades extends Model
 
     public function student()
     {
-        return $this->belongsTo(Student::class, 'student_id');
+        return $this->belongsTo(Student::class, 'assignment_student_id');
     }
 }
 

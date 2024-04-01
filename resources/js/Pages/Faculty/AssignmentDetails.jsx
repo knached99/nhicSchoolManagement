@@ -49,7 +49,7 @@ export default function AssignmentDetails({ auth, assignment }) {
   {assignment.students ? (
     assignment.students.map((student, index) => (
       <li key={index} className="border-gray-400 flex flex-row mb-2 justify-start items-center p-2 bg-white dark:bg-slate-500 dark:text-white rounded-md">
-        <Link className="mr-2 hover:underline" href={`/faculty/studentassignment/${student.student_id}`}>{student.first_name} {student.last_name}</Link>
+        <Link className="mr-2 hover:underline" href={`/faculty/studentassignment/${student.student_id}/${assignment.assignment_id}`}>{student.first_name} {student.last_name}</Link>
       </li>
     ))
   ) : (

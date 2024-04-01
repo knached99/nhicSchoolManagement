@@ -23,7 +23,7 @@ import * as Yup from 'yup';
 
 import Box from '@mui/material/Box';
 
-export default function StudentAssignment({ auth, student, assignments, answer, grade }) {
+export default function StudentAssignment({ auth, student, assignment, answer, grade }) {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
@@ -49,7 +49,7 @@ export default function StudentAssignment({ auth, student, assignments, answer, 
 
     const gradeAssignment = async(values, {setSubmitting}) =>{
         try{
-            const response = await axios.post(`/submitGrade/${assignments[0].assignment_student_id}/${assignments[0].assignment_id}`, values, {
+            const response = await axios.post(`/submitGrade/${assignment.assignment_student_id}/${assignment.assignment_id}`, values, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -97,16 +97,10 @@ export default function StudentAssignment({ auth, student, assignments, answer, 
             <section className="bg-white dark:bg-gray-900 shadow-lg">
                 <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                     <div className="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
-                      
-                        {assignments.map((assignment, index) => (
-                            
-                            <div key={index}>
-                                <div className="mb-4 text-3xl tracking-light font-medium text-gray-900 dark:text-slate-300 text-start">Assignment Details For 
-                                <span className="ml-2">{student.first_name} {student.last_name}</span> 
-                                </div>
-                               
-                                <h2 className="mb-4 text-xl tracking-tight font-bold text-gray-900 dark:text-slate-300">{assignment.assignment.assignment_name}</h2>
-                                <p className="mb-4 font-medium text-xl dark:text-slate-300">
+                    <div className="mb-4 text-3xl tracking-light font-medium text-gray-900 dark:text-slate-300 text-start">Assignment Details For 
+                    <span className="ml-2">{student.first_name} {student.last_name}</span>
+                    <h2 className="mb-4 text-xl tracking-tight font-bold text-gray-900 dark:text-slate-300">{assignment.assignment.assignment_name}</h2>
+                    <p className="mb-4 font-medium text-xl dark:text-slate-300">
                                     <Tooltip title="Assignment Description" arrow>
                                         <DescriptionOutlinedIcon style={{ fontSize: 30, marginRight: 10 }} />
                                     </Tooltip>
@@ -118,9 +112,7 @@ export default function StudentAssignment({ auth, student, assignments, answer, 
                                     </Tooltip>
                                     {new Date(assignment.assignment.assignment_due_date).toLocaleString()}
                                 </p>
-                               
-                            </div>
-                        ))}
+                    </div>
 
                         
                          <div className="block">
@@ -135,7 +127,7 @@ export default function StudentAssignment({ auth, student, assignments, answer, 
                           {/* <div className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer && answer.grade == undefined ? 
                           <> */}
                     <div className="mt-3 text-pretty dark:text-slate-300 text-lg">
-                    {answer && !grade ? (
+                    {answer && !grade && auth.faculty_id === student.faculty_id ? (
     <>
         <p className="dark:text-slate-200 text-slate-900 mt-3 mb-3">Enter a grade for this submission</p>
         {error && (

@@ -19,14 +19,14 @@ import { Button } from 'primereact/button';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 
-export default function StudentAssignment({ auth, student, assignments,  answer }) {
+export default function StudentAssignment({ auth, student, assignment,  answer, grade }) {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
     const [successOpen, setSuccessOpen] = useState(true);
     const [openPermissionsMenu, setOpenPermissionsMenu] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
-   
+
     useEffect(() => {
         // Check if the system is in dark mode
         const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -46,7 +46,7 @@ export default function StudentAssignment({ auth, student, assignments,  answer 
 
       const submitAssignment = async (values, { setSubmitting }) => {
         try {
-            const response = await axios.post(`/submitAssignment/${student.student_id}`, values, {
+            const response = await axios.post(`/submitAssignment/${student.student_id}/${assignment.assignment.assignment_id}`, values, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -89,14 +89,29 @@ export default function StudentAssignment({ auth, student, assignments,  answer 
 
     return (
         <AuthenticatedLayout
-            user={auth}
+            user={auth.user}
             header={<h2 className="font-medium text-xl text-gray-800 leading-tight text-start dark:text-white">Assignment Details</h2>}
         >
             <section className="bg-white dark:bg-gray-900 shadow-lg">
                 <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                     <div className="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
-                      
-                        {assignments.map((assignment, index) => (
+                    <div className="mb-4 text-3xl tracking-light font-medium text-gray-900 dark:text-slate-300 text-start">Assignment Details For 
+                    <span className="ml-2">{student.first_name} {student.last_name}</span>
+                    <h2 className="mb-4 text-xl tracking-tight font-bold text-gray-900 dark:text-slate-300">{assignment.assignment.assignment_name}</h2>
+                    <p className="mb-4 font-medium text-xl dark:text-slate-300">
+                                    <Tooltip title="Assignment Description" arrow>
+                                        <DescriptionOutlinedIcon style={{ fontSize: 30, marginRight: 10 }} />
+                                    </Tooltip>
+                                    {assignment.assignment.assignment_description}
+                                </p>
+                                <p className="mb-4 font-medium text-xl dark:text-slate-300">
+                                    <Tooltip title="Assignment Due Date" arrow>
+                                        <CalendarMonthOutlinedIcon style={{ fontSize: 30, marginRight: 10 }} />
+                                    </Tooltip>
+                                    {new Date(assignment.assignment.assignment_due_date).toLocaleString()}
+                                </p>
+                    </div> 
+                        {/* {assignments.map((assignment, index) => (
                             <div key={index}>
                                 <div className="mb-4 text-3xl tracking-light font-medium text-gray-900 dark:text-slate-300 text-start">Assignment Details For 
                                 <span className="ml-2">{student.first_name} {student.last_name}</span> 
@@ -117,19 +132,37 @@ export default function StudentAssignment({ auth, student, assignments,  answer 
                                 </p>
                                
                             </div>
-                        ))}
+                        ))} */}
 
                         
                          <div className="block">
                            <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>
                            {answer && <p className="dark:text-slate-300">Submitted On: {new Date(answer.created_at).toLocaleString()}</p>}
-                           {answer && answer.grade !== undefined ? (
-                            answer.grade !== null ? (
+                            {!grade ? <p className="dark:text-orange-400 text-orange-700 font-bold mt-3">Pending Grading</p> : 
+                            <>
+                            <p className="dark:text-slate-300 text-black">Grade: {grade.grade} / 100</p>
+                            <p className="dark:text-slate-300 text-black">Feedback: {grade.feedback}</p>
+                        </>
+                            }
+ 
+                           {/* {(!grade || grade !== undefined) ? (
+                            <p className="dark:text-orange-400 text-orange-700 font-bold mt-3">Pending Grading</p>
+                        ) : (grade !== undefined && grade !== null) ? (
+                            <>
+                                <p className="dark:text-slate-300 text-black">Grade: {grade.grade} / 100</p>
+                                <p className="dark:text-slate-300 text-black">Feedback: {grade.feedback}</p>
+                            </>
+                        ) : null} */}
+
+
+
+                           {/* {grade !== undefined ? (
+                            grade !== null ? (
                                 <p className="dark:text-slate-300 text-black">Grade:</p>
                             ) : (
                                 <p className="dark:text-orange-400 text-orange-500">Pending Grading</p>
                             )
-                        ) : null}
+                        ) : null} */}
 
                           
                           <p className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer ? answer.assignment_answer 

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\Students; 
+use App\Models\Grades;
 use App\Models\AssignmentStudents;
 use App\Models\AssignmentAnswers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -79,20 +81,32 @@ class UserDashboard extends Controller
         }
     }
 
-    public function studentAssignment($student_id){
+    public function studentAssignment($student_id, $assignment_id){
+       try{
         $student = Students::where('student_id', $student_id)->first();
-        $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->get();
-        $answer = AssignmentAnswers::with(['grade'])->where('student_id', $student_id)->first();
-        $assignmentID = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->pluck('assignment_id')->toArray();
+        $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->where('assignment_id', $assignment_id)->first();
+
+        $answer = AssignmentAnswers::where('student_id', $student_id)->where('assignment_id', $assignment_id)->first();
+        // Use assignment_id instead of assignment_student_id
+        $grade = Grades::where('assignment_student_id', $assignment->assignment_student_id)->where('assignment_id', $assignment_id)->first();
+
         return Inertia::render('Student/StudentAssignment', [
-            'auth'=> Auth::user(),
-            'student'=>$student, 
-            'assignments'=>$assignment, 
-            'answer'=>$answer 
+            'student' => $student,
+            'assignment' => $assignment, 
+            'answer' => $answer ?? null,
+            'grade' => $grade ?? null,
+            
         ]);
     }
+    catch(\Exception $e){
+        return redirect('dashboard');
+        \Log::info('Cannot find Model: '.$e->getMessage());
+    }
 
-    public function submitAssignment(Request $request, $student_id){
+
+    }
+
+    public function submitAssignment(Request $request, $student_id, $assignment_id){
         $validate = Validator::make($request->only('assignment_answer'), [
             'assignment_answer' => 'required'
         ]);
@@ -101,8 +115,10 @@ class UserDashboard extends Controller
             return response()->json(['errors'=>$validate->errors()]);
         }
         $data = [
+            'assignment_answer_id'=> Str::uuid(),
             'assignment_answer'=>$request->assignment_answer,
-            'student_id'=>$student_id 
+            'student_id'=>$student_id,
+            'assignment_id'=>$assignment_id
         ];
 
         AssignmentAnswers::create($data);

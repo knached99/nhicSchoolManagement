@@ -364,7 +364,7 @@ public function updateUserInformation(Request $request, $faculty_id){
         $attendance = Attendance::where('faculty_id', $faculty_id)
             ->whereDate('created_at', $todayDate)
             ->get();
-
+        \Log::info('Attendance Data: '. $attendance);
         return response()->json(['attendance' => $attendance]);
     } catch (QueryException $e) {
         \Log::error($e->getMessage());

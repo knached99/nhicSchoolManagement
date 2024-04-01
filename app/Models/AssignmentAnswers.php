@@ -19,10 +19,11 @@ class AssignmentAnswers extends Model
         'assignment_answer_id',
         'assignment_answer',
         'student_id',
+        'assignment_id',
         'grade_id'
     ];
 
-    protected $casts = ['assignment_answer_id'=>'string'];
+    protected $casts = ['assignment_answer_id'=>'string', 'assignment_id'=>'string', 'student_id'=>'string', 'grade_id'=>'string'];
 
 
     public function student(){

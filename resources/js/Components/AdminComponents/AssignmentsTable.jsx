@@ -63,8 +63,8 @@ export default function AssignmentsTable({ studentID }) {
     setError(null);
   };
 
-  const viewAssignmentDetails = (studentID) => {
-    window.location.href = `/faculty/studentassignment/${studentID}`;
+  const viewAssignmentDetails = (studentID, assignmentID) => {
+    window.location.href = `/faculty/studentassignment/${studentID}/${assignmentID}`;
   }
   
 
@@ -82,7 +82,7 @@ export default function AssignmentsTable({ studentID }) {
         headerName: 'View Assignment',
         renderCell: (params) => (
             <Tooltip title="View Assignment Details" arrow>
-              <IconButton className="hover:text-emerald-500" onClick={() => viewAssignmentDetails(studentID)}>
+              <IconButton className="hover:text-emerald-500" onClick={() => viewAssignmentDetails(studentID, params.row.assignment_id)}>
                 <VisibilityOutlinedIcon className="dark:text-white"/>
               </IconButton>
             </Tooltip>

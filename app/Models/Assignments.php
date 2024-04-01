@@ -21,7 +21,7 @@ class Assignments extends Model
         'faculty_id', 
     ];
 
-    protected $casts = ['assignment_id'=>'string'];
+    protected $casts = ['assignment_id'=>'string', 'faculty_id'=>'string'];
 
 
     public function students()

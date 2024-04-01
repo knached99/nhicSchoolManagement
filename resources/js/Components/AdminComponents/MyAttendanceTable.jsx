@@ -116,48 +116,53 @@ const handleAttendanceSubmission = async () => {
 };
 
 
+useEffect(() => {
+  const fetchCombinedData = async () => {
+    try {
+      // Fetch students
+      const studentsResponse = await fetch(`/showStudentsForTeacher/${facultyID ? facultyID : auth}}`);
+      const { students: studentData, error: studentError } = await studentsResponse.json();
 
-  useEffect(() => {
-    const fetchCombinedData = async () => {
-      try {
-        // Fetch students
-        const studentsResponse = await fetch(`/showStudentsForTeacher/${facultyID ? facultyID : auth}}`);
-        const { students: studentData, error: studentError } = await studentsResponse.json();
-
-        if (studentError) {
-          setError(studentError);
-          setLoading(false);
-          return;
-        }
-
-        // Fetch attendance data
-        const attendanceResponse = await fetch(`/getAttendance/${facultyID ? facultyID : auth}`);
-        const { attendance: fetchedAttendanceData, error: attendanceError } = await attendanceResponse.json();
-
-        if (attendanceError) {
-          setError(attendanceError);
-          setLoading(false);
-          return;
-        }
-
-        setAttendanceData(fetchedAttendanceData);
-
-        // Merge student and attendance data based on student_id
-        const mergedRows = studentData.map(student => {
-          const correspondingAttendance = fetchedAttendanceData.find(attendance => attendance.student_id === student.student_id);
-          return { ...student, ...correspondingAttendance, id: student.student_id };
-        });
-
-        setRows(mergedRows);
+      if (studentError) {
+        setError(studentError);
         setLoading(false);
-      } catch (error) {
-        setError('Error fetching data: ' + error.message);
-        setLoading(false);
+        return;
       }
-    };
 
-    fetchCombinedData();
-  }, [success]);
+      console.log('Student Data:', studentData); // Log student data for debugging
+
+      // Fetch attendance data
+      const attendanceResponse = await fetch(`/getAttendance/${facultyID ? facultyID : auth}`);
+      const { attendance: fetchedAttendanceData, error: attendanceError } = await attendanceResponse.json();
+      if (attendanceError) {
+        setError(attendanceError);
+        setLoading(false);
+        return;
+      }
+
+      console.log('Attendance Data:', fetchedAttendanceData); // Log attendance data for debugging
+
+      setAttendanceData(fetchedAttendanceData);
+
+      // Merge student and attendance data based on student_id
+      const mergedRows = studentData.map(student => {
+        const correspondingAttendance = fetchedAttendanceData.find(attendance => attendance.student_id === student.student_id);
+        return { ...student, ...correspondingAttendance, id: student.student_id };
+      });
+
+      console.log('Merged Rows:', mergedRows); // Log merged rows for debugging
+
+      setRows(mergedRows);
+      setLoading(false);
+    } catch (error) {
+      setError('Error fetching data: ' + error.message);
+      setLoading(false);
+    }
+  };
+
+  fetchCombinedData();
+}, [success]);
+
 
 
   useEffect(() => {
@@ -183,7 +188,9 @@ const handleAttendanceSubmission = async () => {
       headerName: 'Attendance Status',
       width: 200,
       renderCell: (params) => (
+
         <div>
+          {params}
           {params.attendanceData ? (
             // Display "Present" or "Absent" based on existing attendance data
             <div>{params.attendanceData.is_present === 1 ? 'Present' : 'Absent'}</div>

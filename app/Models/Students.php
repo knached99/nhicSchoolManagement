@@ -72,6 +72,8 @@ class Students extends Model
 
     protected $casts = [
         'student_id'=>'string',
+        'user_id'=>'string',
+        'faculty_id'=>'string'
     ];
     
     protected $dates = ['date_of_birth'];

@@ -24,7 +24,7 @@ class Attendance extends Model
         'reason_for_absence'
     ];
 
-    protected $casts = ['attendance_id'=>'string'];
+    protected $casts = ['attendance_id'=>'string', 'student_id'=>'string', 'faculty_id'=>'string'];
 
 
     public function student()

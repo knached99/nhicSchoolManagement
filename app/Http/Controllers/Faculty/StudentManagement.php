@@ -284,7 +284,7 @@ public function showStudentsForTeacher($faculty_id)
 {
     try {
         $students = Students::with('user', 'faculty')->where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
-
+        \Log::info('Students: '. $students);
         return response()->json(['students' => $students]);
     } catch (\Exception $e) {
         // Log the error message

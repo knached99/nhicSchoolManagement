@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use App\Models\Assignments; 
 use App\Models\AssignmentAnswers;
 use App\Models\AssignmentStudents;
@@ -47,23 +48,23 @@ class AssignmentsController extends Controller
         }
     }
 
-    public function studentAssignment($student_id){
+    public function studentAssignment($student_id, $assignment_id){
         $student = Students::where('student_id', $student_id)->first();
+        $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->where('assignment_id', $assignment_id)->first();
 
-        $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->get();
-
-        $answer = AssignmentAnswers::with(['grade'])->where('student_id', $student_id)->first();
-
-        $grade = Grades::where('assignment_student_id', $student_id)->where('assignment_id', $assignment[0]->assignment_id)->first();
-
+        $answer = AssignmentAnswers::where('student_id', $student_id)->where('assignment_id', $assignment_id)->first();
+  
+        $grade = Grades::where('assignment_student_id', $assignment->assignment_student_id)->where('assignment_id', $assignment_id)->first();
+        
         return Inertia::render('Faculty/StudentAssignment', [
             'auth' => Auth::guard('faculty')->user(),
-            'student'=>$student,
-            'assignments' => $assignment, 
+            'student' => $student,
+            'assignment' => $assignment, 
             'answer' => $answer ?? null,
             'grade' => $grade ?? null,
         ]);
     }
+    
     
     
 
@@ -92,6 +93,7 @@ class AssignmentsController extends Controller
                    throw new InsufficientStudentsException();
                }
     
+
             $assignment = Assignments::create([
                 'assignment_name' => $request->assignment_name,
                 'assignment_due_date' => $request->assignment_due_date,
@@ -100,8 +102,8 @@ class AssignmentsController extends Controller
             ]);
             
                 // Assign to all students 
-                $assignment->students()->attach($students); 
-         
+                $assignment->students()->attach($students);
+                \Log::info('Students attached to assignment: '.$assignment);
     
             return response()->json(['success' => 'Assignment uploaded successfully']);
         } catch (ValidationException $e) {
@@ -119,6 +121,9 @@ class AssignmentsController extends Controller
             return response()->json(['errors' => 'Unable to create assignment, something went wrong']);
         }
     }
+
+
+
 
     public function editAssignmentDetails(Request $request, $assignment_id){
         try{
@@ -177,6 +182,7 @@ class AssignmentsController extends Controller
         }
 
         $data = [
+            'grade_id'=> Str::uuid(),
             'assignment_student_id' => $assignment_student_id,
             'assignment_id'=>$assignment_id, 
             'grade'=>$request->grade, 
