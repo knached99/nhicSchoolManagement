@@ -65,8 +65,9 @@ import { Dropdown } from 'primereact/dropdown';
 
 import AttendanceHistory from '@/Components/AdminComponents/AttendanceHistory';
 import AssignmentsTable from '@/Components/AdminComponents/AssignmentsTable';
+import AdminGradeChart from '@/Components/AdminComponents/AdminGradeChart';
 
-export default function Student({auth, student, assignments}) {
+export default function Student({auth, student, assignments, overall_average_grade}) {
     const [error, setError] = useState(null);
     const [teachers, setTeachers] = useState([]);
     const [parents, setParents] = useState([]);
@@ -137,7 +138,20 @@ export default function Student({auth, student, assignments}) {
       
       const backgroundColor = isDarkMode ? '#334155' : 'background.paper';
 
-    
+      // Change color of grade depending on grade 
+      let color;
+
+      if (overall_average_grade >= 90) {
+          color = '#10b981'; // Green
+      } else if (overall_average_grade >= 80 && overall_average_grade <= 89) {
+          color = '#38bdf8'; // Blue
+      } else if (overall_average_grade >= 70 && overall_average_grade <= 79) {
+          color = '#fbbf24'; // Yellow
+      } else if (overall_average_grade >= 60 && overall_average_grade <= 69) {
+          color = '#fb923c'; // Orange
+      } else {
+          color = '#ef4444'; // Red
+      }
 
       // For assigning teacher to student 
       const initialValues = {
@@ -308,7 +322,6 @@ export default function Student({auth, student, assignments}) {
   });
 
   const editStudentInformation = async (values, { setSubmitting }) => {
-    console.log('Submitting Form: ' + values);
 
     try {
       const response = await axios.put(`/editStudentInformation/${values.student_id}`, values, {
@@ -318,15 +331,12 @@ export default function Student({auth, student, assignments}) {
       });
 
 
-      console.log('Response: ' + response);
   
       if (response.data.errors) {
         setError(response.data.errors);
-        console.log('Submission Error: ' + response.data.errors);
         setErrorOpen(true);
       } else if (response.data.success) {
         setSuccess(response.data.success);
-        console.log('Submission Success: ' + response.data.success);
         setSuccessOpen(true);
   
         // Reset form values
@@ -339,7 +349,6 @@ export default function Student({auth, student, assignments}) {
       }
     } catch (error) {
       setError(error.message || 'Unable to edit student information, something went wrong');
-      console.log('Error Messages: ' + error.message);
       setErrorOpen(true);
     } finally {
       setSubmitting(false);
@@ -1054,7 +1063,7 @@ export default function Student({auth, student, assignments}) {
           Average Grade
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
-          <p class="font-bold text-2xl text-center">100/100</p>
+          <p class="font-bold text-2xl text-center"><span style={{color: color}}>{overall_average_grade}</span>/100</p>
         </p>
       </div>
     </div>
@@ -1081,6 +1090,7 @@ export default function Student({auth, student, assignments}) {
                     <AttendanceHistory studentID={student.student_id}/>
                     <AssignmentsTable studentID={student.student_id} />
                     {/* Assignments Table Goes Here */}
+                    <AdminGradeChart studentID={student.student_id} firstName={student.first_name} lastName={student.last_name}/>
                    
                 </div>
             </div>

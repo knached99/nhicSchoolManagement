@@ -266,7 +266,7 @@ class FacultyAuth extends Controller
 
             // Get Approximate Location 
             $locationData = json_decode(file_get_contents("http://ip-api.com/json/{$request->ip()}"));
-
+            
             $data = [
                 'email_used' => $request->email, 
                 'client_ip' => Crypt::encryptString($request->ip()),

@@ -68,6 +68,9 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     // Failed login attempts 
     Route::get('/faculty/loginattempts', [FacultyDash::class, 'failedLoginAttempts'])->name('faculty.loginattempts');
     Route::get('/faculty/analytics', [FacultyDash::class, 'analytics'])->name('faculty.analytics');
+    // Get Grades Data 
+    Route::get('/getGradesForStudent/{student_id}', [StudentManagement::class, 'getGradesForStudent'])->name('getGradesForStudent');
+    Route::get('/getGradesForAllStudents', [StudentManagement::class, 'getGradesForAllStudents'])->name('getGradesForAllStudents');
     Route::post('/createFacultyRole', [FacultyDash::class, 'createFacultyRole'])->name('createFacultyRole');
     Route::get('/search', [FacultyDash::class, 'autocompleteSearch'])->name('faculty.autocomplete.search');
     Route::delete('/deleteFacultyUser/{faculty_id}', [FacultyDash::class, 'deleteFacultyUser'])->name('deleteFacultyUser');

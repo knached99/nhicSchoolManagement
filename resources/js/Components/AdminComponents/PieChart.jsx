@@ -40,6 +40,7 @@ export default function PieChart({ studentsData, parentsData, facultyData }) {
 
     return (
         <div className="card flex justify-content-center">
+            <h5 className="dark:text-slate-200 text-black text-xl">All Users</h5>
             <Chart type="pie" data={chartData} options={chartOptions} className="w-full md:w-30rem" />
         </div>
     )

@@ -85,60 +85,98 @@ class FacultyDash extends Controller
     }
 
     public function analytics()
-{
-    if(auth('faculty')->user()->role !=='Admin'){
-        return redirect('faculty/dash');
+    {
+        if(auth('faculty')->user()->role !=='Admin'){
+            return redirect('faculty/dash');
+        }
+        $currentMonth = Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $facultyData = [];
+        $studentData = [];
+        $parentData = [];
+    
+        $facultyMembers = Faculty::whereYear('created_at', $currentYear)
+            ->get()
+            ->groupBy(function ($date) {
+                return Carbon::parse($date->created_at)->format('m');
+            });
+    
+        foreach ($facultyMembers as $month => $users) {
+            // Count users for each month
+            $facultyData[] = count($users);
+        }
+    
+        $students = Students::whereYear('created_at', $currentYear)
+            ->get()
+            ->groupBy(function ($date) {
+                return Carbon::parse($date->created_at)->format('m');
+            });
+    
+        foreach ($students as $month => $users) {
+            // Count users for each month
+            $studentData[] = count($users);
+        }
+    
+        $parents = User::whereYear('created_at', $currentYear)
+            ->get()
+            ->groupBy(function ($date) {
+                return Carbon::parse($date->created_at)->format('m');
+            });
+    
+        foreach ($parents as $month => $users) {
+            // Count users for each month
+            $parentData[] = count($users);
+        }
+    
+$storage = $this->calculateStorageUsed(); // Calculates Storage Usage
+$filesCount = $this->countFilesInDirectories(); // Calculates number of files within 3 folders
+$storageLeft = $this->calculateStorageLeft(); // Calculates the amount of storage left 
+
+// Storage Usage 
+$logsSize = isset($storage['logs']) ? $storage['logs'] : 0;
+$wallpaperSize = isset($storage['wallpaper']) ? $storage['wallpaper'] : 0;
+$profilePicsSize = isset($storage['profile']) ? $storage['profile'] : 0;
+$totalSize = isset($storage['total']) ? $storage['total'] : 0;
+
+// file counts 
+$totalFiles = isset($filesCount['total']) ? $filesCount['total'] : 0;
+$logFiles = isset($filesCount['total']) ? $filesCount['total'] : 0;
+$wallpaperFiles = isset($filesCount['wallpaper']) ? $filesCount['wallpaper'] : 0;
+$profileFiles = isset($filesCount['profile']) ? $filesCount['profile'] : 0;
+
+
+return Inertia::render('Faculty/Analytics', [
+    'auth'=>Auth::guard('faculty')->user(),
+    'facultyData'=>$facultyData, 
+    'studentsData'=>$studentData, 
+    'parentsData'=>$parentData, 
+    'totalSize'=>$totalSize, 
+    'logsSize'=>$logsSize, 
+    'wallpaperSize'=>$wallpaperSize,
+    'profilePicsSize'=>$profilePicsSize,
+    'storageLeft' =>$storageLeft,
+    'totalFiles' =>$totalFiles, 
+    'logFiles' =>$logFiles, 
+    'wallpaperFilees'=>$wallpaperFiles, 
+    'profileFiles'=>$profileFiles 
+]);
+// return Inertia::render('Faculty/Analytics', [
+//     'auth' => function () use ($facultyData, $studentData, $parentData, $totalSize, $logsSize, $wallpaperSize, $profilePicsSize) {
+//         return [
+//             'faculty' => auth('faculty')->user(),
+//             'facultyData' => $facultyData,
+//             'studentsData' => $studentData,
+//             'parentsData' => $parentData,
+//             'totalSize' => $totalSize,
+//             'logsSize' => $logsSize, 
+//             'wallpaperSize' => $wallpaperSize, 
+//             'profilePicsSize' => $profilePicsSize
+//         ];
+//     },
+// ]);
+
     }
-    $currentMonth = Carbon::now()->format('m');
-    $currentYear = Carbon::now()->format('Y');
-    $facultyData = [];
-    $studentData = [];
-    $parentData = [];
-
-    $facultyMembers = Faculty::whereYear('created_at', $currentYear)
-        ->get()
-        ->groupBy(function ($date) {
-            return Carbon::parse($date->created_at)->format('m');
-        });
-
-    foreach ($facultyMembers as $month => $users) {
-        // Count users for each month
-        $facultyData[] = count($users);
-    }
-
-    $students = Students::whereYear('created_at', $currentYear)
-        ->get()
-        ->groupBy(function ($date) {
-            return Carbon::parse($date->created_at)->format('m');
-        });
-
-    foreach ($students as $month => $users) {
-        // Count users for each month
-        $studentData[] = count($users);
-    }
-
-    $parents = User::whereYear('created_at', $currentYear)
-        ->get()
-        ->groupBy(function ($date) {
-            return Carbon::parse($date->created_at)->format('m');
-        });
-
-    foreach ($parents as $month => $users) {
-        // Count users for each month
-        $parentData[] = count($users);
-    }
-
-    return Inertia::render('Faculty/Analytics', [
-        'auth' => function () use ($facultyData, $studentData, $parentData) {
-            return [
-                'faculty' => auth('faculty')->user(),
-                'facultyData' => $facultyData,
-                'studentsData' => $studentData,
-                'parentsData' => $parentData,
-            ];
-        },
-    ]);
-}
+    
 
 
     public function loadProfile()
@@ -364,7 +402,6 @@ public function updateUserInformation(Request $request, $faculty_id){
         $attendance = Attendance::where('faculty_id', $faculty_id)
             ->whereDate('created_at', $todayDate)
             ->get();
-        \Log::info('Attendance Data: '. $attendance);
         return response()->json(['attendance' => $attendance]);
     } catch (QueryException $e) {
         \Log::error($e->getMessage());
@@ -486,6 +523,167 @@ public function submitAttendance(Request $request, $faculty_id)
       }
   }
   
+  // Calculate Storage Usage 
+
+  private function calculateStorageUsed()
+  {
+      // Define the paths to the directories
+      $wallpaperPath = storage_path('app/public/wallpaper_pics');
+      $profilePath = storage_path('app/public/profile_pics');
+      $logsPath = storage_path('logs');
+  
+      // Calculate the size of each directory
+      $wallpaperSize = $this->calculateDirectorySize($wallpaperPath);
+      $profileSize = $this->calculateDirectorySize($profilePath);
+      $logsSize = $this->calculateDirectorySize($logsPath);
+  
+      // Calculate the total size used
+      $totalSize = $wallpaperSize + $profileSize + $logsSize;
+  
+      // Convert bytes to human-readable format
+      $totalSizeHumanReadable = $this->formatBytes($totalSize);
+      $wallpaperSizeHumanReadable = $this->formatBytes($wallpaperSize);
+      $profilePicsSizeHumanReadable = $this->formatBytes($profileSize);
+      $logsSizeHumanReadable = $this->formatBytes($logsSize);
+      // Return the storage data
+      return [
+          'total' => $totalSizeHumanReadable,
+          'wallpaper' => $wallpaperSizeHumanReadable,
+          'profile' => $profilePicsSizeHumanReadable,
+          'logs' => $logsSizeHumanReadable,
+      ];
+  }
+  
+
+
+private function calculateDirectorySize($directory)
+{
+    $totalSize = 0;
+
+    // Open the directory
+    $dir = opendir($directory);
+
+    // Loop through each file in the directory
+    while ($file = readdir($dir)) {
+        // Exclude . and ..
+        if ($file != '.' && $file != '..') {
+            // Get the file path
+            $filePath = $directory . '/' . $file;
+
+            // If the file is a directory, calculate its size recursively
+            if (is_dir($filePath)) {
+                $totalSize += calculateDirectorySize($filePath);
+            } else {
+                // If it's a file, add its size to the total
+                $totalSize += filesize($filePath);
+            }
+        }
+    }
+
+    // Close the directory
+    closedir($dir);
+
+    return $totalSize;
+}
+
+private function formatBytes($bytes, $precision = 2)
+{
+    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min($pow, count($units) - 1);
+
+    // Uncomment one of the following alternatives
+    // $bytes /= pow(1024, $pow);
+    $bytes /= (1 << (10 * $pow));
+
+    return round($bytes, $precision) . ' ' . $units[$pow];
+}
+
+private function calculateStorageLeft()
+{
+    // Define the paths to the directories
+    $wallpaperPath = storage_path('app/public/wallpaper_pics');
+    $profilePath = storage_path('app/public/profile_pics');
+    $logsPath = storage_path('logs');
+
+    // Calculate the total storage limit (in bytes) for the storage disk containing these directories
+    $totalStorageLimit = disk_total_space($wallpaperPath) + disk_total_space($profilePath) + disk_total_space($logsPath);
+
+    // Get the current storage usage
+    $storageUsed = $this->calculateStorageUsed();
+
+    // Calculate the storage left only if total storage limit is numeric
+    if (is_numeric($totalStorageLimit)) {
+        // Convert the human-readable storage used to bytes
+        $storageUsedBytes = $this->convertHumanReadableToBytes($storageUsed['total']);
+
+        // Calculate the storage left
+        $storageLeft = $totalStorageLimit - $storageUsedBytes;
+
+        // Convert bytes to human-readable format
+        $storageLeftHumanReadable = $this->formatBytes($storageLeft);
+
+        return $storageLeftHumanReadable;
+    } else {
+        // Handle the case where total storage limit is not numeric
+        return 'Unable to calculate storage left. Non-numeric total storage limit encountered.';
+    }
+}
+
+// Function to convert human-readable size (e.g., "1.83 MB") to bytes
+private function convertHumanReadableToBytes($sizeString)
+{
+    // Extract numeric part
+    $numericPart = (float) $sizeString;
+    // Extract unit part
+    $unit = strtoupper(trim(preg_replace('/[0-9\. ]/', '', $sizeString)));
+
+    switch ($unit) {
+        case 'GB':
+            return $numericPart * 1024 * 1024 * 1024;
+        case 'MB':
+            return $numericPart * 1024 * 1024;
+        case 'KB':
+            return $numericPart * 1024;
+        default:
+            return $numericPart;
+    }
+}
+
+
+private function countFilesInDirectories() {
+    // Define the paths to the directories
+    $wallpaperPath = 'public/wallpaper_pics';
+    $profilePath = 'public/profile_pics';
+    $logsPath = 'logs';
+
+    // Count files in each directory recursively
+    $wallpaperCount = $this->countFilesRecursive($wallpaperPath);
+    $profileCount = $this->countFilesRecursive($profilePath);
+    $logsCount = $this->countFilesRecursive($logsPath);
+    $totalCount = $wallpaperCount + $profileCount + $logsCount;
+    
+    // Return the counts
+    return [
+        'wallpaper' => $wallpaperCount,
+        'profile' => $profileCount,
+        'logs' => $logsCount,
+        'total' => $totalCount,
+    ];
+}
+
+private function countFilesRecursive($directory) {
+    // Get all files within the directory and its subdirectories
+    $files = Storage::allFiles($directory);
+
+    // Count the number of files
+    $fileCount = count($files);
+
+    return $fileCount;
+}
+
   
 }
 

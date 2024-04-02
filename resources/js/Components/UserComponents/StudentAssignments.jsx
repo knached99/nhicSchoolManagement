@@ -70,7 +70,7 @@ export default function StudentAssignments({ studentID }) {
 
 
   const columns = [
-    { field: 'assignment_id', headerName: 'Assignment ID', width: 120 },
+    // { field: 'assignment_id', headerName: 'Assignment ID', width: 120 },
     { field: 'assignment_name', headerName: 'Assignment', width: 200 },
     {
       field: 'assignment_due_date',

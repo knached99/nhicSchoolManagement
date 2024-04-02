@@ -103,7 +103,6 @@ class AssignmentsController extends Controller
             
                 // Assign to all students 
                 $assignment->students()->attach($students);
-                \Log::info('Students attached to assignment: '.$assignment);
     
             return response()->json(['success' => 'Assignment uploaded successfully']);
         } catch (ValidationException $e) {

@@ -21,6 +21,7 @@ use App\Models\Faculty;
 use App\Models\Students;
 use App\Models\User;
 use App\Models\Banned;
+use App\Models\Grades;
 use App\Models\LoginAttempts;
 use App\Models\Attendance;
 use App\Models\AssignmentStudents;
@@ -284,7 +285,6 @@ public function showStudentsForTeacher($faculty_id)
 {
     try {
         $students = Students::with('user', 'faculty')->where('faculty_id', $faculty_id)->orderBy('created_at', 'desc')->get();
-        \Log::info('Students: '. $students);
         return response()->json(['students' => $students]);
     } catch (\Exception $e) {
         // Log the error message
@@ -295,11 +295,35 @@ public function showStudentsForTeacher($faculty_id)
 }
 
 
+
+
 public function viewStudentDetails($student_id) {
     try {
+        $currentYear = now()->format('Y');
+      
+        $assignmentStudentIDs = AssignmentStudents::where('student_id', $student_id)
+        ->pluck('assignment_student_id');
+
+        $grades = Grades::whereIn('assignment_student_id', $assignmentStudentIDs)
+        ->whereYear('created_at', $currentYear)
+        ->get();
+
+        $totalGrade = $grades->sum('grade');
+        $gradesCount = $grades->count();
+    
+        //Avg Grade: 
+        $overallAverageGrade = $gradesCount > 0 ? $totalGrade / $gradesCount : 0;
+        $overallAverageGrade = number_format($overallAverageGrade, 1);
+        
+        
         $student = Students::with('faculty', 'user',)->findOrFail($student_id);
         $assignments = AssignmentStudents::where('student_id', $student_id)->get();
-        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student, 'assignments'=>$assignments]);
+       
+        $assignmentStudentIDs = AssignmentStudents::where('student_id', $student_id)
+        ->pluck('assignment_student_id');
+        
+        
+        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student, 'assignments'=>$assignments, 'overall_average_grade' => $overallAverageGrade]);
     } catch (ModelNotFoundException $e) {
         return redirect('faculty/dash');
     }
@@ -388,4 +412,54 @@ public function getAttendanceHistoryBystudentID($studentId){
         return response()->json(['error'=>'Unable to assign parent to this student: '. $e->getMessage()]);
     }
   }
+
+  public function getGradesForStudent($student_id){
+    $currentYear = now()->format('Y');
+    $currentMonth = now()->format('m');
+
+    // Retrieve all assignment student IDs for the given student_id 
+    $assignmentStudentIDs = AssignmentStudents::where('student_id', $student_id)
+        ->pluck('assignment_student_id');
+
+
+    // fetch the grades tied to the obtained assignment student IDs
+    $grades = Grades::whereIn('assignment_student_id', $assignmentStudentIDs)
+                    ->whereYear('created_at', $currentYear)
+                    ->whereMonth('created_at', $currentMonth)
+                    ->get();
+
+
+    return response()->json(['grades' => $grades]);
+}
+
+
+
+public function getGradesForAllStudents() {
+    $currentYear = now()->format('Y');
+
+    // Fetch grades for all students for the current year
+    $grades = DB::table('grades')
+        ->whereYear('created_at', $currentYear)
+        ->get();
+
+    $gradesData = [];
+
+    // Calculate average grade for each month
+    $averageGrades = $grades->groupBy(function ($grade) {
+        return Carbon::parse($grade->created_at)->format('F'); // Group by month name
+    })->map(function ($monthGrades) {
+        return $monthGrades->avg('grade'); // Calculate average grade for each month
+    });
+
+    // Store the average grades for each month
+    $gradesData = $averageGrades->toArray();
+
+    return response()->json(['grades' => $gradesData]);
+}
+
+
+
+
+
+
 }

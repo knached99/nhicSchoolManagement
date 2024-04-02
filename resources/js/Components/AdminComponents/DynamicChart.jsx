@@ -103,6 +103,7 @@ export default function DynamicChart({ facultyData, studentsData, parentsData, t
     }, [facultyData, studentsData, parentsData]);
 
     return (
+        
         <div className="card">
             <Chart type={type} data={chartData} options={chartOptions} />
         </div>
