@@ -556,35 +556,66 @@ public function submitAttendance(Request $request, $faculty_id)
   
 
 
-private function calculateDirectorySize($directory)
-{
-    $totalSize = 0;
-
-    // Open the directory
-    $dir = opendir($directory);
-
-    // Loop through each file in the directory
-    while ($file = readdir($dir)) {
-        // Exclude . and ..
-        if ($file != '.' && $file != '..') {
-            // Get the file path
-            $filePath = $directory . '/' . $file;
-
-            // If the file is a directory, calculate its size recursively
-            if (is_dir($filePath)) {
-                $totalSize += calculateDirectorySize($filePath);
-            } else {
-                // If it's a file, add its size to the total
-                $totalSize += filesize($filePath);
+  private function calculateDirectorySize($dir){
+    $count_size = 0;
+    $count = 0;
+    $dir_array = scandir($dir);
+      foreach($dir_array as $key=>$filename){
+        if($filename!=".." && $filename!="."){
+           if(is_dir($dir."/".$filename)){
+              $new_foldersize = foldersize($dir."/".$filename);
+              $count_size = $count_size+ $new_foldersize;
+            }else if(is_file($dir."/".$filename)){
+              $count_size = $count_size + filesize($dir."/".$filename);
+              $count++;
             }
-        }
+       }
+     }
+    return $count_size;
     }
 
-    // Close the directory
-    closedir($dir);
+// private function calculateDirectorySize($directory)
+// {
+//     $totalSize = 0;
 
-    return $totalSize;
-}
+//     // Open the directory
+//     $dir = opendir($directory);
+
+//     // Loop through each file in the directory
+//     while ($file = readdir($dir)) {
+//         // Exclude . and ..
+//         if ($file != '.' && $file != '..') {
+//             // Get the file path
+//             $filePath = $directory . '/' . $file;
+
+//             // If the file is a directory, calculate its size recursively
+//             if (is_dir($filePath)) {
+//                 $totalSize += calculateDirectorySize($filePath);
+//             } else {
+//                 // If it's a file, add its size to the total
+//                 $totalSize += filesize($filePath);
+//             }
+//         }
+//     }
+
+//     // Close the directory
+//     closedir($dir);
+
+//     return $totalSize;
+// }
+
+// private function calculateDirectorySize ($dir)
+// {
+//     $size = 0;
+
+//     foreach (glob(rtrim($dir, '/').'/*', GLOB_NOSORT) as $each) {
+//         $size += is_file($each) ? filesize($each) : folderSize($each);
+//     }
+
+//     return $size;
+// }
+
+
 
 private function formatBytes($bytes, $precision = 2)
 {
@@ -600,6 +631,7 @@ private function formatBytes($bytes, $precision = 2)
 
     return round($bytes, $precision) . ' ' . $units[$pow];
 }
+
 
 private function calculateStorageLeft()
 {
@@ -655,9 +687,10 @@ private function convertHumanReadableToBytes($sizeString)
 
 private function countFilesInDirectories() {
     // Define the paths to the directories
-    $wallpaperPath = 'public/wallpaper_pics';
-    $profilePath = 'public/profile_pics';
-    $logsPath = 'logs';
+    $wallpaperPath = Storage::path('public/wallpaper_pics');
+    $profilePath = Storage::path('public/profile_pics');
+    $logsPath = '/Applications/MAMP/htdocs/nhicSchoolManagement/storage/logs';
+
 
     // Count files in each directory recursively
     $wallpaperCount = $this->countFilesRecursive($wallpaperPath);
@@ -665,6 +698,13 @@ private function countFilesInDirectories() {
     $logsCount = $this->countFilesRecursive($logsPath);
     $totalCount = $wallpaperCount + $profileCount + $logsCount;
     
+    \Log::info([
+        'Total Files: ' => $totalCount, 
+        'Wallpapers: ' => $wallpaperCount,
+        'PFP' => $profileCount,
+        'Logs: ' => $logsCount
+
+    ]);
     // Return the counts
     return [
         'wallpaper' => $wallpaperCount,
@@ -674,15 +714,48 @@ private function countFilesInDirectories() {
     ];
 }
 
-private function countFilesRecursive($directory) {
-    // Get all files within the directory and its subdirectories
-    $files = Storage::allFiles($directory);
+// private function countFilesRecursive($directory) {
+//     // Get all files within the directory and its subdirectories
+//     $files = Storage::allFiles($directory);
 
-    // Count the number of files
-    $fileCount = count($files);
+//     // Count the number of files
+//     $fileCount = count($files);
+
+//     return $fileCount;
+// }
+
+private function countFilesRecursive($directory) {
+    // Initialize count to 0
+    $fileCount = 0;
+
+    // Open the directory
+    $dir = opendir($directory);
+
+    // Loop through each file and directory
+    while (($file = readdir($dir)) !== false) {
+        // Skip . and .. directories
+        if ($file == '.' || $file == '..') {
+            continue;
+        }
+
+        // Get the full path of the file or directory
+        $filePath = $directory . '/' . $file;
+
+        // If it's a directory, recursively count files in it
+        if (is_dir($filePath)) {
+            $fileCount += $this->countFilesRecursive($filePath);
+        } else {
+            // If it's a file, increment the count
+            $fileCount++;
+        }
+    }
+
+    // Close the directory
+    closedir($dir);
 
     return $fileCount;
 }
+
 
   
 }

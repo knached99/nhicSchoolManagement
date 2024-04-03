@@ -263,7 +263,7 @@ export default function UploadAssignmentModal({auth, refreshData}) {
             onChange={handleChange} 
             onBlur={handleBlur} 
             className="mb-3 mt-3"
-            min={new Date().toISOString().slice(0, 16)} // Set minimum datetime to now
+            // min={new Date().toISOString().slice(0, 16)} // Set minimum datetime to now
         />
 
           <span className="text-red-500">{touched.assignment_due_date && errors.assignment_due_date}</span>

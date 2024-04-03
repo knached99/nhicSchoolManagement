@@ -135,7 +135,7 @@ const blue = {
 
   
 
-export default function StudentDetails({auth, student}) {
+export default function StudentDetails({auth, student, overallAverageGrade}) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -181,7 +181,19 @@ useEffect(() => {
   setIsDarkMode(prefersDarkMode);
 }, []);
     
-    
+    let color;
+
+    if (overallAverageGrade >= 90) {
+      color = '#10b981'; // Green
+  } else if (overallAverageGrade >= 80 && overallAverageGrade <= 89) {
+      color = '#38bdf8'; // Blue
+  } else if (overallAverageGrade >= 70 && overallAverageGrade <= 79) {
+      color = '#fbbf24'; // Yellow
+  } else if (overallAverageGrade >= 60 && overallAverageGrade <= 69) {
+      color = '#fb923c'; // Orange
+  } else {
+      color = '#ef4444'; // Red
+  }
 
     const updateStudentInformation = async (values, {setSubmitting})=>{
         try{
@@ -590,7 +602,7 @@ useEffect(() => {
           Average Grade
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
-          <p class="font-bold text-2xl text-center">100/100</p>
+        <p class="font-bold text-2xl text-center"><span style={{color: color}}>{overallAverageGrade}</span>/100</p>
         </p>
       </div>
     </div>

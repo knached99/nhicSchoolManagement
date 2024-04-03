@@ -49,11 +49,17 @@ export default function StorageInformation({ totalSize, logsSize, wallpaperSize,
                     <li><ForestOutlinedIcon /> Logs Storage Used: {logsSize}</li>
                     <li><WallpaperIcon /> Wallpaper-Pics Storage Used: {wallpaperSize}</li>
                     <li><PortraitOutlinedIcon /> Profile-Pics Storage Used: {profilePicsSize}</li>
+                    <h6 className="dark:text-slate-200 text-black text-lg">Number of Files</h6>
+                    <li>Total Files: {totalFiles}</li>
+                    <li>Log Files: {logFiles}</li>
+                    <li>Wallpaper Pics: {wallpaperFiles}</li>
+                    <li>Profile Pics: {profileFiles}</li>
                 </ul>
             </div>
-            <div className="card flex justify-content-center">
-                <Chart type="pie" data={chartData} options={chartOptions} className="w-full md:w-30rem" />
-            </div>
+            {/* <div className="card flex justify-content-center"> */}
+         
+                {/* <Chart type="pie" data={chartData} options={chartOptions} className="w-full md:w-30rem" /> */}
+            {/* </div> */}
         </div>
     );
 }

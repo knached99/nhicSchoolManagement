@@ -89,6 +89,15 @@ export default function StudentAssignment({ auth, student, assignment, answer, g
         setError(null);
     };
 
+    // Assuming `dueDate` is the due date of the assignment
+const dueDate = new Date(assignment.assignment.assignment_due_date);
+
+// Get current date
+const currentDate = new Date();
+
+// Check if the assignment due date is today or past due
+const isPastDue = currentDate > dueDate;
+
     return (
         <AdminLayout
             user={auth}
@@ -122,8 +131,15 @@ export default function StudentAssignment({ auth, student, assignment, answer, g
                                     Submitted On: {new Date(answer.created_at).toLocaleString(undefined, { hour12: true, year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                 </p>
                                 )}
-
-                          <p className="mt-3 text-pretty dark:text-slate-300 text-lg"> {answer ? answer.assignment_answer : 'No Answer Provided Yet'} </p>
+                             <p className="mt-3 text-pretty dark:text-slate-300 text-lg">
+                            {isPastDue && !answer ? (
+                            <p>Assignment is past due, student did not submit assignment.</p>
+                            ) : !answer ? (
+                            <p>No answer provided yet.</p>
+                            ) : (
+                            <p>{answer.assignment_answer}</p>
+                            )}
+                        </p>
                           {/* <div className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer && answer.grade == undefined ? 
                           <> */}
                     <div className="mt-3 text-pretty dark:text-slate-300 text-lg">

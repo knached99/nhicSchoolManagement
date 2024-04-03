@@ -14,6 +14,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
 
 class UserDashboard extends Controller
 {
@@ -34,7 +35,21 @@ class UserDashboard extends Controller
             if (auth()->check()) {
                 $student = Students::with('faculty', 'user', 'assignments')->findOrFail($student_id);
                 $assignments = AssignmentStudents::where('student_id', $student_id)->get();
-                return Inertia::render('StudentDetails', ['auth' => Auth::user(), 'student' => $student, 'assignments'=>$assignments]);
+                
+                $assignmentStudentIDs = AssignmentStudents::where('student_id', $student_id)->pluck('assignment_student_id');
+
+                $grades = Grades::whereIn('assignment_student_id', $assignmentStudentIDs)
+                ->whereYear('created_at', now()->format('Y'))->get();
+
+                $totalGrade = $grades->sum('grade');
+
+                $gradesCount = $grades->count();
+                $overallAverageGrade = $gradesCount > 0 ? $totalGrade / $gradesCount : 0;
+                $overallAverageGrade = number_format($overallAverageGrade, 1);
+
+
+            return Inertia::render('StudentDetails', ['auth' => Auth::user(), 'student' => $student, 'assignments'=>$assignments, 'overallAverageGrade'=>$overallAverageGrade]);
+            
             } else {
                 // Handle unauthenticated user
                 return redirect('login');
@@ -120,6 +135,9 @@ class UserDashboard extends Controller
             'student_id'=>$student_id,
             'assignment_id'=>$assignment_id
         ];
+        if(Carbon::now() >= $request->assignment_due_date){
+         return response()->json(['errors'=>'You cannot submit this assignment as it is past due']);
+        }
 
         AssignmentAnswers::create($data);
         return response()->json(['success' => 'You have successfully submitted your assignment']);
