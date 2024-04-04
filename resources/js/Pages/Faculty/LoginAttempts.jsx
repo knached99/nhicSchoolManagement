@@ -183,7 +183,7 @@ export default function LoginAttempts({ auth, attempts }) {
                     IP Address 
                 </th>
                 <th scope="col" className="px-6 py-3">
-                    Device/Browser
+                    User Agent
                 </th>
                 <th scope="col" className="px-6 py-3">
                     Attempt Made On

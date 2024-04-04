@@ -45,7 +45,7 @@ export default function StorageInformation({ totalSize, logsSize, wallpaperSize,
             <div className="m-3">
                 <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-100">
                     <li><StorageIcon /> Total Storage Used: {totalSize}</li>
-                    <li><StorageIcon /> Storage Left: {storageLeft}</li>
+                    <li><StorageIcon /> Available Free Space: {storageLeft}</li>
                     <li><ForestOutlinedIcon /> Logs Storage Used: {logsSize}</li>
                     <li><WallpaperIcon /> Wallpaper-Pics Storage Used: {wallpaperSize}</li>
                     <li><PortraitOutlinedIcon /> Profile-Pics Storage Used: {profilePicsSize}</li>

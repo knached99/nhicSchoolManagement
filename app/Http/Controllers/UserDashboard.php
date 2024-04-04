@@ -135,9 +135,12 @@ class UserDashboard extends Controller
             'student_id'=>$student_id,
             'assignment_id'=>$assignment_id
         ];
-        if(Carbon::now() >= $request->assignment_due_date){
-         return response()->json(['errors'=>'You cannot submit this assignment as it is past due']);
+        $assignmentDueDate = Carbon::parse($request->assignment_due_date);
+
+        if (Carbon::now()->greaterThanOrEqualTo($assignmentDueDate)) {
+            return response()->json(['errors' => 'You cannot submit this assignment as it is past due']);
         }
+        
 
         AssignmentAnswers::create($data);
         return response()->json(['success' => 'You have successfully submitted your assignment']);

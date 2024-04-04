@@ -42,8 +42,11 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 
-import { Calendar } from 'primereact/calendar';
-        
+// import { Calendar } from 'primereact/calendar';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 export default function ViewProfile({auth, user, students, bannedDetails, clientIP, assignmentsCount}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -682,12 +685,16 @@ const handleBanCloseError = () => {
     <div className="flex flex-wrap gap-3">
     <div className="card flex justify-content-center">
       <label className="dark:text-white block">ban user until</label>
-      <Calendar onChange={handleChange} 
-      type="date"
-      id="banned_until"
-      name="banned_until"
-      onBlur={handleBlur}
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DatePicker 
+        id="banned_until"
+        name="banned_until"
+        value={values.banned_until} // Ensure that the value comes from Formik's state
+        onChange={(newValue) => setFieldValue('banned_until', newValue)} // Update Formik's state
+        onBlur={handleBlur}
       />
+      </LocalizationProvider>
+
       {/* <input
         type="date"
         className="block dark:text-white border-slate-400 rounded dark:bg-slate-800 w-full"

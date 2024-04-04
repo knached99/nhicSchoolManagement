@@ -186,50 +186,84 @@ public function editStudentInformation(Request $request, $student_id){
     }
 }
 
+// public function deleteStudent($student_id)
+// {
+//     try {
+
+//         if(Auth::guard('faculty')->user()->role !== 'Admin'){
+//             return response()->json(['errors'=>'You do not have permission to perform this action']);
+//         }
+
+//         // Retrieve the student with associated data
+//         $student = Students::with(['attendance', 'assignments', 'grades'])->findOrFail($student_id);
+
+//         if (!$student) {
+//             return response()->json(['errors'=>'Student not found']);
+//         }
+
+//         // Delete attendance records
+//         if ($student->attendance) {
+//             $student->attendance->each->delete();
+//         }
+
+//         // Delete assignment records
+//         if ($student->assignments) {
+//             $student->assignments->each->delete();
+//         }
+
+//         // Delete grade records
+//         if ($student->grades) {
+//             $student->grades->each->delete();
+//         }
+
+//         // Delete the student
+//         $student->delete();
+
+//         return response()->json(['success' => 'Student and associated data deleted successfully']);
+//     }
+//     catch (ModelNotFoundException $e) {
+
+//         return response()->json(['errors' => $e->getMessage()]);
+//     }
+//     catch (QueryException $e) {
+//         return response()->json(['errors' => $e->getMessage()]);
+//     }
+
+// }
+
 public function deleteStudent($student_id)
 {
     try {
-
         if(Auth::guard('faculty')->user()->role !== 'Admin'){
             return response()->json(['errors'=>'You do not have permission to perform this action']);
         }
 
         // Retrieve the student with associated data
-        $student = Students::with(['attendance', 'assignments', 'grades'])->findOrFail($student_id);
+        $student = Students::findOrFail($student_id);
 
         if (!$student) {
             return response()->json(['errors'=>'Student not found']);
         }
 
-        // Delete attendance records
-        if ($student->attendance) {
-            $student->attendance->each->delete();
-        }
-
-        // Delete assignment records
-        if ($student->assignments) {
-            $student->assignments->each->delete();
-        }
-
-        // Delete grade records
-        if ($student->grades) {
-            $student->grades->each->delete();
+        // Delete associated grades records
+        foreach ($student->assignmentStudents as $assignmentStudent) {
+            $assignmentStudent->grades()->delete();
+            $assignmentStudent->delete();
         }
 
         // Delete the student
         $student->delete();
 
         return response()->json(['success' => 'Student and associated data deleted successfully']);
-    }
-    catch (ModelNotFoundException $e) {
-
+    } catch (ModelNotFoundException $e) {
+        \Log::error('Unable to find Student: '.$e->getMessage());
+        return response()->json(['errors' => $e->getMessage()]);
+    } catch (QueryException $e) {
+        \Log::error('Query Exception Encountered: '.$e->getMessage());
         return response()->json(['errors' => $e->getMessage()]);
     }
-    catch (QueryException $e) {
-        return response()->json(['errors' => $e->getMessage()]);
-    }
-
 }
+
 
 public function deleteAllStudents()
 {

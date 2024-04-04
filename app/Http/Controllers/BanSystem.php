@@ -18,7 +18,7 @@ class BanSystem extends Controller
     public function blockAttempt($loginID){
         try{
             $clientIP = LoginAttempts::select('client_ip')->where('loginID', $loginID)->first();
-
+             
             LoginAttempts::where('loginID', $loginID)->update(['is_blocked' => 1]);
 
             return response()->json(['success'=>'That IP address is now blocked']);

@@ -37,7 +37,8 @@ export default function StudentAssignment({ auth, student, assignment,  answer, 
       // Assignment Form 
 
       const initialValues = {
-        assignment_answer: ''
+        assignment_answer: '',
+        assignment_due_date: assignment.assignment.assignment_due_date
       };
 
       const validation = Yup.object().shape({
@@ -111,114 +112,81 @@ export default function StudentAssignment({ auth, student, assignment,  answer, 
                                     {new Date(assignment.assignment.assignment_due_date).toLocaleString()}
                                 </p>
                     </div> 
-                        {/* {assignments.map((assignment, index) => (
-                            <div key={index}>
-                                <div className="mb-4 text-3xl tracking-light font-medium text-gray-900 dark:text-slate-300 text-start">Assignment Details For 
-                                <span className="ml-2">{student.first_name} {student.last_name}</span> 
-                                </div>
-                               
-                                <h2 className="mb-4 text-xl tracking-tight font-bold text-gray-900 dark:text-slate-300">{assignment.assignment.assignment_name}</h2>
-                                <p className="mb-4 font-medium text-xl dark:text-slate-300">
-                                    <Tooltip title="Assignment Description" arrow>
-                                        <DescriptionOutlinedIcon style={{ fontSize: 30, marginRight: 10 }} />
-                                    </Tooltip>
-                                    {assignment.assignment.assignment_description}
-                                </p>
-                                <p className="mb-4 font-medium text-xl dark:text-slate-300">
-                                    <Tooltip title="Assignment Due Date" arrow>
-                                        <CalendarMonthOutlinedIcon style={{ fontSize: 30, marginRight: 10 }} />
-                                    </Tooltip>
-                                    {new Date(assignment.assignment.assignment_due_date).toLocaleString()}
-                                </p>
-                               
-                            </div>
-                        ))} */}
-
-                        
+        
                          <div className="block">
                            <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>
-                           {answer && <p className="dark:text-slate-300">Submitted On: {new Date(answer.created_at).toLocaleString()}</p>}
-                            {!grade ? <p className="dark:text-orange-400 text-orange-700 font-bold mt-3">Pending Grading</p> : 
-                            <>
-                            <p className="dark:text-slate-300 text-black">Grade: {grade.grade} / 100</p>
-                            <p className="dark:text-slate-300 text-black">Feedback: {grade.feedback}</p>
-                        </>
-                            }
- 
-                           {/* {(!grade || grade !== undefined) ? (
-                            <p className="dark:text-orange-400 text-orange-700 font-bold mt-3">Pending Grading</p>
-                        ) : (grade !== undefined && grade !== null) ? (
-                            <>
-                                <p className="dark:text-slate-300 text-black">Grade: {grade.grade} / 100</p>
-                                <p className="dark:text-slate-300 text-black">Feedback: {grade.feedback}</p>
-                            </>
-                        ) : null} */}
-
-
-
-                           {/* {grade !== undefined ? (
-                            grade !== null ? (
-                                <p className="dark:text-slate-300 text-black">Grade:</p>
-                            ) : (
-                                <p className="dark:text-orange-400 text-orange-500">Pending Grading</p>
-                            )
-                        ) : null} */}
-
                           
-                          <p className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer ? answer.assignment_answer 
-  : (
-  <>
-    <div class="container mx-auto py-8">
-    {error && (
-                            <Box sx={{ width: '100%' }}>
-                                <Collapse in={errorOpen}>
-                                    <Alert
-                                        icon={<ErrorOutlineIcon fontSize="inherit" />}
-                                        severity="error"
-                                        action={
-                                            <IconButton
-                                                aria-label="close"
-                                                color="inherit"
-                                                size="small"
-                                                onClick={handleCloseError}
-                                            >
-                                                <CloseIcon fontSize="inherit" />
-                                            </IconButton>
-                                        }
-                                        sx={{ mb: 2 }}
-                                    >
-                                        {error}
-                                    </Alert>
-                                </Collapse>
-                            </Box>
-                        )}
+                           <>
+  {answer ? (
+    <>
+      <p className="mt-3 mb-3 text-purple-400 text-pretty dark:text-purple-300 text-lg">{answer.assignment_answer}</p>
+      {answer && <p className="dark:text-slate-300">Submitted On: {new Date(answer.created_at).toLocaleString()}</p>}
+      {!grade ? (
+        <p className="dark:text-orange-400 text-orange-700 font-bold mt-3">Pending Grading</p>
+      ) : (
+        <>
+          <p className="dark:text-slate-300 text-black">Grade: {grade.grade} / 100</p>
+          <p className="dark:text-slate-300 text-black">Feedback: {grade.feedback}</p>
+        </>
+      )}
+    </>
+  ) : (
+    <div className="container mx-auto py-8">
+      {error && (
+        <Box sx={{ width: '100%' }}>
+          <Collapse in={errorOpen}>
+            <Alert
+              icon={<ErrorOutlineIcon fontSize="inherit" />}
+              severity="error"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleCloseError}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              {error}
+            </Alert>
+          </Collapse>
+        </Box>
+      )}
 
-                        {success && (
-                            <Box sx={{ width: '100%' }}>
-                                <Collapse in={successOpen}>
-                                    <Alert
-                                        icon={<CheckCircleOutlineIcon fontSize="inherit" />}
-                                        severity="success"
-                                        action={
-                                            <IconButton
-                                                aria-label="close"
-                                                color="inherit"
-                                                size="small"
-                                                onClick={handleCloseSuccess}
-                                            >
-                                                <CloseIcon fontSize="inherit" />
-                                            </IconButton>
-                                        }
-                                        sx={{ mb: 2 }}
-                                    >
-                                        {success}
-                                    </Alert>
-                                </Collapse>
-                            </Box>
-                        )}
-      <Formik initialValues={initialValues} validationSchema={validation} onSubmit={submitAssignment}>
+      {success && (
+        <Box sx={{ width: '100%' }}>
+          <Collapse in={successOpen}>
+            <Alert
+              icon={<CheckCircleOutlineIcon fontSize="inherit" />}
+              severity="success"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={handleCloseSuccess}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              {success}
+            </Alert>
+          </Collapse>
+        </Box>
+      )}
+
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validation}
+        onSubmit={submitAssignment}
+      >
         {({
-          values, 
+          values,
           errors,
           touched,
           handleSubmit,
@@ -231,22 +199,33 @@ export default function StudentAssignment({ auth, student, assignment,  answer, 
           <Form onSubmit={handleSubmit} autoComplete="off">
             <div className="max-w-md mx-auto rounded px-8 pt-6 pb-8 mb-4">
               <div className="mb-6">
-                <InputTextarea 
-                value={values.assignment_answer} 
-                style={{
-                   width: '100%',
-                   ...(touched.assignment_answer && errors.assignment_answer && { border: '1px solid #ef4444' }),
-               }}
-                onChange={handleChange} 
-                onBlur={handleBlur} 
-                id="assignment_answer" name="assignment_answer" rows="5" cols="30" placeholder="Enter your answer" />
-                <span className="text-red-500 dark:text-red-400">{touched.assignment_answer && errors.assignment_answer}</span>
+                <InputTextarea
+                  value={values.assignment_answer}
+                  style={{
+                    width: '100%',
+                    ...(touched.assignment_answer &&
+                      errors.assignment_answer && {
+                        border: '1px solid #ef4444',
+                      }),
+                  }}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  id="assignment_answer"
+                  name="assignment_answer"
+                  rows="5"
+                  cols="30"
+                  placeholder="Enter your answer"
+                />
+                <span className="text-red-500 dark:text-red-400">
+                  {touched.assignment_answer && errors.assignment_answer}
+                </span>
               </div>
               <div className="flex justify-center">
-                <Button label="Submit Answer" 
-                disabled={isSubmitting || !isValid || !dirty}
-                loading={isSubmitting}
-                type="submit"
+                <Button
+                  label="Submit Answer"
+                  disabled={isSubmitting || !isValid || !dirty}
+                  loading={isSubmitting}
+                  type="submit"
                 />
               </div>
             </div>
@@ -254,9 +233,10 @@ export default function StudentAssignment({ auth, student, assignment,  answer, 
         )}
       </Formik>
     </div>
-  </>
-)}
-</p>
+  )}
+</>
+
+
                           </div>
                     </div>
                 </div>

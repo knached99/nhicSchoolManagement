@@ -126,12 +126,8 @@ const isPastDue = currentDate > dueDate;
                         
                          <div className="block">
                            <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>  
-                           {answer && (
-                                <p className="dark:text-slate-100">
-                                    Submitted On: {new Date(answer.created_at).toLocaleString(undefined, { hour12: true, year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                                )}
-                             <p className="mt-3 text-pretty dark:text-slate-300 text-lg">
+                           
+                             <p className="mt-3 mb-3 text-purple-400 text-pretty dark:text-purple-300 text-lg">
                             {isPastDue && !answer ? (
                             <p>Assignment is past due, student did not submit assignment.</p>
                             ) : !answer ? (
@@ -139,6 +135,11 @@ const isPastDue = currentDate > dueDate;
                             ) : (
                             <p>{answer.assignment_answer}</p>
                             )}
+                            {answer && (
+                                <p className="dark:text-slate-100 mt-5">
+                                    Submitted On: {new Date(answer.created_at).toLocaleString(undefined, { hour12: true, year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                                )}
                         </p>
                           {/* <div className="mt-3 text-pretty dark:text-slate-300 text-lg">{answer && answer.grade == undefined ? 
                           <> */}

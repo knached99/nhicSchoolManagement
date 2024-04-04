@@ -102,6 +102,13 @@ class Students extends Model
 
     public function grades()
     {
-        return $this->hasMany(Grades::class, 'student_id', 'student_id');
+        return $this->hasManyThrough(Grades::class, AssignmentStudents::class, 'student_id', 'assignment_student_id', 'student_id', 'assignment_student_id');
     }
+
+    public function assignmentStudents()
+{
+    return $this->hasMany(AssignmentStudents::class, 'student_id', 'student_id');
+}
+
+    
 }

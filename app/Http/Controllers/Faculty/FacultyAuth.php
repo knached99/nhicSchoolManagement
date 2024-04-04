@@ -223,46 +223,46 @@ class FacultyAuth extends Controller
 
             $userAgent = $request->header('User-Agent');
 
-            $device = 'Unknown';
-            $browser = 'Unknown';
+            // $device = 'Unknown';
+            // $browser = 'Unknown';
 
-            // Common Devices & Browsers
+            // // Common Devices & Browsers
 
-            $devices  = [
-                'iPhone' => 'iPhone',
-                'iPad' => 'iPad',
-                'Android' => 'Android',
-                'Windows Phone' => 'Windows Phone',
-                'Windows' => 'Windows',
-                'Macintosh' => 'Macintosh',
-                'Linux' => 'Linux',
-            ];
+            // $devices  = [
+            //     'iPhone' => 'iPhone',
+            //     'iPad' => 'iPad',
+            //     'Android' => 'Android',
+            //     'Windows Phone' => 'Windows Phone',
+            //     'Windows' => 'Windows',
+            //     'Macintosh' => 'Macintosh',
+            //     'Linux' => 'Linux',
+            // ];
 
-            $browsers = [
-                'Chrome' => 'Chrome',
-                'Firefox' => 'Firefox',
-                'Safari' => 'Safari',
-                'Opera' => 'Opera',
-                'MSIE' => 'Internet Explorer',
-                'Trident' => 'Internet Explorer',
-            ];
+            // $browsers = [
+            //     'Chrome' => 'Chrome',
+            //     'Firefox' => 'Firefox',
+            //     'Safari' => 'Safari',
+            //     'Opera' => 'Opera',
+            //     'MSIE' => 'Internet Explorer',
+            //     'Trident' => 'Internet Explorer',
+            // ];
 
 
-                        // Determine the device
-                foreach ($devices as $key => $value) {
-                    if (strpos($userAgent, $key) !== false) {
-                        $device = $value;
-                        break;
-                    }
-                }
+            //             // Determine the device
+            //     foreach ($devices as $key => $value) {
+            //         if (strpos($userAgent, $key) !== false) {
+            //             $device = $value;
+            //             break;
+            //         }
+            //     }
 
-                // Determine the browser
-                foreach ($browsers as $key => $value) {
-                    if (strpos($userAgent, $key) !== false) {
-                        $browser = $value;
-                        break;
-                    }
-                }
+            //     // Determine the browser
+            //     foreach ($browsers as $key => $value) {
+            //         if (strpos($userAgent, $key) !== false) {
+            //             $browser = $value;
+            //             break;
+            //         }
+            //     }
 
             // Get Approximate Location 
             $locationData = json_decode(file_get_contents("http://ip-api.com/json/{$request->ip()}"));
@@ -270,7 +270,7 @@ class FacultyAuth extends Controller
             $data = [
                 'email_used' => $request->email, 
                 'client_ip' => Crypt::encryptString($request->ip()),
-                'user_agent' => 'Device: ' .$device . ' Browser: '. $browser,
+                'user_agent' => $userAgent,
                 'location_information' => $locationData ? 
                 ($locationData->city ?? '') . ', ' . 
                 ($locationData->regionName ?? '') . ', ' . 

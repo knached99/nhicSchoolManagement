@@ -88,7 +88,7 @@ class FacultyProfileController extends Controller {
             $saveImage = Storage::putFileAs('public/profile_pics', $file, $fileName);
     
             // Strip Exif data
-            $this->stripExifData(storage_path('app/public/profile_pics/' . $fileName));
+            $this->stripExifData(storage_path('app/'.$saveImage));
     
             $user->profile_pic = $fileName;
             $savePfpToDb = $user->save();
@@ -130,7 +130,7 @@ class FacultyProfileController extends Controller {
             $saveWallpaper = Storage::putFileAs('public/wallpaper_pics', $file, $fileName);
     
             // Strip Exif data
-            $this->stripExifData(storage_path('app/public/wallpaper_pics/' . $fileName));
+            $this->stripExifData(storage_path('app/'.$saveWallpaper));
     
             $user->wallpaper_pic = $fileName;
             $saveWallpaperDB = $user->save();
@@ -153,44 +153,76 @@ class FacultyProfileController extends Controller {
         }
     }
 
+    public function removePfp()
+    {
+        try {
+            $user = Auth::guard('faculty')->user();            
+            // Get the path to the wallpaper file
+            $pfpPath = $user->profile_pic;
+        
+            
+            // Clear the wallpaper field in the database
+            $user->profile_pic = '';
+            $user->save();
+            
+            // Delete the wallpaper file from storage
+            if ($pfpPath) {
+                Storage::delete('public/profile_pics/' . basename($pfpPath));
+            }
+            
+            return response()->json(['success' => 'Profile Picture Removed']);
+        } catch (\Exception $e) {
+            \Log::error('Error Removing profile pic: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong removing that profile pic']);
+        }
+    }
+    
 
-    public function removeWallpaper(){
-        try{
-            $user = Auth::guard('faculty')->user();
+    public function removeWallpaper()
+    {
+        try {
+            $user = Auth::guard('faculty')->user();            
+            // Get the path to the wallpaper file
+            $wallpaperPath = $user->wallpaper_pic;
+        
+            
+            // Clear the wallpaper field in the database
             $user->wallpaper_pic = '';
             $user->save();
-            Storage::delete('public/wallpaper_pics/' . basename($user->wallpaper_pic));
-            return response()->json(['success'=>'Wallpaper removed']);
-        }
-        catch(\Exception $e){
-            \Log::error(['Error Removing Wallpaper: ', $e->getMessage()]);
-            return response()->json(['error'=>'Something went wront removing that wallpaper']);
+            
+            // Delete the wallpaper file from storage
+            if ($wallpaperPath) {
+                Storage::delete('public/wallpaper_pics/' . basename($wallpaperPath));
+            }
+            
+            return response()->json(['success' => 'Wallpaper removed']);
+        } catch (\Exception $e) {
+            \Log::error('Error Removing Wallpaper: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong removing that wallpaper']);
         }
     }
     
     private function stripExifData($filePath)
-    {   
-        $supportedFileTypes = ['image/jpeg']; // exif is only present in jpg/jpeg images so no need to include png 
+    {
+        $supportedFileTypes = ['image/jpeg']; // Only process JPEG files for Exif data removal
         $fileMimeType = mime_content_type($filePath);
     
         if (!in_array($fileMimeType, $supportedFileTypes)) {
-            // Skip exif stripping to avoid unsupported file type error 
+            // Skip exif stripping for unsupported file types
             return;
         }
     
         // Read Exif data
         $exifBefore = exif_read_data($filePath);
     
-        // Remove Exif data
+        // Remove specific Exif sections containing metadata
         if ($fileMimeType === 'image/jpeg' && $exifBefore !== false) {
-            foreach ($exifBefore as $key => $section) {
-                if (is_array($section)) {
-                    foreach ($section as $name => $val) {
-                        // Remove all sections and entries except for 'COMPUTED' entries
-                        if ($key !== 'COMPUTED') {
-                            unset($exifBefore[$key][$name]);
-                        }
-                    }
+            // List of known Exif sections containing metadata to be removed
+            $exifSectionsToRemove = ['COMMENT', 'GPS', 'MakerNote', 'IFD0'];
+    
+            foreach ($exifSectionsToRemove as $section) {
+                if (isset($exifBefore[$section])) {
+                    unset($exifBefore[$section]);
                 }
             }
     
@@ -203,9 +235,10 @@ class FacultyProfileController extends Controller {
         // Read Exif data after stripping
         // $exifAfter = exif_read_data($filePath);
     
-        // Log Exif information before and after stripping
+        // // Log Exif information before and after stripping
         // \Log::info(['Exif Before Stripping' => $exifBefore, 'Exif After Stripping' => $exifAfter]);
     }
+    
     
 
 }

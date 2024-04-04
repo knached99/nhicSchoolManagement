@@ -172,6 +172,26 @@ export default function UpdateProfilePic({ className = '' , style= ''}) {
       
       const color = isDarkMode ? '#fff' : 'inherit';
 
+      const removeProfilePic = () => {
+        // Send a DELETE request to your backend to remove the wallpaper
+        axios.delete(`/removePfp`)
+          .then(response => {
+            // Assuming the backend returns a success message or updated user data
+            setSuccess(response.data.success);
+            setSuccessOpen(true);
+    
+            window.setTimeout(() => {
+                window.location.reload();
+              }, 1500);
+          })
+          .catch(error => {
+    
+            console.error('Error removing profile Pic:', error);
+            setErrorOpen(`Error removing profile Pic: ${error}`);
+            setErrorOpen(true);
+          });
+      };
+
 
     return (
         <section className={className} style={style}>
@@ -233,7 +253,10 @@ export default function UpdateProfilePic({ className = '' , style= ''}) {
                  )          
                 : 
                 (
+                    <>
                     <img src={`${profilePicPath}/${user.profile_pic}`} className="w-40 h-40 p-1 mt-3 rounded-full" alt="User Profile Pic" />
+                    <button className="hover:text-orange-500 font-medium" onClick={removeProfilePic}>Remove Profile Pic</button>
+                    </>
                 )
                 }
 
