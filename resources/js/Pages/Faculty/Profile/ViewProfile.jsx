@@ -44,7 +44,7 @@ import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 
 import { Calendar } from 'primereact/calendar';
         
-export default function ViewProfile({auth, user, students, bannedDetails, clientIP}) {
+export default function ViewProfile({auth, user, students, bannedDetails, clientIP, assignmentsCount}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -784,7 +784,7 @@ const handleBanCloseError = () => {
           Total Assignments
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
-          <p class="font-bold text-2xl text-center">10</p>
+          <p class="font-bold text-2xl text-center">{assignmentsCount}</p>
         </p>
       </div>
     </div>

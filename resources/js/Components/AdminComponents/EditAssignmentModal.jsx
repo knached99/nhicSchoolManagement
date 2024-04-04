@@ -244,7 +244,7 @@ slotProps={{
 
 <label className="dark:text-white mt-4 mb-4 font-semibold">Assignment Due Date</label>
 <InputText 
-    type="date"
+    type="datetime-local"
     id="assignment_due_date"
     name="assignment_due_date"
     value={values.assignment_due_date}

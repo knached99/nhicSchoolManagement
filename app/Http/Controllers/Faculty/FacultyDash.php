@@ -23,6 +23,7 @@ use App\Models\User;
 use App\Models\Banned;
 use App\Models\LoginAttempts;
 use App\Models\Attendance;
+use App\Models\Assignments;
 use App\Models\AssignmentStudents; 
 
 use Carbon\Carbon;
@@ -349,10 +350,11 @@ public function viewFacultyUser($faculty_id){
   try{
     $user = Faculty::where('faculty_id',$faculty_id)->firstOrFail();
     $students = Students::where('faculty_id', $faculty_id)->get();
+    $assignmentsCount = Assignments::where('faculty_id',$faculty_id)->count();
     $bannedDetails = Banned::where('faculty_id', $faculty_id)->get();
     $decryptedIP = isset($user->client_ip) ? Crypt::decryptString($user->client_ip) : null;
 
-return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students, 'bannedDetails'=>$bannedDetails, 'clientIP'=>$decryptedIP]);
+return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students, 'bannedDetails'=>$bannedDetails, 'clientIP'=>$decryptedIP, 'assignmentsCount'=>$assignmentsCount]);
   }
   catch(ModelNotFoundException $e) {
     return redirect('faculty/dash');
