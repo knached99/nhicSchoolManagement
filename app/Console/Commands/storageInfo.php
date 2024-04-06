@@ -45,7 +45,7 @@ class storageInfo extends Command
         $profileFiles = isset($filesCount['profile']) ? $filesCount['profile'] : 0;
 
         // Calculate total available disk space
-        $totalDiskSpace = disk_total_space(storage_path());
+        $totalDiskSpace = disk_free_space(storage_path());
         $totalDiskSpaceHumanReadable = $this->formatBytes($totalDiskSpace);
 
         // Calculate space used
