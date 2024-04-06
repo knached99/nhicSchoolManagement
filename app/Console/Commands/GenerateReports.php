@@ -70,7 +70,7 @@ class GenerateReports extends Command implements PromptsForMissingInput
         $students = Students::select('first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip')->get();
         $parents = User::select('name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip')->get();
         $banned = Banned::select('client_ip')->get();
-        $attempts = LoginAttempts::all();
+        $attempts = LoginAttempts::select('email_used', 'client_ip', 'location_information', 'is_blocked')->get();
         
         foreach ($banned as $ban) {
             $ban->client_ip = Crypt::decryptString($ban->client_ip);
