@@ -58,10 +58,10 @@ class storageInfo extends Command
         $table->setHeaders(['Category', 'Size', 'Files Count']);
 
         // Add rows to the table
-        $table->addRow(['Logs', $logsSize . ' bytes', $logFiles]);
-        $table->addRow(['Wallpapers', $wallpaperSize . ' bytes', $wallpaperFiles]);
-        $table->addRow(['Profile Pics', $profilePicsSize . ' bytes', $profileFiles]);
-        $table->addRow(['Total', $totalSize . ' bytes', $totalFiles]);
+        $table->addRow(['Logs Storage Usage', $logsSize . ' bytes', $logFiles]);
+        $table->addRow(['Wallpapers Storage Usage', $wallpaperSize . ' bytes', $wallpaperFiles]);
+        $table->addRow(['Profile Pics Storage Usage', $profilePicsSize . ' bytes', $profileFiles]);
+        $table->addRow(['Total Storage Usage', $totalSize . ' bytes', $totalFiles]);
 
         // Add total available disk space and space used rows
         $table->addRow(['Total Available Space', $totalDiskSpaceHumanReadable]);
