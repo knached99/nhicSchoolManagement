@@ -265,20 +265,52 @@ class FacultyAuth extends Controller
             //     }
 
             // Get Approximate Location 
-            $locationData = json_decode(file_get_contents("http://ip-api.com/json/{$request->ip()}"));
+
+            // Construct the URL with the IP address from $request->ip()
+$url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
+
+// Fetch the JSON response using file_get_contents
+$response = file_get_contents($url);
+
+if ($response === false) {
+    // Error fetching data
+    $data = null;
+} else {
+    // Parse JSON response
+    $locationData = json_decode($response);
+
+    // Build data array
+    $data = [
+        'email_used' => $request->email,
+        'client_ip' => Crypt::encryptString($request->ip()),
+        'user_agent' => $userAgent,
+        'location_information' => $locationData ?
+            ($locationData->city ?? '') . ', ' .
+            ($locationData->region ?? '') . ', ' .
+            ($locationData->area_code ?? '') . ', ' .
+            ($locationData->country ?? '') . ', ' .
+            ($locationData->timezone ?? '') . ', '. 
+            ($locationData->coordinates->latitude ?? '') . ', ' . 
+            ($locationData->coordinates->longitude ?? '') : 
+            null
+    ];
+}
+
+
+            // $locationData = json_decode(file_get_contents("http://ip-api.com/json/{$request->ip()}"));
             
-            $data = [
-                'email_used' => $request->email, 
-                'client_ip' => Crypt::encryptString($request->ip()),
-                'user_agent' => $userAgent,
-                'location_information' => $locationData ? 
-                ($locationData->city ?? '') . ', ' . 
-                ($locationData->regionName ?? '') . ', ' . 
-                ($locationData->zip ?? '') . ', ' . 
-                ($locationData->country ?? '') . ', ' . 
-                ($locationData->timezone ?? '') : 
-                null
-                ];
+            // $data = [
+            //     'email_used' => $request->email, 
+            //     'client_ip' => Crypt::encryptString($request->ip()),
+            //     'user_agent' => $userAgent,
+            //     'location_information' => $locationData ? 
+            //     ($locationData->city ?? '') . ', ' . 
+            //     ($locationData->regionName ?? '') . ', ' . 
+            //     ($locationData->zip ?? '') . ', ' . 
+            //     ($locationData->country ?? '') . ', ' . 
+            //     ($locationData->timezone ?? '') : 
+            //     null
+            //     ];
 
             LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
 

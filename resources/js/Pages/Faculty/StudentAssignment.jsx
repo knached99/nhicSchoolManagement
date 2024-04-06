@@ -127,7 +127,7 @@ const isPastDue = currentDate > dueDate;
                          <div className="block">
                            <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>  
                            
-                             <p className="mt-3 mb-3 text-purple-400 text-pretty dark:text-purple-300 text-lg">
+                             <p className="mt-3 mb-3 text-purple-500 text-pretty dark:text-purple-400 text-lg">
                             {isPastDue && !answer ? (
                             <p>Assignment is past due, student did not submit assignment.</p>
                             ) : !answer ? (

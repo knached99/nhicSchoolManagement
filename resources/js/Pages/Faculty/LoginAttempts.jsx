@@ -38,9 +38,7 @@ export default function LoginAttempts({ auth, attempts }) {
             'Content-Type': 'application/json',
           },
         });
-      
-        console.log(response); // Log the entire response to the console
-      
+            
         if (response.data.errors) {
           // Handle errors
           setError(response.data.errors);
@@ -53,7 +51,6 @@ export default function LoginAttempts({ auth, attempts }) {
         }
       } catch (error) {
         // Handle errors
-        console.error(error);
         setError(error.message || 'Whoops, something went wrong blocking the IP');
         setErrorOpen(true);
       }
@@ -67,7 +64,6 @@ export default function LoginAttempts({ auth, attempts }) {
           },
         });
       
-        console.log(response); // Log the entire response to the console
       
         if (response.data.errors) {
           // Handle errors
@@ -81,7 +77,6 @@ export default function LoginAttempts({ auth, attempts }) {
         }
       } catch (error) {
         // Handle errors
-        console.error(error);
         setError(error.message || 'Whoops, something went wrong deleting the IP');
         setErrorOpen(true);
       }
