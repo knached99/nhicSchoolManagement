@@ -39,105 +39,6 @@ class FacultyAuth extends Controller
         ]);
     }
 
-    // public function authenticate(Request $request)
-    // {
-    //     try {
-    //         $request->validate([
-    //             'email' => 'required|email|exists:faculty',
-    //             'password' => 'required',
-    //         ], [
-    //             'email.required' => 'Your email is required',
-    //             'email.email' => 'You\'ve entered an invalid email',
-    //             'email.exists' => 'An account for that email does not exist',
-    //             'password.required' => 'Your password is required',
-    //         ]);
-
-    //         $user = Faculty::where('email', $request->email)->first();
-    //         $banned = $this->isBanned($user->faculty_id);
-
-    //         if ($banned !== null) {
-    //             return redirect()->back()->withErrors(['auth_error'=>$banned]);
-    //         }
-           
-    
-    //         $rateLimitKey = $request->ip();
-    //         $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
-    
-    //         // Set the lockout duration to 10 minutes (600 seconds)
-    //         $lockoutDuration = 600;
-    
-    //         if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
-    //             $minutesRemaining = ceil(RateLimiter::availableIn($rateLimitKey) / 60);
-    //             return $this->rateLimitExceededResponse($minutesRemaining);
-    //         }
-    
-    //         $rememberMe = $request->input('remember');
-    
-    //         if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-               
-    //             if ($request->expectsJson()) {
-    //                 // Check if two factor authentication is required
-    //                 if (Fortify::twoFactorAuthenticationEnabled() &&
-    //                     Auth::guard('faculty')->user()->two_factor_secret) {
-    //                     return response()->json(['two_factor' => true]);
-    //                 }
-    //             }
-               
-    //             if ($rememberMe) {
-    //                 $encryptedEmail = Crypt::encryptString($request->input('email'));
-    //                 $encryptedPassword = Crypt::encryptString($request->input('password'));
-    
-    //                 // Use secure cookies instead of regular cookies
-    //                 cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
-    //                 cookie()->queue('password', $encryptedPassword, 60);
-    //             }  
-
-    //             $ip = Faculty::where('email', $request->email)->value('client_ip');
-
-    //             if (empty($ip) || $ip !== $request->ip()) {
-    //                 $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
-    //             }
-                
-
-    //             RateLimiter::clear($rateLimitKey);
-    //             //session(['faculty' => Auth::guard('faculty')->user()]);
-    //             $request->session()->regenerate();
-    //             return redirect()->intended(RouteServiceProvider::DASH);
-                
-    //         } else {
-    //             RateLimiter::hit($rateLimitKey, $lockoutDuration);
-    //             $data = [
-    //                 'email_used' => $request->email, 
-    //                 'client_ip' => $request->ip(),
-    //                 'user_agent' => $request->header('User-Agent'),
-    //             ];
-    
-
-    //             LoginAttempts::updateOrCreate(['email_used' => $request->email, 'client_ip' => $request->ip()], $data);
-
-    //             // DB::table('failed_login_attempts')->updateOrInsert([
-    //             //     'email_used'=>$request->email, 
-    //             //     'client_ip'=>$request->ip(),
-    //             //     'user_agent'=>$request->header('User-Agent'),
-    //             //     'attempted_at'=>now()
-    //             // ]);
-    //             // \Log::error([
-    //             //     'Failed Login Attempt', 
-    //             //     'Email Entered' => $request->email,
-    //             //     'IP Address' => $request->ip(),
-    //             //     'User Agent' => $request->header('User-Agent'),
-    //             //     'Time' => Carbon::now()->format('l, F jS, Y, h:i:s A'),
-    //             // ]);     
-
-    //             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
-    //         }
-        
-        
-    //     } catch (ValidationException $e) {
-    //         return redirect()->back()->withErrors($e->errors())->withInput();
-    //     } 
-        
-    // }
 
     public function authenticate(Request $request)
 {
@@ -176,11 +77,6 @@ class FacultyAuth extends Controller
             
             $user = Auth::guard('faculty')->user();
 
-            // if($user->two_factor_secret){
-            //     return $request->wantsJson() 
-            //     ? response()->json(['two_factor'=>true]) 
-            //     : redirect()->route('faculty.login');
-            // }
            
             if ($rememberMe) {
                 $encryptedEmail = Crypt::encryptString($request->input('email'));
@@ -196,21 +92,16 @@ class FacultyAuth extends Controller
             if ($ip !== null) {
                 $decryptedIP = Crypt::decryptString($ip);
                 if ($decryptedIP !== $request->ip()) {
-                    // Update the IP address to the correct one
-                    // $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString('71.192.87.83')]);
+
                     $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
 
                 }
             } else {
-                // If IP is null, set it to the default value
                 $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
-
-                // $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString('71.192.87.83')]);
             }
             
 
             RateLimiter::clear($rateLimitKey);
-            //session(['faculty' => Auth::guard('faculty')->user()]);
             $request->session()->regenerate();
             
         
@@ -223,94 +114,38 @@ class FacultyAuth extends Controller
 
             $userAgent = $request->header('User-Agent');
 
-            // $device = 'Unknown';
-            // $browser = 'Unknown';
-
-            // // Common Devices & Browsers
-
-            // $devices  = [
-            //     'iPhone' => 'iPhone',
-            //     'iPad' => 'iPad',
-            //     'Android' => 'Android',
-            //     'Windows Phone' => 'Windows Phone',
-            //     'Windows' => 'Windows',
-            //     'Macintosh' => 'Macintosh',
-            //     'Linux' => 'Linux',
-            // ];
-
-            // $browsers = [
-            //     'Chrome' => 'Chrome',
-            //     'Firefox' => 'Firefox',
-            //     'Safari' => 'Safari',
-            //     'Opera' => 'Opera',
-            //     'MSIE' => 'Internet Explorer',
-            //     'Trident' => 'Internet Explorer',
-            // ];
-
-
-            //             // Determine the device
-            //     foreach ($devices as $key => $value) {
-            //         if (strpos($userAgent, $key) !== false) {
-            //             $device = $value;
-            //             break;
-            //         }
-            //     }
-
-            //     // Determine the browser
-            //     foreach ($browsers as $key => $value) {
-            //         if (strpos($userAgent, $key) !== false) {
-            //             $browser = $value;
-            //             break;
-            //         }
-            //     }
-
+         
             // Get Approximate Location 
 
-            // Construct the URL with the IP address from $request->ip()
-$url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
+        $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
 
-// Fetch the JSON response using file_get_contents
-$response = file_get_contents($url);
+        // Fetch the JSON response using file_get_contents
+        $response = file_get_contents($url);
 
-if ($response === false) {
-    // Error fetching data
-    $data = null;
-} else {
-    // Parse JSON response
-    $locationData = json_decode($response);
+        if ($response === false) {
+            // Error fetching data
+            $data = null;
+        } else {
+            // Parse JSON response
+            $locationData = json_decode($response);
 
-    // Build data array
-    $data = [
-        'email_used' => $request->email,
-        'client_ip' => Crypt::encryptString($request->ip()),
-        'user_agent' => $userAgent,
-        'location_information' => $locationData ?
-            ($locationData->city ?? '') . ', ' .
-            ($locationData->region ?? '') . ', ' .
-            ($locationData->area_code ?? '') . ', ' .
-            ($locationData->country ?? '') . ', ' .
-            ($locationData->timezone ?? '') . ', '. 
-            ($locationData->coordinates->latitude ?? '') . ', ' . 
-            ($locationData->coordinates->longitude ?? '') : 
-            null
-    ];
-}
+            // Build data array
+            $data = [
+                'email_used' => $request->email,
+                'client_ip' => Crypt::encryptString($request->ip()),
+                'user_agent' => $userAgent,
+                'location_information' => $locationData ?
+                    ($locationData->city ?? '') . ', ' .
+                    ($locationData->region ?? '') . ', ' .
+                    ($locationData->area_code ?? '') . ', ' .
+                    ($locationData->country ?? '') . ', ' .
+                    ($locationData->timezone ?? '') . ', '. 
+                    ($locationData->coordinates->latitude ?? '') . ', ' . 
+                    ($locationData->coordinates->longitude ?? '') : 
+                    null
+            ];
+        }
 
-
-            // $locationData = json_decode(file_get_contents("http://ip-api.com/json/{$request->ip()}"));
-            
-            // $data = [
-            //     'email_used' => $request->email, 
-            //     'client_ip' => Crypt::encryptString($request->ip()),
-            //     'user_agent' => $userAgent,
-            //     'location_information' => $locationData ? 
-            //     ($locationData->city ?? '') . ', ' . 
-            //     ($locationData->regionName ?? '') . ', ' . 
-            //     ($locationData->zip ?? '') . ', ' . 
-            //     ($locationData->country ?? '') . ', ' . 
-            //     ($locationData->timezone ?? '') : 
-            //     null
-            //     ];
 
             LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
 

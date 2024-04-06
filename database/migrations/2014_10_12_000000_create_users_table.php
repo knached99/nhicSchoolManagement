@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('zip')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('client_ip')->nullable();
+            $table->longText('client_ip')->nullable();
             $table->rememberToken();
             $table->timestamps();
   

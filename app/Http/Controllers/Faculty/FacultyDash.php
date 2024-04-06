@@ -674,15 +674,6 @@ private function countFilesInDirectories() {
     ];
 }
 
-// private function countFilesRecursive($directory) {
-//     // Get all files within the directory and its subdirectories
-//     $files = Storage::allFiles($directory);
-
-//     // Count the number of files
-//     $fileCount = count($files);
-
-//     return $fileCount;
-// }
 
 private function countFilesRecursive($directory) {
     // Initialize count to 0

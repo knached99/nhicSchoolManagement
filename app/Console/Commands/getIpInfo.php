@@ -12,7 +12,7 @@ class GetIpInfo extends Command
      *
      * @var string
      */
-    protected $signature = 'nhic:findIP {clientIP}';
+    protected $signature = 'nhic:findIP';
 
     /**
      * The console command description.
@@ -26,7 +26,8 @@ class GetIpInfo extends Command
      */
     public function handle()
     {
-        $clientIP = $this->argument('clientIP');
+        // $clientIP = $this->argument('clientIP');
+        $clientIP = $this->ask('Enter IPV4 or IPV6 address:');
 
         if (!$this->validateIP($clientIP)) {
             $this->error('Invalid IP address');

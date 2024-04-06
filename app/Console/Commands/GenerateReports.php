@@ -7,6 +7,7 @@ use App\Models\Faculty;
 use App\Models\Students;
 use App\Models\User;
 use App\Models\Banned;
+use App\Models\LoginAttempts;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -69,9 +70,16 @@ class GenerateReports extends Command implements PromptsForMissingInput
         $students = Students::select('first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip')->get();
         $parents = User::select('name', 'email', 'phone', 'address', 'address_2', 'city', 'state', 'zip')->get();
         $banned = Banned::select('client_ip')->get();
+        $attempts = LoginAttempts::all();
+        
         foreach ($banned as $ban) {
             $ban->client_ip = Crypt::decryptString($ban->client_ip);
         }
+
+        foreach ($attempts as $attempt) {
+            $attempt->client_ip = Crypt::decryptString($attempt->client_ip);
+        }
+
     
         // Output data to console
         $this->info('Faculty Data:');
@@ -100,6 +108,15 @@ class GenerateReports extends Command implements PromptsForMissingInput
         $this->info('Banned IPs:');
         $this->table(['Client IP'], $banned->toArray());
         }
+
+        if($attempts->isEmpty()){
+            $this->error('No data for failed login attempts');
+        }
+        else{
+            $this->info('Failed Login Attempts:');
+            $this->table(['Email', 'Client IP', 'Location Information', 'Is Blocked'], $attempts->toArray());
+        }
+        
     
         $this->info('Finished Generating Report!');
     }
