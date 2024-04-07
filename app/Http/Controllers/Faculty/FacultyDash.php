@@ -417,7 +417,7 @@ public function submitAttendance(Request $request, $faculty_id)
             'attendanceData' => 'required|array'
         ]);
 
-        $currentDate = now()->startOfDay(); // Get the current date at midnight
+        $currentDate = Carbon::now()->startOfDay(); // Get the current date at midnight 
 
         foreach ($request->attendanceData as $attendanceRecord) {
             $conditions = [
@@ -427,6 +427,7 @@ public function submitAttendance(Request $request, $faculty_id)
             ];
 
             $values = [
+                'attendance_id' => Str::uuid(), 
                 'is_present' => $attendanceRecord['is_present'],
                 // 'reason_for_absence' => $attendanceRecord['reason_for_absence'] ?? null,
             ];
@@ -436,11 +437,9 @@ public function submitAttendance(Request $request, $faculty_id)
 
         return response()->json(['success' => 'Attendance data submitted']);
     } catch (ValidationException $e) {
-
         return response()->json(['error' =>$e->getMessage()]);
     }
 }
-
 
   
 

@@ -31,15 +31,6 @@ export default function MyAttendanceTable({auth, facultyID}) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedValues, setSelectedValues] = useState({});
 
-  // const handleAttendanceChange = (id, value) => {
-  //   // Update the is_present field in the corresponding row
-  //   const updatedRows = rows.map((row) =>
-  //     row.id === id ? { ...row, is_present: value } : row
-  //   );
-  //   console.log("Updated Rows:", updatedRows); // Log the updated rows
-
-  //   setRows(updatedRows);
-  // };
 
   const handleAttendanceChange = (id, value) => {
     setSelectedValues((prevValues) => ({
@@ -62,38 +53,13 @@ const handleCloseError = () => {
 
 
 
-// const handleAttendanceSubmission = async () => {
-//     try {
-//       console.log("Rows before submission:", rows);
-  
-//       const response = await axios.post(`/submitAttendance/${facultyID ? facultyID : auth}`, {
-//         attendanceData: rows.map(row => ({
-//           student_id: row.student_id,
-//           is_present: row.is_present,
-//         })),
-//       });
-      
-  
-//       // Assuming the response directly contains the success or error message
-//       const { success, error } = response.data;
-  
-//       if (success) {
-//         setSuccess(success);
-//         setSuccessOpen(true);
-//       } else if (error) {
-//         setError(error);
-//         setErrorOpen(true);
-//       }
-//     } catch (error) {
-//       setError(`Something went wrong submitting attendance: ${error.message}`);
-//     }
-//   };
+
 
 
 const handleAttendanceSubmission = async () => {
   try {
 
-    const response = await axios.post(`/submitAttendance/${facultyID ? facultyID : auth}`, {
+    const response = await axios.post(`/submitAttendance/${auth}`, {
       attendanceData: Object.keys(selectedValues).map(id => ({
         student_id: id,
         is_present: selectedValues[id],
@@ -120,7 +86,7 @@ useEffect(() => {
   const fetchCombinedData = async () => {
     try {
       // Fetch students
-      const studentsResponse = await fetch(`/showStudentsForTeacher/${facultyID ? facultyID : auth}}`);
+      const studentsResponse = await fetch(`/showStudentsForTeacher/${auth}`);
       const { students: studentData, error: studentError } = await studentsResponse.json();
 
       if (studentError) {
@@ -129,18 +95,15 @@ useEffect(() => {
         return;
       }
 
-      console.log('Student Data:', studentData); // Log student data for debugging
 
       // Fetch attendance data
-      const attendanceResponse = await fetch(`/getAttendance/${facultyID ? facultyID : auth}`);
+      const attendanceResponse = await fetch(`/getAttendance/${auth}`);
       const { attendance: fetchedAttendanceData, error: attendanceError } = await attendanceResponse.json();
       if (attendanceError) {
         setError(attendanceError);
         setLoading(false);
         return;
       }
-
-      console.log('Attendance Data:', fetchedAttendanceData); // Log attendance data for debugging
 
       setAttendanceData(fetchedAttendanceData);
 
@@ -150,7 +113,6 @@ useEffect(() => {
         return { ...student, ...correspondingAttendance, id: student.student_id };
       });
 
-      console.log('Merged Rows:', mergedRows); // Log merged rows for debugging
 
       setRows(mergedRows);
       setLoading(false);
@@ -180,66 +142,115 @@ useEffect(() => {
   
 
   const columns = [
-    { field: 'student_id', headerName: 'Student ID', width: 120 },
+    // { field: 'student_id', headerName: 'Student ID', width: 120 },
     { field: 'first_name', headerName: 'First Name', width: 120 },
     { field: 'last_name', headerName: 'Last Name', width: 120 },
     {
       field: 'is_present',
       headerName: 'Attendance Status',
       width: 200,
-      renderCell: (params) => (
+//       renderCell: (params) => (
 
-        <div>
-          {params}
-          {params.attendanceData ? (
-            // Display "Present" or "Absent" based on existing attendance data
-            <div>{params.attendanceData.is_present === 1 ? 'Present' : 'Absent'}</div>
-          ) : (
-            // Display radio buttons if no existing attendance data
-            params.row.is_present === undefined  && auth === params.row.faculty_id ? (
-              <>              
-                <>
-                <FormControlLabel
-  control={
-    <Radio
-      checked={selectedValues[params.id] === 1}
-      onChange={(e) => handleAttendanceChange(params.id, 1)}
-      value={1}
-      name={`attendance-radio-${params.id}`}
-    />
-  }
-  label="Present"
-/>
-<FormControlLabel
-  control={
-    <Radio
-      checked={selectedValues[params.id] === 0}
-      onChange={(e) => handleAttendanceChange(params.id, 0)}
-      value={0}
-      name={`attendance-radio-${params.id}`}
-    />
-  }
-  label="Absent"
-/>
+//         <div>
+//           {params}
+//           {params.attendanceData ? (
+//             // Display "Present" or "Absent" based on existing attendance data
+//             <div>{params.attendanceData.is_present === 1 ? 'Present' : 'Absent'}</div>
+//           ) : (
+//             // Display radio buttons if no existing attendance data
+//             params.row.is_present === undefined  && auth === params.row.faculty_id ? (
+//               <>              
+//                 <>
+//                 <FormControlLabel
+//   control={
+//     <Radio
+//       checked={selectedValues[params.id] === 1}
+//       onChange={(e) => handleAttendanceChange(params.id, 1)}
+//       value={1}
+//       name={`attendance-radio-${params.id}`}
+//     />
+//   }
+//   label="Present"
+// />
+// <FormControlLabel
+//   control={
+//     <Radio
+//       checked={selectedValues[params.id] === 0}
+//       onChange={(e) => handleAttendanceChange(params.id, 0)}
+//       value={0}
+//       name={`attendance-radio-${params.id}`}
+//     />
+//   }
+//   label="Absent"
+// />
 
-                </>
+//                 </>
               
-            </>
+//             </>
             
-            ) : (
-              // Display "Present" or "Absent" based on the value in the row
-              <div>{params.row.is_present ===1 &&  
-                <span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-md font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">Present</span> 
-                || params.row.is_present ===0 && 
-                <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-inset ring-red-700/10">Absent</span>
+//             ) : (
+//               // Display "Present" or "Absent" based on the value in the row
+//               <div>{params.row.is_present ===1 &&  
+//                 <span class="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-md font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">Present</span> 
+//                 || params.row.is_present ===0 && 
+//                 <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-inset ring-red-700/10">Absent</span>
               
-                || params.row.is_present === undefined && 
-                <span class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-md font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10">N/A</span>
-                }</div>
-            )
+//                 || params.row.is_present === undefined && 
+//                 <span class="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-md font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10">N/A</span>
+//                 }</div>
+//             )
+//           )}
+//         </div>
+//       ),
+
+renderCell: (params) => (
+  <div>
+    {params.attendanceData ? (
+      // Display "Present" or "Absent" based on existing attendance data
+      <div>{params.attendanceData.is_present === 1 ? 'Present' : 'Absent'}</div>
+    ) : (
+      // Display radio buttons if no existing attendance data
+      params.row.is_present === undefined && auth === params.row.faculty_id ? (
+        <>
+          <FormControlLabel
+            control={
+              <Radio
+                checked={selectedValues[params.id] === 1}
+                onChange={(e) => handleAttendanceChange(params.id, 1)}
+                value={1}
+                name={`attendance-radio-${params.id}`}
+              />
+            }
+            label="Present"
+          />
+          <FormControlLabel
+            control={
+              <Radio
+                checked={selectedValues[params.id] === 0}
+                onChange={(e) => handleAttendanceChange(params.id, 0)}
+                value={0}
+                name={`attendance-radio-${params.id}`}
+              />
+            }
+            label="Absent"
+          />
+        </>
+      ) : (
+        // Display "Present" or "Absent" based on the value in the row
+        <div>
+          {params.row.is_present === 1 ? (
+            <span className="inline-flex items-center rounded-md bg-emerald-50 px-2 py-1 text-md font-medium text-emerald-700 ring-1 ring-inset ring-emerald-700/10">Present</span>
+          ) : params.row.is_present === 0 ? (
+            <span className="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-md font-medium text-red-700 ring-1 ring-inset ring-red-700/10">Absent</span>
+          ) : (
+            <span className="inline-flex items-center rounded-md bg-slate-50 px-2 py-1 text-md font-medium text-slate-700 ring-1 ring-inset ring-slate-700/10">N/A</span>
           )}
         </div>
-      ),
+      )
+    )}
+  </div>
+),
+
     },
     
     
