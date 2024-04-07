@@ -19,7 +19,7 @@ import Textarea from '@mui/joy/Textarea';
 import Radio from '@mui/material/Radio';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-export default function MyAttendanceTable({auth, facultyID}) {
+export default function MyAttendanceTable({auth}) {
 
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
@@ -30,8 +30,7 @@ export default function MyAttendanceTable({auth, facultyID}) {
   const [attendanceData, setAttendanceData] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [selectedValues, setSelectedValues] = useState({});
-
-
+  
   const handleAttendanceChange = (id, value) => {
     setSelectedValues((prevValues) => ({
       ...prevValues,

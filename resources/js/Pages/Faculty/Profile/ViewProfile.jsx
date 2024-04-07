@@ -821,7 +821,7 @@ const handleBanCloseError = () => {
                     {auth.role === 'Teacher' || auth.role === 'Substitute Teacher' && auth.faculty_id !== user.faculty_id ? (
                     <p></p>
                   ) : (
-                    <MyAttendanceTable facultyID={user.faculty_id} auth={auth && auth.faculty_id} />
+                    <MyAttendanceTable auth={user.faculty_id} />
                   )}
 
 
