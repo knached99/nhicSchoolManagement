@@ -33,9 +33,9 @@ export default function UpdateProfileInformation({className = '' }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Profile Information</h2>
+                <h2 className="text-xl font-medium text-gray-900 dark:text-slate-200">Profile Information</h2>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-lg text-gray-600 dark:text-slate-300">
                     Update your account's profile information and email address.
                 </p>
             </header>
@@ -46,7 +46,6 @@ export default function UpdateProfileInformation({className = '' }) {
 
                     <InputText
                         id="name"
-                        className="mt-1 block w-full p-3 cursor-not-allowed"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
                         required
@@ -64,7 +63,6 @@ export default function UpdateProfileInformation({className = '' }) {
                     <InputText
                         id="email"
                         type="email"
-                        className="mt-1 block w-full p-3 border-1 border-slate-400"
                         value={data.email}
                         onChange={(e) => setData('email', e.target.value)}
                         placeholder="Email"
@@ -78,16 +76,6 @@ export default function UpdateProfileInformation({className = '' }) {
                 <div>
                     <InputLabel htmlFor="phone" value="Phone" />
                     <InputMask style={{width: '100%'}} name="phone" id="phone" value={data.phone} onChange={(e)=>setData('phone', e.target.value)} mask="(999) 999-9999" placeholder="(999) 999-9999"></InputMask>
-
-
-                    {/* <InputText
-                        id="phone"
-                        type="phone"
-                        className="mt-1 block w-full p-3 border-1 border-slate-400"
-                        value={data.phone}
-                        onChange={(e) => setData('phone', e.target.value)}
-                        placeholder="Phone"
-                    /> */}
 
                     <InputError className="mt-2" message={errors.phone} />
                 </div>
@@ -122,7 +110,6 @@ export default function UpdateProfileInformation({className = '' }) {
                     <InputText
                         id="address_2"
                         type="address"
-                        className="mt-1 p-3 block w-full border-1 border-slate-400"
                         value={data.address_2}
                         placeholder="Apartment/Unit Number"
                         onChange={(e) => setData('address_2', e.target.value)}
@@ -137,7 +124,6 @@ export default function UpdateProfileInformation({className = '' }) {
                     <InputText
                         id="city"
                         type="city"
-                        className="mt-1 p-3 block w-full border-1 border-slate-400"
                         value={data.city}
                         placeholder="City"
                         onChange={(e) => setData('city', e.target.value)}
@@ -152,10 +138,11 @@ export default function UpdateProfileInformation({className = '' }) {
                     <select 
                     id="state"
                     name="state"
-                    className="mt-1 p-3 block w-full border-1 border-slate-400"
+                    className="mt-1 p-3 block w-full border-1 border-slate-400 dark:bg-slate-900 dark:text-white"
                     onChange={(e)=>setData('state', e.target.value)}
                     >
-                    <option value={data.state} selected>{data.state}</option>
+    
+                    <option value={data.state} selected>{data.state ? data.state : 'Select State'}</option>
                     {states.map((state) => (
                         <option key={state.abbreviation} value={state.abbreviation}>
                         {state.name}
@@ -170,7 +157,6 @@ export default function UpdateProfileInformation({className = '' }) {
                     <InputText
                         id="zip"
                         type="zip"
-                        className="mt-1 p-3 block w-full border-1 border-slate-400"
                         value={data.zip}
                         placeholder="Zip"
                         onChange={(e) => setData('zip', e.target.value)}

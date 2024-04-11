@@ -153,8 +153,24 @@ class AssignmentsController extends Controller
         try {
             $assignment = Assignments::findOrFail($assignment_id);
     
-            // (remove associations)
+            // Detach students
             $assignment->students()->detach();
+    
+            // Find related assignment students
+            $assignmentStudents = AssignmentStudents::where('assignment_id', $assignment_id)->get();
+    
+            // Detach assignment students and their related answers
+            foreach ($assignmentStudents as $assignmentStudent) {
+                // Detach assignment student
+                $assignmentStudent->delete();
+    
+                // Detach assignment answers for this student
+                AssignmentAnswers::where('student_id', $assignmentStudent->student_id)
+                                ->where('assignment_id', $assignment_id)
+                                ->delete();
+            }
+    
+            // Finally, delete the assignment itself
             $assignment->delete();
     
             return response()->json(['success' => 'Assignment with ID: ' . $assignment_id . ' was successfully deleted']);
@@ -162,6 +178,8 @@ class AssignmentsController extends Controller
             return response()->json(['errors' => $e->getMessage()]);
         }
     }
+    
+    
 
     // Grading 
 

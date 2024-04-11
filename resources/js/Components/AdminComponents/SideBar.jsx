@@ -291,7 +291,7 @@ export default function SideBar({auth}) {
    
 
         </List>
-        <p className="text-start m-3 font-semibold">App Version <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-1 text-md font-medium text-orange-500 ring-1 ring-inset ring-orange-700/10">Beta</span></p>
+        <p className="text-start m-3 font-semibold">App Version <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-1 text-md font-medium text-indigo-500 ring-1 ring-inset ring-indigo-700/10">Beta</span></p>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />

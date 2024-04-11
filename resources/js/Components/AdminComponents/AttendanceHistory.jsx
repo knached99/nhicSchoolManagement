@@ -75,13 +75,13 @@ const VirtuosoTableComponents = {
 
   function fixedHeaderContent() {
     return (
-      <TableRow > 
+      <TableRow> 
         {columns.map((column) => (
           <TableCell
             key={column.dataKey}
             variant="head"
             align={column.numeric || false ? 'right' : 'left'}
-            style={{ width: column.width }}
+            style={{ width: column.width, backgroundColor: backgroundColor, color: isDarkMode ? '#fff' : 'inherit', fontWeight: 'bold'}}
             sx={{
               backgroundColor: 'background.paper',
             }}
