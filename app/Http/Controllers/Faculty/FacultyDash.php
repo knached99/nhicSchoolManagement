@@ -346,6 +346,10 @@ public function fetchTeachers(){
 
 public function viewFacultyUser($faculty_id){
   try{
+    if(Auth::guard('faculty')->id() === $faculty_id){
+        return redirect('faculty/profile');
+    }
+    
     $user = Faculty::where('faculty_id',$faculty_id)->firstOrFail();
     $students = Students::where('faculty_id', $faculty_id)->get();
     $assignmentsCount = Assignments::where('faculty_id',$faculty_id)->count();
