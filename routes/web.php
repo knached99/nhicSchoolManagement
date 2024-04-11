@@ -8,6 +8,7 @@ use App\Http\Controllers\BanSystem;
 use App\Http\Controllers\AssignmentsController;
 use App\Http\Controllers\UserDashboard;
 use App\Http\Controllers\Faculty\FacultyProfileController;
+use App\Http\Controllers\Faculty\DynamicFormBuilder;
 use App\Http\Middleware\FacultyMiddleware;
 use App\Http\Middleware\BanMiddleware;
 use Illuminate\Foundation\Application;
@@ -128,6 +129,18 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     
     Route::put('/editAssignmentDetails/{assignment_id}', [AssignmentsController::class, 'editAssignmentDetails'])->name('editAssignmentDetails');
     Route::delete('/deleteAssignment/{assignment_id}', [AssignmentsController::class, 'deleteAssignment'])->name('deleteAssignment');
+
+    // Form Builder Routes
+Route::get('/faculty/forms', [DynamicFormBuilder::class, 'builderUI'])->name('forms.ui');
+Route::get('/faculty/getForms', [DynamicFormBuilder::class, 'getForms'])->name('getForms');
+Route::post('/faculty/forms', [DynamicFormBuilder::class, 'buildForm'])->name('forms.buildForm');
+Route::get('/forms/{form}', [DynamicFormBuilder::class, 'show'])->name('forms.show');
+Route::put('/forms/{form}', [DynamicFormBuilder::class, 'update'])->name('forms.update');
+Route::delete('/forms/{form}', [DynamicFormBuilder::class, 'destroy'])->name('forms.destroy');
+
+Route::post('/faculty/forms/{form}/fields', [DynamicFormBuilder::class, 'addField'])->name('fields.add');
+Route::put('/fields/{field}', [DynamicFormBuilder::class, 'updateField'])->name('fields.update');
+Route::delete('/fields/{field}', [DynamicFormBuilder::class, 'deleteField'])->name('fields.delete');
 
     // Two-Step Verification 
     // Route::get('/faculty/profile/two-factor-authentication', [TwoStepVerification::class, 'display'])->name('two-factor-authentication.show');

@@ -37,6 +37,7 @@ import AutoCompleteSearch from '@/Components/AdminComponents/AutoCompleteSearch'
 import ApplicationLogo from '../ApplicationLogo';
 import Avatar from '@mui/material/Avatar';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
+import DynamicFormOutlinedIcon from '@mui/icons-material/DynamicFormOutlined';
 
 const drawerWidth = 240;
 
@@ -273,6 +274,18 @@ export default function SideBar({auth}) {
                     <ListItemText primary="Analytics" />
                   </ListItemButton>
                 </ListItem>
+
+                <ListItem key="Form Builder" disablePadding style={{
+            backgroundColor: route().current('forms.ui') ? '#10b981' : '', color: route().current('forms.ui') ? '#fff' : '#000'}}>
+                  <ListItemButton component={Link} to={route('forms.ui')}>
+                    <ListItemIcon>
+                    <DynamicFormOutlinedIcon style={{color: route().current('forms.ui') ? '#fff' : '#000'}}/>
+                    </ListItemIcon>
+                    <ListItemText primary="Form Builder" />
+                  </ListItemButton>
+                </ListItem>
+
+                
                 </>
             )}
 
