@@ -19,7 +19,6 @@ class ProfileUpdateRequest extends FormRequest
         // Use $this->auth() instead of Auth()
         // $user = $this->auth()->user();
         $user = Auth::guard('web')->user();
-        \Log::info($user);
 
         return [
             'name' => ['required', 'string', 'max:255'],
