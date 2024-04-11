@@ -138,7 +138,6 @@ const viewParentDetails = (user_id) => {
 }
 
 const columns = [
-  { field: 'user_id', headerName: 'Parent ID', width: 120 },
   { field: 'name', headerName: 'Name', width: 120 },
   { field: 'email', headerName: 'Email', width: 200 },
   {
