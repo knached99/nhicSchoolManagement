@@ -96,9 +96,8 @@ export default function StudentAssignment({ auth, student, assignment,  answer, 
             <section className="bg-white dark:bg-gray-900 shadow-lg">
                 <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
                     <div className="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
-                    <div className="mb-4 text-3xl tracking-light font-medium text-gray-900 dark:text-slate-300 text-start">Assignment Details For 
-                    <span className="ml-2">{student.first_name} {student.last_name}</span>
-                    <h2 className="mb-4 text-xl tracking-tight font-bold text-gray-900 dark:text-slate-300">{assignment.assignment.assignment_name}</h2>
+                    <div className="mb-4 text-3xl tracking-light font-medium text-gray-900 dark:text-slate-300 text-start">{assignment.assignment.assignment_name}
+                    <h2 className="mb-4 text-xl tracking-tight font-bold text-gray-900 dark:text-slate-300">Assigned To: {student.first_name} {student.last_name}</h2>
                     <p className="mb-4 font-medium text-xl dark:text-slate-300">
                                     <Tooltip title="Assignment Description" arrow>
                                         <DescriptionOutlinedIcon style={{ fontSize: 30, marginRight: 10 }} />
