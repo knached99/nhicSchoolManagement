@@ -13,10 +13,15 @@ class Form extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-    protected $fillable = ['form_id', 'name'];
+    protected $fillable = ['form_id', 'faculty_id', 'name'];
 
     public function fields()
     {
         return $this->hasMany(Field::class, 'form_id', 'form_id');
+    }
+
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class, 'faculty_id', 'faculty_id');
     }
 }
