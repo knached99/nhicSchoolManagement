@@ -144,7 +144,7 @@ export default function UploadAssignmentModal({auth, refreshData}) {
 
   return (
     <>
-    <button onClick={handleOpen} className="m-4 p-3 dark:bg-indigo-600 dark:text-white dark:hover:bg-indigo-500 bg-slate-300 rounded hover:bg-slate-400 text-lg float-end">Upload an Assignment</button>
+    <button onClick={handleOpen} className="m-4 p-3 dark:bg-indigo-500 dark:text-white dark:hover:bg-indigo-400 bg-slate-300 rounded hover:bg-slate-400 text-lg float-end">Upload an Assignment</button>
 
     <Modal
     aria-labelledby="transition-modal-title"

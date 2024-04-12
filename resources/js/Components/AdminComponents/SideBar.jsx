@@ -297,7 +297,7 @@ export default function SideBar({auth}) {
                    <ListItemIcon>
                    <AssignmentOutlinedIcon style={{color: route().current('faculty.assignments') ? '#fff' : '#000'}}/>
                    </ListItemIcon>
-                   <ListItemText primary="My Assignments" />
+                   <ListItemText primary="Assignments" />
                  </ListItemButton>
                </ListItem>
               )}
