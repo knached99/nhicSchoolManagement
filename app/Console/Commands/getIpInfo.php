@@ -82,6 +82,10 @@ class GetIpInfo extends Command
              $latitude = $data->coordinates->latitude;
              $longitude = $data->coordinates->longitude;
      
+             // Construct URLs for Google Earth and Google Maps
+             $googleEarthLink = "https://earth.google.com/web/search/$latitude,$longitude";
+             $googleMapsLink = "https://www.google.com/maps?q=$latitude,$longitude";
+     
              // Convert the $data object to a formatted string
              $formattedData = "IP: $data->ip\n" .
                               "ISP: $data->isp\n" .
@@ -91,8 +95,10 @@ class GetIpInfo extends Command
                               "Location: $data->location\n" .
                               "Area Code: $data->area_code\n" .
                               "Country Code: $data->country_code\n" .
-                              "Latitude: $latitude\n" .  // Use latitude variable
-                              "Longitude: $longitude";    // Use longitude variable
+                              "Latitude: $latitude\n" .
+                              "Longitude: $longitude\n" .
+                              "Google Earth: $googleEarthLink\n" .
+                              "Google Maps: $googleMapsLink";
      
              // Output the formatted string
              $this->info($formattedData);
@@ -100,6 +106,7 @@ class GetIpInfo extends Command
              $this->error('Coordinates data not found or not in expected format');
          }
      }
+     
      
 
     /**
