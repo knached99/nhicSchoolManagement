@@ -91,13 +91,13 @@ class FacultyAuth extends Controller
 
             if ($ip !== null) {
                 $decryptedIP = Crypt::decryptString($ip);
-                if ($decryptedIP !== "2601:183:4602:4a20:e043:3fd:cac4:7db8") {
+                if ($decryptedIP !== $request->ip()) {
 
-                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8")]);
+                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
 
                 }
             } else {
-                $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8")]);
+                $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
             }
             
 
@@ -117,7 +117,7 @@ class FacultyAuth extends Controller
          
             // Get Approximate Location 
 
-        $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip=2601:183:4602:4a20:e043:3fd:cac4:7db8";
+        $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
 
         // Fetch the JSON response using file_get_contents
         $response = file_get_contents($url);
@@ -133,7 +133,7 @@ class FacultyAuth extends Controller
             // Build data array
             $data = [
                 'email_used' => $request->email,
-                'client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8"),
+                'client_ip' => Crypt::encryptString($request->ip()),
                 'user_agent' => $userAgent,
                 'location_information' => $locationData ?
                     ($locationData->city ?? '') . ', ' .
@@ -150,7 +150,7 @@ class FacultyAuth extends Controller
         }
 
 
-            LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8")], $data);
+            LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
 
             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
         }

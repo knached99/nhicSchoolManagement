@@ -57,14 +57,7 @@ class GetIpInfo extends Command
             $this->error('Failed to retrieve IP information: ' . $err);
         } else {
             $data = json_decode($response);
-            //$this->info($response);
             $this->displayData($data);
-
-            // if ($data->status === false) {
-            //     $this->error('Failed to retrieve IP information');
-            // } else {
-            //     $this->displayData($data);
-            // }
         }
     }
 
