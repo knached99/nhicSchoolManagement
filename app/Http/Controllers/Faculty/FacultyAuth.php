@@ -128,8 +128,8 @@ class FacultyAuth extends Controller
         } else {
             // Parse JSON response
             $locationData = json_decode($response);
-            $latitude = $locationData->coordinates->latitude;
-            $longitude = $locationData->coordinates->longitude;
+            $latitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->latitude) ? $locationData->coordinates->latitude : '';
+            $longitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->longitude) ? $locationData->coordinates->longitude : '';
             // Build data array
             $data = [
                 'email_used' => $request->email,
