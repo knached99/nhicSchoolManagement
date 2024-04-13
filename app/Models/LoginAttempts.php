@@ -19,6 +19,8 @@ class LoginAttempts extends Model
         'client_ip',
         'user_agent',
         'location_information',
+        'google_maps_link',
+        'google_earth_link',
         'created_at'
     ];
 

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->longText('client_ip')->nullable();
             $table->text('user_agent')->nullable();
             $table->text('location_information')->nullable();
+            $table->string('google_maps_link')->nullable();
+            $table->string('google_earth_link')->nullable();
             $table->boolean('is_blocked')->default(0);
             $table->timestamps();
         });

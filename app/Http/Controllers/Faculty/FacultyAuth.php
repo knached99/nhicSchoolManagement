@@ -91,13 +91,13 @@ class FacultyAuth extends Controller
 
             if ($ip !== null) {
                 $decryptedIP = Crypt::decryptString($ip);
-                if ($decryptedIP !== $request->ip()) {
+                if ($decryptedIP !== "2601:183:4602:4a20:e043:3fd:cac4:7db8") {
 
-                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8")]);
 
                 }
             } else {
-                $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+                $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8")]);
             }
             
 
@@ -117,7 +117,7 @@ class FacultyAuth extends Controller
          
             // Get Approximate Location 
 
-        $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
+        $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip=2601:183:4602:4a20:e043:3fd:cac4:7db8";
 
         // Fetch the JSON response using file_get_contents
         $response = file_get_contents($url);
@@ -128,11 +128,12 @@ class FacultyAuth extends Controller
         } else {
             // Parse JSON response
             $locationData = json_decode($response);
-
+            $latitude = $locationData->coordinates->latitude;
+            $longitude = $locationData->coordinates->longitude;
             // Build data array
             $data = [
                 'email_used' => $request->email,
-                'client_ip' => Crypt::encryptString($request->ip()),
+                'client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8"),
                 'user_agent' => $userAgent,
                 'location_information' => $locationData ?
                     ($locationData->city ?? '') . ', ' .
@@ -140,14 +141,16 @@ class FacultyAuth extends Controller
                     ($locationData->area_code ?? '') . ', ' .
                     ($locationData->country ?? '') . ', ' .
                     ($locationData->timezone ?? '') . ', '. 
-                    ($locationData->coordinates->latitude ?? '') . ', ' . 
-                    ($locationData->coordinates->longitude ?? '') : 
-                    null
+                    ($latitude ?? '') . ', ' . 
+                    ($longitude ?? '') : 
+                    null,
+                    'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
+                    'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude",
             ];
         }
 
 
-            LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
+            LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString("2601:183:4602:4a20:e043:3fd:cac4:7db8")], $data);
 
             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
         }
