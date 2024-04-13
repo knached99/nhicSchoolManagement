@@ -145,7 +145,7 @@ class FacultyAuth extends Controller
                     ($longitude ?? '') : 
                     null,
                     'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
-                    'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude",
+                    'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r",
             ];
         }
 

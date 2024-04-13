@@ -83,7 +83,7 @@ class GetIpInfo extends Command
              $longitude = $data->coordinates->longitude;
      
              // Construct URLs for Google Earth and Google Maps
-             $googleEarthLink = "https://earth.google.com/web/@$latitude,$longitude";
+             $googleEarthLink = "https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r";
              $googleMapsLink = "https://www.google.com/maps?q=$latitude,$longitude";
      
              // Convert the $data object to a formatted string
