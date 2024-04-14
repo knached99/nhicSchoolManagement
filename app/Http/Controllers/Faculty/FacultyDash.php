@@ -382,8 +382,6 @@ private function studentWithHighestGradeAverage($parent_id){
             }
         }
     }
-    \Log::info('Student Name: '. $studentWithHighestAverage);
-    \Log::info('Highest Average: '.$highestAverage);
     return [$studentWithHighestAverage, $highestAverage];
 
 }
