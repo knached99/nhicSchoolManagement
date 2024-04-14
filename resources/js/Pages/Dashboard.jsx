@@ -53,9 +53,11 @@ export default function Dashboard({ auth }) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-slate-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900 dark:text-white">Welcome Back {auth.user.name}!</div>
+                        {studentName &&
                         <h5 className="text-start ml-4 mb-2 text-lg">Student With the highest grade: <span className="text-emerald-600 dark:text-emerald-400">{studentName}</span>
                         <span className="block">Average Grade for the above student: <span style={{color: color}}>{highestAverage}</span>/100</span>
                         </h5>
+                        }
                         {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
                     </div>
                     <div className="m-5 text-center w-full">

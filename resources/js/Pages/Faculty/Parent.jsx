@@ -159,7 +159,8 @@ useEffect(() => {
       </div>
     </div>
   </div>
-
+{studentWithHighestAverage && 
+<>
   <div class="flex flex-col w-full md:w-96">
     <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-800 dark:text-white border-slate-900 dark:border-indigo-400 border-2 shadow-md bg-clip-border rounded-xl">
       <div class="p-6">
@@ -189,6 +190,8 @@ useEffect(() => {
       </div>
     </div>
   </div>
+  </>
+}
   
 </div>
 {/* <StudentAssignments studentID={student.student_id} /> */}
