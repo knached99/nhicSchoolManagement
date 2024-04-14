@@ -24,6 +24,7 @@ use App\Models\Banned;
 use App\Models\LoginAttempts;
 use App\Models\Attendance;
 use App\Models\Assignments;
+use App\Models\Grades;
 use App\Models\AssignmentStudents; 
 
 use Carbon\Carbon;
@@ -343,6 +344,52 @@ public function fetchTeachers(){
         return response()->json(['error' => 'Error getting teachers: ' . $e->getMessage()]);
     }
 }
+
+public function viewParentDetails($parent_id){
+    $parent = User::with(['students'])->where('user_id', $parent_id)->first();
+
+    if (!$parent) {
+        return redirect()->route('faculty.dash');
+    }
+
+    $auth = Auth::guard('faculty')->user();
+    // list -> assigns variables as if they were in an array
+    list($studentWithHighestAverage, $highestAverage) = $this->studentWithHighestGradeAverage($parent_id);
+    
+    return Inertia::render('Faculty/Parent', [
+        'auth' => $auth, 
+        'parent' => $parent,
+        'studentWithHighestAverage' => $studentWithHighestAverage,
+        'highestAverage' => $highestAverage
+    ]);
+}
+
+private function studentWithHighestGradeAverage($parent_id){
+    $students = Students::where('user_id', $parent_id)->get();
+    $highestAverage = 0;
+    $studentWithHighestAverage = null;
+
+    foreach($students as $student){
+        $assignmentStudentIDs = AssignmentStudents::where('student_id', $student->student_id)->pluck('assignment_student_id');
+        $grades = Grades::whereIn('assignment_student_id', $assignmentStudentIDs)->pluck('grade');
+
+        if($grades->count() > 0){
+            $averageGrade = $grades->avg();
+
+            if($averageGrade > $highestAverage){
+                $highestAverage = $averageGrade;
+                $studentWithHighestAverage = $student->first_name . ' '.$student->last_name;
+            }
+        }
+    }
+    \Log::info('Student Name: '. $studentWithHighestAverage);
+    \Log::info('Highest Average: '.$highestAverage);
+    return [$studentWithHighestAverage, $highestAverage];
+
+}
+
+
+
 
 public function viewFacultyUser($faculty_id){
   try{

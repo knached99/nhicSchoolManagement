@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Students;
 // Full Text Search using Scout
 // use Laravel\Scout\Attributes\SearchUsingFullText;
 // use Laravel\Scout\Attributes\SearchUsingPrefix;
@@ -85,7 +86,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function students()
 {
-    return $this->hasMany(Student::class, 'user_id');
+    return $this->hasMany(Students::class, 'user_id');
 }
 
 }
