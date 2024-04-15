@@ -8,6 +8,7 @@ use App\Http\Controllers\BanSystem;
 use App\Http\Controllers\AssignmentsController;
 use App\Http\Controllers\UserDashboard;
 use App\Http\Controllers\Faculty\FacultyProfileController;
+use App\Http\Controllers\Faculty\DynamicFormBuilder;
 use App\Http\Middleware\FacultyMiddleware;
 use App\Http\Middleware\BanMiddleware;
 use Illuminate\Foundation\Application;
@@ -47,6 +48,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware(['web', 'auth', 'banMiddleware'])->group(function () {
     Route::get('/getStudents', [UserDashboard::class, 'getStudents'])->name('getStudents');
+    Route::get('/studentWithHighestGradeAverage', [UserDashboard::class, 'studentWithHighestGradeAverage'])->name('studentWithHighestGradeAverage');
     Route::get('/studentDetails/{student_id}/view', [UserDashboard::class, 'viewStudentDetails'])->name('viewStudentDetails');
     Route::get('/fetchStudentAssignments/{student_id}', [UserDashboard::class, 'fetchStudentAssignments'])->name('fetchStudentAssignments');
     Route::get('/student/studentassignment/{student_id}/{assignment_id}', [UserDashboard::class, 'studentAssignment'])->name('student.studentassignment');
@@ -91,7 +93,13 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     Route::delete('/deleteParent/{user_id}', [FacultyDash::class, 'deleteParent'])->name('deleteParent');
     Route::get('/showAllStudents', [StudentManagement::class, 'showAllStudents'])->name('showAllStudents');
     Route::get('/showStudentsForTeacher/{faculty_id}', [StudentManagement::class, 'showStudentsForTeacher'])->name('showStudentsForTeacher');
+    Route::get('/showStudentsForParent/{parent_id}', [StudentManagement::class, 'showStudentsForParent'])->name('showStudentsForParent');
+
+    
     Route::get('/student/{student_id}/view', [StudentManagement::class, 'viewStudentDetails'])->name('studentDetails');
+    Route::get('/parent/{user_id}/view', [FacultyDash::class, 'viewParentDetails'])->name('parent');
+    Route::get('/studentWithHighestGradeAverage', [FacultyDash::class, 'studentWithHighestGradeAverage'])->name('studentWithHighestGradeAverage');
+
     Route::get('/getAttendanceHistoryBystudentID/{student_id}', [StudentManagement::class, 'getAttendanceHistoryBystudentID'])
     ->name('getAttendanceHistoryBystudentID');
     Route::get('/getAssignmentsForStudent/{student_id}', [StudentManagement::class, 'getAssignmentsForStudent'])->name('getAssignmentsForStudent');
@@ -128,6 +136,19 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     
     Route::put('/editAssignmentDetails/{assignment_id}', [AssignmentsController::class, 'editAssignmentDetails'])->name('editAssignmentDetails');
     Route::delete('/deleteAssignment/{assignment_id}', [AssignmentsController::class, 'deleteAssignment'])->name('deleteAssignment');
+
+    // Form Builder Routes
+Route::get('/faculty/forms', [DynamicFormBuilder::class, 'builderUI'])->name('forms.ui');
+Route::get('/faculty/getForms', [DynamicFormBuilder::class, 'getForms'])->name('getForms');
+Route::get('/faculty/form/{form_id}/editForm', [DynamicFormBuilder::class, 'viewForm'])->name('faculty.form.editForm');
+Route::post('/faculty/forms', [DynamicFormBuilder::class, 'buildForm'])->name('forms.buildForm');
+Route::get('/forms/{form}', [DynamicFormBuilder::class, 'show'])->name('forms.show');
+Route::put('/forms/{form}', [DynamicFormBuilder::class, 'update'])->name('forms.update');
+Route::delete('/forms/{form}', [DynamicFormBuilder::class, 'destroy'])->name('forms.destroy');
+
+Route::post('/faculty/forms/{form}/fields', [DynamicFormBuilder::class, 'addField'])->name('fields.add');
+Route::put('/fields/{field}', [DynamicFormBuilder::class, 'updateField'])->name('fields.update');
+Route::delete('/fields/{field}', [DynamicFormBuilder::class, 'deleteField'])->name('fields.delete');
 
     // Two-Step Verification 
     // Route::get('/faculty/profile/two-factor-authentication', [TwoStepVerification::class, 'display'])->name('two-factor-authentication.show');

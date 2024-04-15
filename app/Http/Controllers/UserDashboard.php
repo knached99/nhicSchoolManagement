@@ -18,7 +18,31 @@ use Carbon\Carbon;
 
 class UserDashboard extends Controller
 {
-   
+    public function studentWithHighestGradeAverage(){
+        $students = Students::where('user_id', Auth::id())->get();
+        $highestAverage = 0;
+        $studentWithHighestAverage = null;
+    
+        foreach($students as $student){
+            $assignmentStudentIDs = AssignmentStudents::where('student_id', $student->student_id)->pluck('assignment_student_id');
+            $grades = Grades::whereIn('assignment_student_id', $assignmentStudentIDs)->pluck('grade');
+    
+            if($grades->count() > 0){
+                $averageGrade = $grades->avg();
+    
+                if($averageGrade > $highestAverage){
+                    $highestAverage = $averageGrade;
+                    $studentWithHighestAverage = $student->first_name . ' '.$student->last_name;
+                }
+            }
+        }
+
+        return response()->json(['studentWithHighestAverage'=>$studentWithHighestAverage, 'highestAverage'=>$highestAverage]);
+    }
+    
+    
+    
+    
     public function getStudents()
     {
         try {

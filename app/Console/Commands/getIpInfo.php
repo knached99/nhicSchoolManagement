@@ -57,13 +57,7 @@ class GetIpInfo extends Command
             $this->error('Failed to retrieve IP information: ' . $err);
         } else {
             $data = json_decode($response);
-            $this->info($response);
-
-            if ($data->status === false) {
-                $this->error('Failed to retrieve IP information');
-            } else {
-                $this->displayData($data);
-            }
+            $this->displayData($data);
         }
     }
 
@@ -72,37 +66,41 @@ class GetIpInfo extends Command
      *
      * @param  object  $data
      */
-    // private function displayData($data)
-    // {
-    //     $this->info('IP: ' . $data->ip);
-    //     $this->info('ISP: ' . $data->isp);
-    //     $this->info('City: ' . $data->city);
-    //     $this->info('Region: ' . $data->region);
-    //     $this->info('Country: ' . $data->country);
-    //     $this->info('Location: ' . $data->location);
-    //     $this->info('Area Code: ' . $data->area_code);
-    //     $this->info('Country Code: ' . $data->country_code);
-    //     $this->info('Latitude: ' . $data->coordinates->latitude);
-    //     $this->info('Longitude: ' . $data->coordinates->longitude);
-    // }
-
-    private function displayData($data)
-{
-    // Convert the $data object to a formatted string
-    $formattedData = "IP: $data->ip\n" .
-                     "ISP: $data->isp\n" .
-                     "City: $data->city\n" .
-                     "Region: $data->region\n" .
-                     "Country: $data->country\n" .
-                     "Location: $data->location\n" .
-                     "Area Code: $data->area_code\n" .
-                     "Country Code: $data->country_code\n" .
-                     "Latitude: $data->coordinates->latitude\n" .
-                     "Longitude: $data->coordinates->longitude";
-
-    // Output the formatted string
-    $this->info($formattedData);
-}
+  
+     private function displayData($data)
+     {
+         // Check if coordinates property exists and is an object
+         if (isset($data->coordinates) && is_object($data->coordinates)) {
+             // Store latitude and longitude in variables
+             $latitude = $data->coordinates->latitude;
+             $longitude = $data->coordinates->longitude;
+     
+             // Construct URLs for Google Earth and Google Maps
+             $googleEarthLink = "https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r";
+             $googleMapsLink = "https://www.google.com/maps?q=$latitude,$longitude";
+     
+             // Convert the $data object to a formatted string
+             $formattedData = "IP: $data->ip\n" .
+                              "ISP: $data->isp\n" .
+                              "City: $data->city\n" .
+                              "Region: $data->region\n" .
+                              "Country: $data->country\n" .
+                              "Location: $data->location\n" .
+                              "Area Code: $data->area_code\n" .
+                              "Country Code: $data->country_code\n" .
+                              "Latitude: $latitude\n" .
+                              "Longitude: $longitude\n" .
+                              "Google Earth: $googleEarthLink\n" .
+                              "Google Maps: $googleMapsLink";
+     
+             // Output the formatted string
+             $this->info($formattedData);
+         } else {
+             $this->error('Coordinates data not found or not in expected format');
+         }
+     }
+     
+     
 
     /**
      * Validate IPv4 or IPv6 address.

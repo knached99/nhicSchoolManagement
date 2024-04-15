@@ -78,7 +78,7 @@ const AutoCompleteSearch = ({ auth }) => {
   };
 
   const viewUserDetails = (user_id) => {
-    // Implement viewUserDetails logic
+     window.location.href= `/parent/${user_id}/view`;
   };
 
   const viewStudentDetails = (student_id) => {

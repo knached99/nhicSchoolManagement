@@ -328,6 +328,19 @@ public function showStudentsForTeacher($faculty_id)
     }
 }
 
+public function showStudentsForParent($parent_id)
+{
+    try {
+        $students = Students::with('user', 'faculty')->where('user_id', $parent_id)->orderBy('created_at', 'desc')->get();
+        return response()->json(['students' => $students]);
+    } catch (\Exception $e) {
+        // Log the error message
+        error('Error getting students: ' . $e->getMessage());
+
+        return response()->json(['error' => 'Error getting students: ' . $e->getMessage()]);
+    }
+}
+
 
 
 

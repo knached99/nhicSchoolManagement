@@ -12,7 +12,6 @@ import IconButton from '@mui/material/IconButton';
 
 
 export default function LoginAttempts({ auth, attempts }) {
-
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
@@ -93,6 +92,8 @@ export default function LoginAttempts({ auth, attempts }) {
     UserAgent: attempt.user_agent,
     isBlocked: attempt.is_blocked, 
     locationData: attempt.location_information,
+    googleMapsLink: attempt.google_maps_link,
+    googleEarthLink: attempt.google_earth_link,
     created_at: attempt.created_at
   }));
 
@@ -196,6 +197,14 @@ export default function LoginAttempts({ auth, attempts }) {
                    Approximate Location 
                 </th>
 
+                <th scope="col" className="px-6 py-3">
+                   Google Maps 
+                </th>
+
+                <th scope="col" className="px-6 py-3">
+                   Google Earth 
+                </th>
+
             </tr>
         </thead>
         <tbody>
@@ -235,7 +244,15 @@ export default function LoginAttempts({ auth, attempts }) {
 
                     <td className="px-6 py-4">
                                       {row.locationData ? row.locationData : 'Not Available'}
-                    </td>
+                     </td>
+
+                     <td className="px-6 py-4">
+                     <a href={`${row.googleMapsLink}`} className="text-blue-500 dark:text-blue-400 font-bold underline" rel="noreferrer noopener" target="_blank">Google Maps</a>
+                     </td>
+
+                     <td className="px-6 py-4">
+                     <a href={`${row.googleEarthLink}`} className="text-blue-500 dark:text-blue-400 font-bold underline" rel="noreferrer noopener" target="_blank">Google Earth</a>
+                     </td>
                 </tr>
             ))}
 

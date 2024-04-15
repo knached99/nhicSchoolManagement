@@ -6,10 +6,9 @@ import ParentsTable from '@/Components/AdminComponents/ParentsTable';
 import MyStudentsTable from '@/Components/AdminComponents/MyStudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 import Cards from '@/Components/AdminComponents/Cards';
-export default function Dash({ auth, facultyCount, studentsCount, parentsCount }) {
+export default function Dash({ auth, facultyCount, studentsCount, parentsCount}) {
   // Check if auth object is defined before accessing its properties
   const userName = auth && auth.faculty ? auth.faculty.name : 'Guest';
-  console.log('Props received in Dash:', auth, facultyCount, studentsCount, parentsCount);
 
   return (
     <AdminLayout
@@ -38,6 +37,7 @@ export default function Dash({ auth, facultyCount, studentsCount, parentsCount }
     {auth.faculty && (
         auth.faculty.role === 'Teacher' && (
           <>
+
           <MyStudentsTable auth={auth} />
           <MyAttendanceTable auth={auth && auth.faculty && auth.faculty.faculty_id} />
           </>

@@ -128,7 +128,8 @@ class FacultyAuth extends Controller
         } else {
             // Parse JSON response
             $locationData = json_decode($response);
-
+            $latitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->latitude) ? $locationData->coordinates->latitude : '';
+            $longitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->longitude) ? $locationData->coordinates->longitude : '';
             // Build data array
             $data = [
                 'email_used' => $request->email,
@@ -140,9 +141,11 @@ class FacultyAuth extends Controller
                     ($locationData->area_code ?? '') . ', ' .
                     ($locationData->country ?? '') . ', ' .
                     ($locationData->timezone ?? '') . ', '. 
-                    ($locationData->coordinates->latitude ?? '') . ', ' . 
-                    ($locationData->coordinates->longitude ?? '') : 
-                    null
+                    ($latitude ?? '') . ', ' . 
+                    ($longitude ?? '') : 
+                    null,
+                    'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
+                    'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r",
             ];
         }
 

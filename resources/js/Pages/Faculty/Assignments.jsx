@@ -149,8 +149,9 @@ const deleteAssignment = async (assignment_id) => {
         <div className="dark:bg-slate-600 bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <UploadAssignmentModal auth={auth} refreshData={refreshData}/>
             <h1 className="font-bold text-start text-2xl p-6 text-gray-900 dark:text-white">
-            My Uploaded Assignments
+            Assignments
             </h1>
+            <p className="ml-4 mb-3 text-slate-800 dark:text-white">Assignments created are mass assigned to all of your students</p>
 
             {error && (
                             <Box   style={{

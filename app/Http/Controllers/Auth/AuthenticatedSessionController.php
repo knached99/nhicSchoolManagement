@@ -10,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Crypt;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,16 +33,35 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
+    
         $request->session()->regenerate();
+    
+        // Get the encrypted client IP from the database
+        $encryptedIP = User::where('email', $request->email)->value('client_ip');
+    
+        if ($encryptedIP) {
+            // Decrypt the client IP
+            try {
+                $decryptedIP = Crypt::decryptString($encryptedIP);
+            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
 
-        $ip = User::where('email', $request->email)->pluck('client_ip');
-
-        if ($request->ip() !== $ip) {
-            $saveIP = User::where('email', $request->email)->update(['client_ip' => $request->ip()]);
+                $decryptedIP = null;
+            }
+    
+            // Update the client IP if it's different from the current IP
+            if ($request->ip() !== $decryptedIP) {
+                $encryptedCurrentIP = Crypt::encryptString($request->ip());
+                $saveIP = User::where('email', $request->email)->update(['client_ip' => $encryptedCurrentIP]);
+            }
+        } else {
+            // Encrypt and store the current IP if no client IP is stored
+            $encryptedCurrentIP = Crypt::encryptString($request->ip());
+            $saveIP = User::where('email', $request->email)->update(['client_ip' => $encryptedCurrentIP]);
         }
+    
         return redirect()->intended(RouteServiceProvider::HOME);
     }
+    
 
     /**
      * Destroy an authenticated session.

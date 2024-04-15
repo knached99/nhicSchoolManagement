@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Crypt;
+
 
 class RegisteredUserController extends Controller
 {
@@ -41,6 +43,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'client_ip'=> Crypt::encryptString($request->ip()),
         ]);
 
         event(new Registered($user));

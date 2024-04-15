@@ -24,6 +24,7 @@ use App\Models\Banned;
 use App\Models\LoginAttempts;
 use App\Models\Attendance;
 use App\Models\Assignments;
+use App\Models\Grades;
 use App\Models\AssignmentStudents; 
 
 use Carbon\Carbon;
@@ -46,15 +47,15 @@ class FacultyDash extends Controller
         $facultyCount = Faculty::count();
         $studentsCount = Students::count();
         $parentsCount = User::count();
+        $user = Auth::guard('faculty')->user();
 
-    
         return Inertia::render('Faculty/Dash', [
             'auth' => function () use ($facultyCount, $studentsCount, $parentsCount) {
                 return [
                     'faculty' => auth('faculty')->user(),
                     'facultyCount' => $facultyCount,
                     'studentsCount' => $studentsCount,
-                    'parentsCount' => $parentsCount
+                    'parentsCount' => $parentsCount,
                 ];
             },
         ]);
@@ -344,6 +345,50 @@ public function fetchTeachers(){
     }
 }
 
+public function viewParentDetails($parent_id){
+    $parent = User::with(['students'])->where('user_id', $parent_id)->first();
+
+    if (!$parent) {
+        return redirect()->route('faculty.dash');
+    }
+
+    $auth = Auth::guard('faculty')->user();
+    // list -> assigns variables as if they were in an array
+    list($studentWithHighestAverage, $highestAverage) = $this->studentWithHighestGradeAverage($parent_id);
+    
+    return Inertia::render('Faculty/Parent', [
+        'auth' => $auth, 
+        'parent' => $parent,
+        'studentWithHighestAverage' => $studentWithHighestAverage,
+        'highestAverage' => $highestAverage
+    ]);
+}
+
+private function studentWithHighestGradeAverage($user_id){
+    $students = Students::where('user_id', $user_id)->orWhere('faculty_id', $user_id)->get();
+    $highestAverage = 0;
+    $studentWithHighestAverage = null;
+
+    foreach($students as $student){
+        $assignmentStudentIDs = AssignmentStudents::where('student_id', $student->student_id)->pluck('assignment_student_id');
+        $grades = Grades::whereIn('assignment_student_id', $assignmentStudentIDs)->pluck('grade');
+
+        if($grades->count() > 0){
+            $averageGrade = $grades->avg();
+
+            if($averageGrade > $highestAverage){
+                $highestAverage = $averageGrade;
+                $studentWithHighestAverage = $student->first_name . ' '.$student->last_name;
+            }
+        }
+    }
+    return [$studentWithHighestAverage, $highestAverage];
+
+}
+
+
+
+
 public function viewFacultyUser($faculty_id){
   try{
     if(Auth::guard('faculty')->id() === $faculty_id){
@@ -355,8 +400,19 @@ public function viewFacultyUser($faculty_id){
     $assignmentsCount = Assignments::where('faculty_id',$faculty_id)->count();
     $bannedDetails = Banned::where('faculty_id', $faculty_id)->get();
     $decryptedIP = isset($user->client_ip) ? Crypt::decryptString($user->client_ip) : null;
+    list($studentWithHighestAverage, $highestAverage) = $this->studentWithHighestGradeAverage($faculty_id);
 
-return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students, 'bannedDetails'=>$bannedDetails, 'clientIP'=>$decryptedIP, 'assignmentsCount'=>$assignmentsCount]);
+
+return Inertia::render('Faculty/Profile/ViewProfile',
+ ['auth'=> Auth::guard('faculty')->user(),
+  'user'=>$user,
+   'students'=>$students,
+   'bannedDetails'=>$bannedDetails, 
+   'clientIP'=>$decryptedIP, 
+   'assignmentsCount'=>$assignmentsCount,
+   'studentWithHighestAverage'=>$studentWithHighestAverage,
+   'highestAverage'=>$highestAverage
+]);
   }
   catch(ModelNotFoundException $e) {
     return redirect('faculty/dash');
