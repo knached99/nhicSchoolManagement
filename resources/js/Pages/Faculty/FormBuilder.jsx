@@ -170,7 +170,7 @@ const FormBuilder = ({ auth }) => {
                     ) : (
                         <>
                             {forms.map(form => (
-                                <div className="my-4 shadow-lg p-4 bg-white rounded-md dark:slate-800" key={form.id}>
+                                <div className="my-4 shadow-lg p-4 bg-white dark:bg-slate-800 dark:text-white rounded-md dark:slate-800" key={form.id}>
                                 <a className="float-start inline-block mr-6 underline text-blue-500 dark:text-blue-400" href={`/faculty/form/${form.form_id}/editForm`}>View Form</a>
 
                                 <h3 className="font-bold text-xl mb-5">{form.name}</h3>

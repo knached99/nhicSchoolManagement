@@ -103,7 +103,7 @@ export default function editForm({ form, auth, success }) {
             user={auth}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">{form.name}</h2>}
         >
-            <div className="my-4 shadow-lg p-4 bg-white rounded-md dark:slate-800" key={form.id}>
+            <div className="my-4 px-6 mx-6 shadow-lg p-4 bg-white dark:bg-slate-800  dark:text-white rounded-md dark:slate-800" key={form.id}>
                 <div className="flex flex-col items-start">
                     <Link href="/faculty/forms" className="float-start mb-5 bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:scale-110">
                         <ArrowBackOutlinedIcon />
@@ -154,23 +154,23 @@ export default function editForm({ form, auth, success }) {
                 <div>
                     <InputText
                         type="text"
+                        style={{margin: 10}}
                         value={newFieldName}
                         onChange={(e) => setNewFieldName(e.target.value)}
                         placeholder="Enter field name"
                     />
-                    <Dropdown value={newFieldType} onChange={(e) => setNewFieldType(e.value)} options={fields} optionLabel="name" placeholder="Select Field Type" className="w-full md:w-14rem" />
+                    <Dropdown style={{margin: 10}} value={newFieldType} onChange={(e) => setNewFieldType(e.value)} options={fields} optionLabel="name" placeholder="Select Field Type" className="w-full md:w-14rem" />
                     {['radio', 'checkbox', 'select'].includes(newFieldType) && (
                         <div>
-                            <input
+                            <InputText
                                 type="text"
                                 value={newFieldOptions}
                                 onChange={(e) => setNewFieldOptions(e.target.value)}
                                 placeholder="Enter options (comma-separated)"
-                                className="w-full mt-2"
                             />
                         </div>
                     )}
-                    <Button onClick={() => addField(form.form_id)} label="Add Field" className="mt-3" />
+                    <Button style={{margin: 10}} onClick={() => addField(form.form_id)} label="Add Field" className="mt-3" />
                 </div>
                 {form.fields && (
                     <ul>
