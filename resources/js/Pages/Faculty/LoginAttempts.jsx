@@ -235,7 +235,7 @@ export default function LoginAttempts({ auth, attempts }) {
 
                     <td className="px-6 py-4">
                                       {row.locationData ? row.locationData : 'Not Available'}
-                                    </td>
+                    </td>
                 </tr>
             ))}
 
