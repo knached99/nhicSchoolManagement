@@ -47,7 +47,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-export default function ViewProfile({auth, user, students, bannedDetails, clientIP, assignmentsCount}) {
+export default function ViewProfile({auth, user, students, bannedDetails, clientIP, assignmentsCount, studentWithHighestAverage, highestAverage}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -812,7 +812,40 @@ const handleBanCloseError = () => {
       </div>
     </div>
   </div>
-  
+</div>
+
+<div class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-6">
+<div class="flex flex-col w-full md:w-96">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-600 dark:text-white border-slate-900 dark:border-slate-200 border-2 shadow-md bg-clip-border rounded-xl">
+      <div class="p-6">
+        <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+          Student With Highest Grade Average
+        </h5>
+        <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
+        <p className="font-bold text-2xl text-center">
+          {studentWithHighestAverage}
+      </p>
+
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col w-full md:w-96">
+    <div class="relative mt-6 text-gray-700 bg-white dark:bg-slate-600 dark:text-white border-slate-900 dark:border-slate-200 border-2 shadow-md bg-clip-border rounded-xl">
+      <div class="p-6">
+        <h5 class="text-center block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+         Grade Average for {studentWithHighestAverage}
+        </h5>
+        <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
+        <p className="font-bold text-2xl text-center">
+          {highestAverage}
+      </p>
+
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
                     <h2 className="text-xl font-bold mt-6 mb-4 dark:text-white">Students</h2>
 

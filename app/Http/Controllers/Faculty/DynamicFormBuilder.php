@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Form;
 use App\Models\Faculty;
 use App\Models\Field;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Auth;
@@ -33,9 +34,9 @@ class DynamicFormBuilder extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'fields' => 'array', // Make the 'fields' field optional
-            'fields.*.name' => 'nullable|string|max:255', // Validate each field name
-            'fields.*.type' => 'nullable|in:input,select,radio,checkbox,date', // Optionally validate each field type
+            // 'fields' => 'array', // Make the 'fields' field optional
+            // 'fields.*.name' => 'nullable|string|max:255', // Validate each field name
+            // 'fields.*.type' => 'nullable|in:input,select,radio,checkbox,date', // Optionally validate each field type
         ]);
     
         try {
@@ -52,32 +53,39 @@ class DynamicFormBuilder extends Controller
             ]);
     
             // Iterate over each field and set the form_id
-            foreach ($validatedData['fields'] as $fieldData) {
-                // Generate UUID for field_id
-                $fieldId = Str::uuid();
+            // foreach ($validatedData['fields'] as $fieldData) {
+            //     // Generate UUID for field_id
+            //     $fieldId = Str::uuid();
             
-                // Set the 'form_id' for each field
-                $fieldData['form_id'] = $formId;
+            //     // Set the 'form_id' for each field
+            //     $fieldData['form_id'] = $formId;
             
-                // Create the field with the generated UUID
-                $field = new Field([
-                    'field_id' => $fieldId,
-                    'name' => $fieldData['name'],
-                    'type' => $fieldData['type'],
-                    'faculty_id' => Auth::guard('faculty')->id(),
-                ]);
+            //     // Create the field with the generated UUID
+            //     $field = new Field([
+            //         'field_id' => $fieldId,
+            //         'name' => $fieldData['name'],
+            //         'type' => $fieldData['type'],
+            //         'faculty_id' => Auth::guard('faculty')->id(),
+            //     ]);
             
-                $form->fields()->save($field);
-            }
-            
+            //     $form->fields()->save($field);
+            // }
     
+            // Return the form data 
+            Session::flash('success', 'Form created successfully! Continue to edit the form on this page');
             return response()->json($form, 201);
+
+    
         } catch (ValidationException $e) {
-            \Log::error('Unable to Create Form: ');
-            \Log::error($e->getMessage());
-            return response()->json(['errors' => $e->errors()], 422);
+            // return response()->json(['errors' => $e->errors()], 422);
+            \Log::error('Form Builder Validation Errors '.$e->errors());
+    
+        } catch(\Exception $e){
+            \Log::error('Unable to Create Form: '.$e->getMessage());
+    
         }
     }
+    
     
     
 
@@ -106,7 +114,6 @@ class DynamicFormBuilder extends Controller
         }
     
         // Log validated data for debugging purposes
-        \Log::info('Validated Data: ' . json_encode($validatedData));
     
        // Check if options are provided, if not, set them to an empty array
            // Check if options are provided and not null, if not, set them to an empty array
@@ -130,7 +137,17 @@ class DynamicFormBuilder extends Controller
         return response()->json($field, 201);
     }
     
-
+    public function viewform($form_id){
+        $form = Form::with(['fields', 'faculty'])->where('form_id', $form_id)->firstOrFail();
+        
+        $successMessage = session('success');
+    
+        return Inertia::render('Faculty/Form/editForm', [
+            'form' => $form,
+            'auth' => Auth::guard('faculty')->user(),
+            'success' => $successMessage
+        ]);
+    }
     
     
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from '@inertiajs/react';
 import axios from 'axios';
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import { InputText } from 'primereact/inputtext';
@@ -45,13 +46,16 @@ const FormBuilder = ({ auth }) => {
 
     const createForm = () => {
         setIsLoading(true);
-        axios.post('/faculty/forms', { name: newFormName, fields: [{ name: '', type: '' }] })
+        axios.post('/faculty/forms/', { name: newFormName })
             .then(response => {
-                setForms([...forms, response.data]);
+                const formData = response.data;
+                setForms([...forms, formData]);
                 setNewFormName('');
                 setSuccess('Form Created!');
                 setIsLoading(false);
                 setError(null);
+                // Redirect to the edit form page after creating the form
+                window.location.href = `/faculty/form/${formData.form_id}/editForm`;
             })
             .catch(error => {
                 console.error('Error creating form:', error);
@@ -59,6 +63,7 @@ const FormBuilder = ({ auth }) => {
                 setIsLoading(false);
             });
     };
+    
     
     const addField = (formId) => {
         if (!newFieldName.trim() || !newFieldType) {
@@ -166,7 +171,10 @@ const FormBuilder = ({ auth }) => {
                         <>
                             {forms.map(form => (
                                 <div className="my-4 shadow-lg p-4 bg-white rounded-md dark:slate-800" key={form.id}>
+                                <a className="float-start inline-block mr-6 underline text-blue-500 dark:text-blue-400" href={`/faculty/form/${form.form_id}/editForm`}>View Form</a>
+
                                 <h3 className="font-bold text-xl mb-5">{form.name}</h3>
+
                                <div className="mb-3 inline-block">
                                 <h3 className="text-xl mb-3">Created By: </h3>
                                 {form.faculty.profile_pic ? (
@@ -182,29 +190,10 @@ const FormBuilder = ({ auth }) => {
                                     </>
                                     )}
                                     </div>
-                                 
+
                                     <div>
-                                        <InputText
-                                            type="text"
-                                            value={newFieldName}
-                                            onChange={(e) => setNewFieldName(e.target.value)}
-                                            placeholder="Enter field name"
-                                        />
-                                      <Dropdown value={newFieldType} onChange={(e) => setNewFieldType(e.value)} options={fields} optionLabel="name" placeholder="Select Field Type" className="w-full md:w-14rem" />
+                                  
 
-
-                                        {['radio', 'checkbox', 'select'].includes(newFieldType) && (
-                                            <div>
-                                                <input
-                                                    type="text"
-                                                    value={newFieldOptions}
-                                                    onChange={(e) => setNewFieldOptions(e.target.value)}
-                                                    placeholder="Enter options (comma-separated)"
-                                                    className="w-full mt-2"
-                                                />
-                                            </div>
-                                        )}
-                                    <Button onClick={() => addField(form.form_id)} label="Add Field" className="mt-3"/>
                                     </div>
                                     {form.fields && (
                                         <ul>

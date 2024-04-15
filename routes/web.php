@@ -140,6 +140,7 @@ Route::group(['middleware' => [FacultyMiddleware::class, BanMiddleware::class]],
     // Form Builder Routes
 Route::get('/faculty/forms', [DynamicFormBuilder::class, 'builderUI'])->name('forms.ui');
 Route::get('/faculty/getForms', [DynamicFormBuilder::class, 'getForms'])->name('getForms');
+Route::get('/faculty/form/{form_id}/editForm', [DynamicFormBuilder::class, 'viewForm'])->name('faculty.form.editForm');
 Route::post('/faculty/forms', [DynamicFormBuilder::class, 'buildForm'])->name('forms.buildForm');
 Route::get('/forms/{form}', [DynamicFormBuilder::class, 'show'])->name('forms.show');
 Route::put('/forms/{form}', [DynamicFormBuilder::class, 'update'])->name('forms.update');

@@ -47,15 +47,15 @@ class FacultyDash extends Controller
         $facultyCount = Faculty::count();
         $studentsCount = Students::count();
         $parentsCount = User::count();
+        $user = Auth::guard('faculty')->user();
 
-    
         return Inertia::render('Faculty/Dash', [
             'auth' => function () use ($facultyCount, $studentsCount, $parentsCount) {
                 return [
                     'faculty' => auth('faculty')->user(),
                     'facultyCount' => $facultyCount,
                     'studentsCount' => $studentsCount,
-                    'parentsCount' => $parentsCount
+                    'parentsCount' => $parentsCount,
                 ];
             },
         ]);
@@ -364,8 +364,8 @@ public function viewParentDetails($parent_id){
     ]);
 }
 
-private function studentWithHighestGradeAverage($parent_id){
-    $students = Students::where('user_id', $parent_id)->get();
+private function studentWithHighestGradeAverage($user_id){
+    $students = Students::where('user_id', $user_id)->orWhere('faculty_id', $user_id)->get();
     $highestAverage = 0;
     $studentWithHighestAverage = null;
 
@@ -400,8 +400,19 @@ public function viewFacultyUser($faculty_id){
     $assignmentsCount = Assignments::where('faculty_id',$faculty_id)->count();
     $bannedDetails = Banned::where('faculty_id', $faculty_id)->get();
     $decryptedIP = isset($user->client_ip) ? Crypt::decryptString($user->client_ip) : null;
+    list($studentWithHighestAverage, $highestAverage) = $this->studentWithHighestGradeAverage($faculty_id);
 
-return Inertia::render('Faculty/Profile/ViewProfile', ['auth'=> Auth::guard('faculty')->user(), 'user'=>$user, 'students'=>$students, 'bannedDetails'=>$bannedDetails, 'clientIP'=>$decryptedIP, 'assignmentsCount'=>$assignmentsCount]);
+
+return Inertia::render('Faculty/Profile/ViewProfile',
+ ['auth'=> Auth::guard('faculty')->user(),
+  'user'=>$user,
+   'students'=>$students,
+   'bannedDetails'=>$bannedDetails, 
+   'clientIP'=>$decryptedIP, 
+   'assignmentsCount'=>$assignmentsCount,
+   'studentWithHighestAverage'=>$studentWithHighestAverage,
+   'highestAverage'=>$highestAverage
+]);
   }
   catch(ModelNotFoundException $e) {
     return redirect('faculty/dash');
