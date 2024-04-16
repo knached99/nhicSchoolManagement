@@ -13,7 +13,7 @@ export default function Dashboard({ auth }) {
             try {
                 const response = await axios.get('/studentWithHighestGradeAverage');
                 const { studentWithHighestAverage, highestAverage, error } = response.data; 
-
+                    
                 if (error) {
                     setError(error);
                 } else {
@@ -24,8 +24,26 @@ export default function Dashboard({ auth }) {
                 setError('Unable to get data: ' + error.message);
             }
         };
-        getStudentWithHighestGrade();
+    
+        const getStudents = async () => {
+            try {
+                const response = await axios.get('/getStudents');
+                const { students } = response.data;
+    
+                // Check if there are students
+                if (students && students.length > 0) {
+                    // If there are students, fetch the highest grade
+                    getStudentWithHighestGrade();
+                }
+            } catch (error) {
+                setError('Unable to get students: ' + error.message);
+            }
+        };
+    
+        // Fetch students
+        getStudents();
     }, []);
+    
 
        // Change color of grade depending on grade 
        let color;

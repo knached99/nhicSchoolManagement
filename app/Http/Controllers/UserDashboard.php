@@ -5,6 +5,7 @@ use Inertia\Inertia;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Crypt;
 use App\Models\Students; 
 use App\Models\Grades;
 use App\Models\AssignmentStudents;
@@ -22,6 +23,10 @@ class UserDashboard extends Controller
         $students = Students::where('user_id', Auth::id())->get();
         $highestAverage = 0;
         $studentWithHighestAverage = null;
+
+        if(!$students){
+            return response()->json(['error'=>null]);
+        }
     
         foreach($students as $student){
             $assignmentStudentIDs = AssignmentStudents::where('student_id', $student->student_id)->pluck('assignment_student_id');
@@ -36,6 +41,8 @@ class UserDashboard extends Controller
                 }
             }
         }
+
+        
 
         return response()->json(['studentWithHighestAverage'=>$studentWithHighestAverage, 'highestAverage'=>$highestAverage]);
     }
@@ -169,7 +176,46 @@ class UserDashboard extends Controller
         AssignmentAnswers::create($data);
         return response()->json(['success' => 'You have successfully submitted your assignment']);
     }
+
+    public function saveUserLocation(Request $request)
+    {
+        $user = Auth::user();
     
-}
+        $latitude = $request->latitude;
+        $longitude = $request->longitude;
+        $preference = $request->preference;
+    
+        if ($user) {
+            if ($preference === 1) {
+                // Check if latitude and longitude are provided
+                if ($latitude !== null && $longitude !== null) {
+                    $user->latitude = Crypt::encryptString($latitude);
+                    $user->longitude = Crypt::encryptString($longitude);
+                    $user->location_preference = $preference;
+                    $user->save();
+    
+                    return response()->json(['success' => 'Location Information Saved!']);
+                } else {
+                    return response()->json(['error' => 'Latitude or longitude missing.'], 400);
+                }
+            } else {
+                // If preference is 0, save empty latitude, longitude, and set preference
+                $user->latitude = null;
+                $user->longitude = null;
+                $user->location_preference = $preference;
+                $user->save();
+    
+                return response()->json(['success' => 'Location Preference Updated!']);
+            }
+        } else {
+            return response()->json(['error' => 'User not authenticated.'], 401);
+        }
+    }
+    
+        
+    }
+    
+    
+
 
 ?>
