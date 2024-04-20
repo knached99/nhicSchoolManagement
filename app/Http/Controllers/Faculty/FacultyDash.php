@@ -429,7 +429,7 @@ public function viewFacultyUser($faculty_id){
     $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
 
-return Inertia::render('Faculty/Profile/ViewProfile', [
+return Inertia::render('Faculty/Profile/ViewProfile', 
 
 ['auth'=> Auth::guard('faculty')->user(),
   'user'=>$user,
@@ -438,10 +438,10 @@ return Inertia::render('Faculty/Profile/ViewProfile', [
    'clientIP'=>$decryptedIP, 
    'assignmentsCount'=>$assignmentsCount,
    'studentWithHighestAverage'=>$studentWithHighestAverage,
-   'highestAverage'=>$highestAverage
+   'highestAverage'=>$highestAverage,
+   'notifications'=>$notifications
 ],
-'notificatios' =>$notifications
-]
+
 );
   }
   catch(ModelNotFoundException $e) {
