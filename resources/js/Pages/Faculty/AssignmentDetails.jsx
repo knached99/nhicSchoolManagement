@@ -30,7 +30,10 @@ export default function AssignmentDetails({ auth, assignment, notifications }) {
           <div className="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
             <h1 className="mb-4 text-3xl tracking-light font-black text-gray-900 dark:text-white text-center">Assignment Details</h1>
             {/* MODAL GOES HERE */}
+            {auth.faculty_id === assignment.faculty_id && 
             <EditAssignmentModal assignment={assignment}/>
+            }
+            
             <h2 className="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">
   
                {assignment.assignment_name}</h2>
