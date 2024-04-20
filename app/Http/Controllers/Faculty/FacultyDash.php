@@ -568,6 +568,8 @@ public function submitAttendance(Request $request, $faculty_id)
             ->get()
             ->toArray();
         }
+     
+
         else if($authenticatedUser->role === 'Teacher' || $authenticatedUser === 'Assistant Teacher'){
             $studentResults = Students::where('faculty_id', $authenticatedUser->faculty_id)
             ->where('first_name', 'LIKE', "%$query%")
@@ -586,12 +588,20 @@ public function submitAttendance(Request $request, $faculty_id)
             ->get()
             ->toArray();
 
-            $assignmentsResults = Assignments::where('faculty_id', $authenticatedUser->faculty_id)
-            ->where('assignment_name', 'LIKE', "%$query%")
-            ->orWhere('assignment_description', 'LIKE', "%$query%")
-            ->get()
-            ->toArray();
         }
+
+        $assignmentsResults = Assignments::where(function ($q) use ($authenticatedUser) {
+            if ($authenticatedUser->role === 'Teacher') {
+                $q->where('faculty_id', $authenticatedUser->faculty_id);
+            }
+        })
+        ->where(function ($q) use ($query) {
+            $q->where('assignment_name', 'LIKE', "%$query%")
+            ->orWhere('assignment_description', 'LIKE', "%$query%");
+        })
+        ->get()
+        ->toArray();
+        
   
         
   
