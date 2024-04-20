@@ -9,7 +9,7 @@ import { Link } from '@inertiajs/react';
 import EditAssignmentModal from '@/Components/AdminComponents/EditAssignmentModal';
 
 
-export default function AssignmentDetails({ auth, assignment }) {
+export default function AssignmentDetails({ auth, assignment, notifications }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -22,6 +22,7 @@ export default function AssignmentDetails({ auth, assignment }) {
   return (
     <AdminLayout
       user={auth}
+      notifications={notifications}
       header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Assignment Details</h2>}
     >
       <section className="bg-white dark:bg-gray-900 shadow-lg">

@@ -22,6 +22,7 @@ use App\Models\Students;
 use App\Models\User;
 use App\Models\Banned;
 use App\Models\Grades;
+use App\Models\Notifications;
 use App\Models\LoginAttempts;
 use App\Models\Attendance;
 use App\Models\AssignmentStudents;
@@ -347,7 +348,8 @@ public function showStudentsForParent($parent_id)
 public function viewStudentDetails($student_id) {
     try {
         $currentYear = now()->format('Y');
-      
+        $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
+
         $assignmentStudentIDs = AssignmentStudents::where('student_id', $student_id)
         ->pluck('assignment_student_id');
 
@@ -370,7 +372,14 @@ public function viewStudentDetails($student_id) {
         ->pluck('assignment_student_id');
         
         
-        return Inertia::render('Student', ['auth' => Auth::guard('faculty')->user(), 'student' => $student, 'assignments'=>$assignments, 'overall_average_grade' => $overallAverageGrade]);
+        return Inertia::render('Student', [
+            'auth' => Auth::guard('faculty')->user(),
+            'student' => $student,
+            'assignments' => $assignments,
+            'overall_average_grade' => $overallAverageGrade,
+            'notifications' => $notifications
+        ]);
+
     } catch (ModelNotFoundException $e) {
         return redirect('faculty/dash');
     }

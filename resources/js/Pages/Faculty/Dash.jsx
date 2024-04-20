@@ -6,18 +6,17 @@ import ParentsTable from '@/Components/AdminComponents/ParentsTable';
 import MyStudentsTable from '@/Components/AdminComponents/MyStudentsTable';
 import MyAttendanceTable from '@/Components/AdminComponents/MyAttendanceTable';
 import Cards from '@/Components/AdminComponents/Cards';
-export default function Dash({ auth, facultyCount, studentsCount, parentsCount}) {
-  // Check if auth object is defined before accessing its properties
-  const userName = auth && auth.faculty ? auth.faculty.name : 'Guest';
+export default function Dash({ auth, notifications, facultyCount, studentsCount, parentsCount }) {
 
+  // const userName = auth && auth.faculty ? auth.faculty.name : 'Guest';
   return (
     <AdminLayout
       user={auth.faculty}
+      notifications={notifications}
       header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Faculty Dashboard</h2>}
     >
       <div className="py-12">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
          
           {auth.faculty && (
           (auth.faculty.role === 'Admin') && (

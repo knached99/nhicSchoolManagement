@@ -14,10 +14,10 @@ import ImportStudentsModal from '@/Components/AdminComponents/ImportStudentsModa
 import SideBar from '@/Components/AdminComponents/SideBar';
 import Zoom from '@mui/material/Zoom';
 
-export default function AdminLayout({ user, header, children }) {
+export default function AdminLayout({ user, notifications, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const wallpaperPicPath = "http://localhost:8000/storage/wallpaper_pics";
-    
+
     const backgroundStyle = user.wallpaper_pic
     ? {
         backgroundImage: `url(${wallpaperPicPath}/${user.wallpaper_pic})`,
@@ -36,7 +36,7 @@ export default function AdminLayout({ user, header, children }) {
         <div className="min-h-screen bg-gray-100 dark:bg-slate-900" style={backgroundStyle}>
 
             
-            <SideBar auth={user}/>
+            <SideBar auth={user} notifications={notifications}/>
 
             <main>{children}</main>
         </div>

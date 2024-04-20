@@ -11,6 +11,7 @@ use App\Models\AssignmentAnswers;
 use App\Models\AssignmentStudents;
 use App\Models\Students; 
 use App\Models\Grades;
+use App\Models\Notifications;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\InsufficientStudentsException; 
@@ -20,8 +21,11 @@ use Illuminate\Support\Facades\Validator;
 class AssignmentsController extends Controller
 {
     public function myAssignments(){
+        $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
+
         return Inertia::render('Faculty/Assignments',[
             'auth'=> Auth::guard('faculty')->user(),
+            'notifications'=>$notifications
         ]);
     }
 
@@ -37,10 +41,12 @@ class AssignmentsController extends Controller
     }
     public function assignmentDetails($assignment_id){
         try {
+            $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
             $assignment = Assignments::with(['students'])->findOrFail($assignment_id);
             return Inertia::render('Faculty/AssignmentDetails', [
                 'auth' => Auth::guard('faculty')->user(),
-                'assignment' => $assignment
+                'assignment' => $assignment,
+                'notifications'=>$notifications
             ]);
         } catch (ModelNotFoundException $error) {
             \Log::error(['Model Exception Thrown: ', $error->getMessage()]);
@@ -51,6 +57,7 @@ class AssignmentsController extends Controller
     public function studentAssignment($student_id, $assignment_id){
         $student = Students::where('student_id', $student_id)->first();
         $assignment = AssignmentStudents::with(['assignment'])->where('student_id', $student_id)->where('assignment_id', $assignment_id)->first();
+        $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
         $answer = AssignmentAnswers::where('student_id', $student_id)->where('assignment_id', $assignment_id)->first();
   
@@ -62,6 +69,7 @@ class AssignmentsController extends Controller
             'assignment' => $assignment, 
             'answer' => $answer ?? null,
             'grade' => $grade ?? null,
+            'notifications'=>$notifications
         ]);
     }
     

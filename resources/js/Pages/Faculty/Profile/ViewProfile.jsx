@@ -47,7 +47,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-export default function ViewProfile({auth, user, students, bannedDetails, clientIP, assignmentsCount, studentWithHighestAverage, highestAverage}) {
+export default function ViewProfile({auth, notifications, user, students, bannedDetails, clientIP, assignmentsCount, studentWithHighestAverage, highestAverage}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -254,6 +254,7 @@ const handleBanCloseError = () => {
     <>
       <AdminLayout
         user={auth}
+        notifications={notifications}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">{user.name}'s Profile Page</h2>}
       >
     <div className="container mx-auto py-8" >

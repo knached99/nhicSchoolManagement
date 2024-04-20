@@ -7,7 +7,7 @@ import { Button } from 'primereact/button';
 import { Dropdown } from 'primereact/dropdown';
 import Avatar from '@mui/material/Avatar';
 
-const FormBuilder = ({ auth }) => {
+const FormBuilder = ({ auth, notifications }) => {
     const [forms, setForms] = useState([]);
     const [newFormName, setNewFormName] = useState('');
     const [newFieldName, setNewFieldName] = useState('');
@@ -147,6 +147,7 @@ const FormBuilder = ({ auth }) => {
     return (
         <AdminLayout
             user={auth}
+            notifications={notifications}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Faculty Dashboard</h2>}
         >
             <div className="flex justify-center">

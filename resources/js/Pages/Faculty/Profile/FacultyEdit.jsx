@@ -7,10 +7,11 @@ import { Head, Link } from '@inertiajs/react';
 import TwoFactorSetup from './Partials/TwoFactorSetup';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 
-export default function FacultyEdit({ auth }) {
+export default function FacultyEdit({ auth, notifications }) {
     return (
         <AdminLayout
             user={auth.faculty}
+            notifications={notifications}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>}
         >
             <Head title="Profile" />

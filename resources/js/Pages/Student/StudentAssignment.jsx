@@ -118,7 +118,7 @@ export default function StudentAssignment({ auth, student, assignment,  answer, 
                            <>
   {answer ? (
     <>
-      <p className="mt-3 mb-3 text-purple-500 text-pretty dark:text-purple-400 text-lg">{answer.assignment_answer}</p>
+      <p className="mt-3 mb-3 font-semibold italic text-slate-800 text-pretty dark:text-slate-200 text-lg">{answer.assignment_answer}</p>
       {answer && <p className="dark:text-slate-300">Submitted On: {new Date(answer.created_at).toLocaleString()}</p>}
       {!grade ? (
         <p className="dark:text-orange-400 text-orange-700 font-bold mt-3">Pending Grading</p>

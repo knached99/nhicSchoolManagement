@@ -6,6 +6,7 @@ import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
 import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -38,6 +39,8 @@ import ApplicationLogo from '../ApplicationLogo';
 import Avatar from '@mui/material/Avatar';
 import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined';
 import DynamicFormOutlinedIcon from '@mui/icons-material/DynamicFormOutlined';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import DeviceHubOutlinedIcon from '@mui/icons-material/DeviceHubOutlined';
 
 const drawerWidth = 240;
 
@@ -88,12 +91,13 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function SideBar({auth}) {
+export default function SideBar({auth, notifications}) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const profilePicPath = "http://localhost:8000/storage/profile_pics"; 
+  
 
   useEffect(() => {
     // Check if the system is in dark mode
@@ -143,6 +147,26 @@ export default function SideBar({auth}) {
   }
   
 
+  const massDeleteNotifications = async () => {
+
+    try {
+      console.log('Clicked on button...');
+        const response = await axios.delete(`/massDeleteNotifications/`);
+        console.log('RESPONSE:' , response);
+
+        if (response.data.success) {
+            console.log('Notifications deleted successfully');
+            window.location.reload();
+        } else {
+            console.warn('Failed to delete notifications:', response.data.errors || 'Unknown reason');
+            alert('Unable to delete notifications, something went wrong.');
+        }
+    } catch (error) {
+        console.error('Error deleting notifications:', error);
+        alert('Cannot delete notifications. Something went wrong.');
+    }
+};
+
   return (
     <Box sx={{ display: 'flex'}}>
       <CssBaseline />
@@ -177,6 +201,52 @@ export default function SideBar({auth}) {
   </div>
 
   <div className="flex items-center">
+      {/*Notifications*/}
+      <Dropdown>
+    <Dropdown.Trigger>
+    <span className="inline-flex rounded-md m-3 hover:cursor-pointer">
+      
+    <sup class="absolute inline-flex items-center justify-center w-6 h-6 text-lg font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -end-2 dark:border-gray-900 m-2 p-2">{notifications ? notifications.length : 0}</sup>
+      <NotificationsNoneOutlinedIcon style={{fontSize: 35}}/>
+    </span>
+    <Dropdown.Content>
+    <div className="overflow-y-scroll">
+    {notifications && 
+     <button className="m-3 text-red-700 dark:text-red-500 hover:underline" onClick={()=>massDeleteNotifications()}>
+     Mark all as read 
+   </button>
+    }
+   
+
+   {notifications && (
+    <div className="notifications-container" style={{ maxHeight: '300px', overflowY: 'scroll' }}>
+        {notifications.map((notification, index) => {
+            // Parse the JSON data from the `data` field
+            const data = JSON.parse(notification.data);
+        
+            // Now we extract the specified fields
+            const link = data.link;
+            const notificationTitle = data.notificationTitle;
+            // const notificationType = data.notificationType;
+
+            // Rendering out the notifications as Links
+            return (
+                <div className="notification-item hover:bg-slate-300">
+                    {/* Link to view the notification */}
+                    <Link href={link}>
+                        <h3 className="text-black m-2">{notificationTitle}</h3>
+                    </Link>
+                </div>
+            );
+        })}
+    </div>
+)}
+
+            </div>
+    </Dropdown.Content>
+    </Dropdown.Trigger>
+    </Dropdown>
+    
     {auth.role === 'Admin' && (
       <>
         <div className="mr-3 inline-block">
@@ -185,6 +255,9 @@ export default function SideBar({auth}) {
         <CreateFacultyModal />
       </>
     )}
+
+
+
     <Dropdown>
       <Dropdown.Trigger>
       <span className="inline-flex rounded-md m-3 hover:cursor-pointer">

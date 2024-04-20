@@ -17,7 +17,7 @@ import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
 
 
-export default function Parent({auth, parent, studentWithHighestAverage, highestAverage}) {
+export default function Parent({auth, notifications, parent, studentWithHighestAverage, highestAverage}) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -96,6 +96,7 @@ useEffect(() => {
     <>
      <AdminLayout
             user={auth}
+            notifications={notifications}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight dark:text-white">{parent.name}'s profile</h2>}
         >
     <Head title={`${parent.name}'s Info`} />

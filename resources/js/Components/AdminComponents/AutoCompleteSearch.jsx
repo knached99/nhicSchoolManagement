@@ -58,16 +58,28 @@ const AutoCompleteSearch = ({ auth }) => {
   };
   
 
-
   const handleItemClick = (item) => {
-    if (item.faculty_id) {
-      viewFacultyDetails(item.faculty_id);
-    } else if (item.user_id) {
-      viewUserDetails(item.user_id);
-    } else if (item.student_id) {
-      viewStudentDetails(item.student_id);
+    // mapping between item types and the corresponding handling functions
+    const handlers = {
+        assignment_id: viewAssignmentDetails,
+        faculty_id: viewFacultyDetails,
+        user_id: viewUserDetails,
+        student_id: viewStudentDetails,
+    };
+
+    // Iterating over the keys in the handlers object
+    for (const key in handlers) {
+        // Check if the current key exists in the item object
+        if (item[key]) {
+            // Call the corresponding function with the item key value
+            handlers[key](item[key]);
+            break;
+        }
     }
-  };
+};
+
+
+
 
   const viewFacultyDetails = (user_id) => {
     if (auth.faculty_id !== user_id) {
@@ -84,6 +96,11 @@ const AutoCompleteSearch = ({ auth }) => {
   const viewStudentDetails = (student_id) => {
     window.location.href = `/student/${student_id}/view`;
   };
+
+  const viewAssignmentDetails = (assignment_id) => {
+    window.location.href = `/faculty/assignmentDetails/${assignment_id}/`;
+};
+
 
   const stringToColor = (string) => {
     let hash = 0;
@@ -149,6 +166,13 @@ const AutoCompleteSearch = ({ auth }) => {
         </div>
       </div>
     )}
+
+    {item.assignment_id && (
+      <div>
+          <span>Assignment: {item.assignment_name}</span>
+          <span>{item.assignment_description}</span>
+      </div>
+  )}
   </div>
   )}
 />

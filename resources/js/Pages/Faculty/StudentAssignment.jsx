@@ -23,7 +23,7 @@ import * as Yup from 'yup';
 
 import Box from '@mui/material/Box';
 
-export default function StudentAssignment({ auth, student, assignment, answer, grade }) {
+export default function StudentAssignment({ auth, student, assignment, answer, grade, notifications }) {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
@@ -101,6 +101,7 @@ const isPastDue = currentDate > dueDate;
     return (
         <AdminLayout
             user={auth}
+            notifications={notifications}
             header={<h2 className="font-medium text-xl text-gray-800 leading-tight text-start">Assignment Details</h2>}
         >
             <section className="bg-white dark:bg-gray-900 shadow-lg">
@@ -126,7 +127,7 @@ const isPastDue = currentDate > dueDate;
                          <div className="block">
                            <h1 className="font-medium text-2xl mt-3 dark:text-slate-300 text-black">Answer:</h1>  
                            
-                             <p className="mt-3 mb-3 text-purple-500 text-pretty dark:text-purple-400 text-lg">
+                             <p className="mt-3 mb-3 font-semibold italic text-slate-800 text-pretty dark:text-slate-200 text-lg">
                             {isPastDue && !answer ? (
                             <p>Assignment is past due, student did not submit assignment.</p>
                             ) : !answer ? (

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Form;
 use App\Models\Faculty;
 use App\Models\Field;
+use App\Models\Notifications;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
@@ -20,7 +21,9 @@ class DynamicFormBuilder extends Controller
 {
     public function builderUI()
     { 
-        return Inertia::render('Faculty/FormBuilder', ['auth'=>Auth::guard('faculty')->user()]);
+        $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
+
+        return Inertia::render('Faculty/FormBuilder', ['auth'=>Auth::guard('faculty')->user(), 'notifications'=>$notifications]);
     }
 
     public function getForms(){

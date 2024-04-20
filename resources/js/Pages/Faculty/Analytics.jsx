@@ -4,7 +4,7 @@ import PieChart from '@/Components/AdminComponents/PieChart';
 import AdminLayout from '@/Layouts/AdminLayouts/AdminLayout';
 import StorageInformation from '@/Components/AdminComponents/StorageInformation.';
 
-export default function Analytics({ auth, facultyData, studentsData, parentsData, totalSize, logsSize, wallpaperSize, profilePicsSize, storageLeft, totalFiles, logFiles, wallpaperFiles, profileFiles }) {
+export default function Analytics({ auth, notifications, facultyData, studentsData, parentsData, totalSize, logsSize, wallpaperSize, profilePicsSize, storageLeft, totalFiles, logFiles, wallpaperFiles, profileFiles }) {
     // const facultiesData = [100];
     // const studentsData = [200];
     // const parentsData = [450];
@@ -12,6 +12,7 @@ export default function Analytics({ auth, facultyData, studentsData, parentsData
     return (
         <AdminLayout
             user={auth}
+            notifications={notifications}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Analytics</h2>}
         >
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">

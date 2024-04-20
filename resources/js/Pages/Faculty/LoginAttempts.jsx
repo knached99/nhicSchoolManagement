@@ -11,7 +11,7 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import IconButton from '@mui/material/IconButton';
 
 
-export default function LoginAttempts({ auth, attempts }) {
+export default function LoginAttempts({ auth, attempts, notifications }) {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [errorOpen, setErrorOpen] = useState(true);
@@ -100,6 +100,7 @@ export default function LoginAttempts({ auth, attempts }) {
   return (
     <AdminLayout
     user={auth}
+    notifications={notifications}
     header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Failed Login Attempts</h2>}
   >
  <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">

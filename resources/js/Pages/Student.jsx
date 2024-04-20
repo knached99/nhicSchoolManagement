@@ -67,7 +67,7 @@ import AttendanceHistory from '@/Components/AdminComponents/AttendanceHistory';
 import AssignmentsTable from '@/Components/AdminComponents/AssignmentsTable';
 import AdminGradeChart from '@/Components/AdminComponents/AdminGradeChart';
 
-export default function Student({auth, student, assignments, overall_average_grade}) {
+export default function Student({auth, student, notifications, assignments, overall_average_grade}) {
     const [error, setError] = useState(null);
     const [teachers, setTeachers] = useState([]);
     const [parents, setParents] = useState([]);
@@ -362,6 +362,7 @@ export default function Student({auth, student, assignments, overall_average_gra
       <Head title="Unauthorized"/>
        <AdminLayout
         user={auth}
+        notifications={notifications}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">Not Authorized</h2>}
       >
        <h1 className="text-center font-normal text-2xl dark:text-white"> You are not authorized to view this page. This student is not assigned to you. </h1>
@@ -375,6 +376,7 @@ export default function Student({auth, student, assignments, overall_average_gra
     <>
       <AdminLayout
         user={auth}
+        notifications={notifications}
         header={<h2 classNameName="font-semibold text-xl text-gray-800 leading-tight">{student.first_name} {student.last_name}'s Profile Page</h2>}
       >
     <div className="container mx-auto py-8" >

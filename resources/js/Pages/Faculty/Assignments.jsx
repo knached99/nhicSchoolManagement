@@ -27,7 +27,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import Tooltip from '@mui/material/Tooltip';
 
 
-export default function Assignments({auth}) {
+export default function Assignments({auth, notifications}) {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
@@ -141,6 +141,7 @@ const deleteAssignment = async (assignment_id) => {
   return (
     <AdminLayout
     user={auth}
+    notifications={notifications}
     header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">My Assignments</h2>}
     >
 

@@ -5,10 +5,17 @@ use Inertia\Inertia;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Notification;
+
 use App\Models\Students; 
 use App\Models\Grades;
 use App\Models\AssignmentStudents;
 use App\Models\AssignmentAnswers;
+use App\Models\Faculty;
+use App\Models\Assignments;
+
+use App\Notifications\HomeworkSubmitted;
+
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
@@ -145,7 +152,7 @@ class UserDashboard extends Controller
 
     }
 
-    public function submitAssignment(Request $request, $student_id, $assignment_id){
+    public function submitAssignment(Request $request, $student_id, $assignment_id,){
         $validate = Validator::make($request->only('assignment_answer'), [
             'assignment_answer' => 'required'
         ]);
@@ -167,6 +174,11 @@ class UserDashboard extends Controller
         
 
         AssignmentAnswers::create($data);
+        $assignment = Assignments::where('assignment_id', $assignment_id)->first();
+
+        $teacher = Faculty::where('faculty_id', $assignment->faculty_id)->first();
+        $teacher->notify(new HomeworkSubmitted($assignment_id, $assignment->assignment_name, $student_id, $teacher->faculty_id));
+        
         return response()->json(['success' => 'You have successfully submitted your assignment']);
     }
     

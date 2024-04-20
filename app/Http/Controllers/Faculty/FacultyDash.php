@@ -26,6 +26,7 @@ use App\Models\Attendance;
 use App\Models\Assignments;
 use App\Models\Grades;
 use App\Models\AssignmentStudents; 
+use App\Models\Notifications;
 
 use Carbon\Carbon;
 
@@ -48,23 +49,55 @@ class FacultyDash extends Controller
         $studentsCount = Students::count();
         $parentsCount = User::count();
         $user = Auth::guard('faculty')->user();
-
+        $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [$user->faculty_id])->get();
+    
+        // Directly pass `notifications` as a top-level prop alongside other props
         return Inertia::render('Faculty/Dash', [
-            'auth' => function () use ($facultyCount, $studentsCount, $parentsCount) {
-                return [
-                    'faculty' => auth('faculty')->user(),
-                    'facultyCount' => $facultyCount,
-                    'studentsCount' => $studentsCount,
-                    'parentsCount' => $parentsCount,
-                ];
-            },
+            'auth' => [
+                'faculty' => $user,
+            ],
+            'facultyCount' => $facultyCount,
+            'studentsCount' => $studentsCount,
+            'parentsCount' => $parentsCount,
+            'notifications' => $notifications, // Passing the `notifications` directly
         ]);
     }
+
+    public function massDeleteNotifications()
+    {
+    
+        try {
+            $user = auth('faculty')->user();
+    
+            if (!$user) {
+                throw new \Exception('User not found');
+            }
+    
+            // We need to access the notifications relationship
+            // and delete each notification individually
+            $user->notifications->each(function ($notification) {
+                $notification->delete();
+            });
+    
+            return response()->json(['success' => 'Notifications deleted successfully']);
+        } catch (\Exception $e) {
+            \Log::error('Failed to delete notifications because: ' . $e->getMessage());
+            return response()->json(['errors' => 'Failed to delete notifications']);
+        }
+    }
+    
+    
+    
+    
     
     public function failedLoginAttempts(){
         try{
+            $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
+
             if(Auth::guard('faculty')->user()->role !== 'Admin'){
-                return redirect('faculty/dash');
+                return redirect('faculty/dash', [
+                    'notifications'=>$notifications
+                ]);
             }
             
         $attempts = LoginAttempts::all();
@@ -108,71 +141,39 @@ class FacultyDash extends Controller
         $parentCount = User::count();
         $parentData[] = $parentCount;
     
-        // $facultyMembers = Faculty::whereYear('created_at', $currentYear)
-        //     ->get()
-        //     ->groupBy(function ($date) {
-        //         return Carbon::parse($date->created_at)->format('m');
-        //     });
-    
-        // foreach ($facultyMembers as $month => $users) {
-        //     // Count users for each month
-        //     $facultyData[] = count($users);
-        // }
-    
-        // $students = Students::whereYear('created_at', $currentYear)
-        //     ->get()
-        //     ->groupBy(function ($date) {
-        //         return Carbon::parse($date->created_at)->format('m');
-        //     });
-    
-        // foreach ($students as $month => $users) {
-        //     // Count users for each month
-        //     $studentData[] = count($users);
-        // }
-    
-        // $parents = User::whereYear('created_at', $currentYear)
-        //     ->get()
-        //     ->groupBy(function ($date) {
-        //         return Carbon::parse($date->created_at)->format('m');
-        //     });
-    
-        // foreach ($parents as $month => $users) {
-        //     // Count users for each month
-        //     $parentData[] = count($users);
-        // }
-    
-$storage = $this->calculateStorageUsed(); // Calculates Storage Usage
-$filesCount = $this->countFilesInDirectories(); // Calculates number of files within 3 folders
-$storageLeft = $this->calculateStorageLeft(); // Calculates the amount of storage left 
 
-// Storage Usage 
-$logsSize = isset($storage['logs']) ? $storage['logs'] : 0;
-$wallpaperSize = isset($storage['wallpaper']) ? $storage['wallpaper'] : 0;
-$profilePicsSize = isset($storage['profile']) ? $storage['profile'] : 0;
-$totalSize = isset($storage['total']) ? $storage['total'] : 0;
+        $storage = $this->calculateStorageUsed(); // Calculates Storage Usage
+        $filesCount = $this->countFilesInDirectories(); // Calculates number of files within 3 folders
+        $storageLeft = $this->calculateStorageLeft(); // Calculates the amount of storage left 
 
-// file counts 
-$totalFiles = isset($filesCount['total']) ? $filesCount['total'] : 0;
-$logFiles = isset($filesCount['logs']) ? $filesCount['logs'] : 0;
-$wallpaperFiles = isset($filesCount['wallpaper']) ? $filesCount['wallpaper'] : 0;
-$profileFiles = isset($filesCount['profile']) ? $filesCount['profile'] : 0;
+        // Storage Usage 
+        $logsSize = isset($storage['logs']) ? $storage['logs'] : 0;
+        $wallpaperSize = isset($storage['wallpaper']) ? $storage['wallpaper'] : 0;
+        $profilePicsSize = isset($storage['profile']) ? $storage['profile'] : 0;
+        $totalSize = isset($storage['total']) ? $storage['total'] : 0;
+
+        // file counts 
+        $totalFiles = isset($filesCount['total']) ? $filesCount['total'] : 0;
+        $logFiles = isset($filesCount['logs']) ? $filesCount['logs'] : 0;
+        $wallpaperFiles = isset($filesCount['wallpaper']) ? $filesCount['wallpaper'] : 0;
+        $profileFiles = isset($filesCount['profile']) ? $filesCount['profile'] : 0;
 
 
-return Inertia::render('Faculty/Analytics', [
-    'auth'=>Auth::guard('faculty')->user(),
-    'facultyData'=>$facultyData, 
-    'studentsData'=>$studentData, 
-    'parentsData'=>$parentData, 
-    'totalSize'=>$totalSize, 
-    'logsSize'=>$logsSize, 
-    'wallpaperSize'=>$wallpaperSize,
-    'profilePicsSize'=>$profilePicsSize,
-    'storageLeft' =>$storageLeft,
-    'totalFiles' =>$totalFiles, 
-    'logFiles' =>$logFiles, 
-    'wallpaperFiles'=>$wallpaperFiles, 
-    'profileFiles'=>$profileFiles 
-]);
+        return Inertia::render('Faculty/Analytics', [
+            'auth'=>Auth::guard('faculty')->user(),
+            'facultyData'=>$facultyData, 
+            'studentsData'=>$studentData, 
+            'parentsData'=>$parentData, 
+            'totalSize'=>$totalSize, 
+            'logsSize'=>$logsSize, 
+            'wallpaperSize'=>$wallpaperSize,
+            'profilePicsSize'=>$profilePicsSize,
+            'storageLeft' =>$storageLeft,
+            'totalFiles' =>$totalFiles, 
+            'logFiles' =>$logFiles, 
+            'wallpaperFiles'=>$wallpaperFiles, 
+            'profileFiles'=>$profileFiles 
+        ]);
 
 
     }
@@ -181,10 +182,14 @@ return Inertia::render('Faculty/Analytics', [
 
     public function loadProfile()
     {
+        $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [Auth::guard('faculty')->id()])->get();
+        
         return Inertia::render('Faculty/Profile/FacultyEdit', [
-            'auth' => function () {
-                return ['faculty' => auth('faculty')->user()];
-            },
+            'auth' => [
+                'faculty' => auth('faculty')->user(),
+            ],
+
+            'notifications' => $notifications, // Passing the `notifications` directly
         ]);
     }
 
@@ -347,6 +352,7 @@ public function fetchTeachers(){
 
 public function viewParentDetails($parent_id){
     $parent = User::with(['students'])->where('user_id', $parent_id)->first();
+    $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
     if (!$parent) {
         return redirect()->route('faculty.dash');
@@ -360,7 +366,8 @@ public function viewParentDetails($parent_id){
         'auth' => $auth, 
         'parent' => $parent,
         'studentWithHighestAverage' => $studentWithHighestAverage,
-        'highestAverage' => $highestAverage
+        'highestAverage' => $highestAverage,
+        'notifications' => $notifications
     ]);
 }
 
@@ -402,9 +409,12 @@ public function viewFacultyUser($faculty_id){
     $decryptedIP = isset($user->client_ip) ? Crypt::decryptString($user->client_ip) : null;
     list($studentWithHighestAverage, $highestAverage) = $this->studentWithHighestGradeAverage($faculty_id);
 
+    $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
-return Inertia::render('Faculty/Profile/ViewProfile',
- ['auth'=> Auth::guard('faculty')->user(),
+
+return Inertia::render('Faculty/Profile/ViewProfile', [
+
+['auth'=> Auth::guard('faculty')->user(),
   'user'=>$user,
    'students'=>$students,
    'bannedDetails'=>$bannedDetails, 
@@ -412,7 +422,10 @@ return Inertia::render('Faculty/Profile/ViewProfile',
    'assignmentsCount'=>$assignmentsCount,
    'studentWithHighestAverage'=>$studentWithHighestAverage,
    'highestAverage'=>$highestAverage
-]);
+],
+'notificatios' =>$notifications
+]
+);
   }
   catch(ModelNotFoundException $e) {
     return redirect('faculty/dash');
@@ -555,6 +568,12 @@ public function submitAttendance(Request $request, $faculty_id)
             ->select('student_id', 'first_name', 'last_name', 'date_of_birth', 'address', 'street_address_2', 'city', 'state', 'zip', 'level', 'gender', 'allergies_or_special_needs', 'emergency_contact_person', 'emergency_contact_hospital')
             ->get()
             ->toArray();
+
+            $assignmentsResults = Assignments::where('faculty_id', $authenticatedUser->faculty_id)
+            ->where('assignment_name', 'LIKE', "%$query%")
+            ->orWhere('assignment_description', 'LIKE', "%$query%")
+            ->get()
+            ->toArray();
         }
   
         
@@ -572,7 +591,7 @@ public function submitAttendance(Request $request, $faculty_id)
               ->toArray();
   
           // Merge the results and remove duplicates
-          $results = array_unique(array_merge($facultyResults, $studentResults, $userResults), SORT_REGULAR);
+          $results = array_unique(array_merge($facultyResults, $studentResults, $userResults, $assignmentsResults), SORT_REGULAR);
 
           return response()->json(['results' => $results]);
         
