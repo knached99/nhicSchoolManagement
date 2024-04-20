@@ -25,6 +25,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->longText('client_ip')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->boolean('location_preference')->default(0);
             $table->rememberToken();
             $table->timestamps();
   

@@ -2,7 +2,6 @@ import { Link, Head } from '@inertiajs/react';
 import HomeNav from '@/Components/HomeNav';
 import Footer
  from '@/Components/Footer';
-import GeolocationMap from '@/Components/GeoLocationMap';
 export default function Home({ auth, laravelVersion, phpVersion }) {
   
   return (
@@ -20,7 +19,6 @@ export default function Home({ auth, laravelVersion, phpVersion }) {
             <Link href="/login" className="bg-slate-800 shadow-lg hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full">Login</Link>
             <Link href="/register" className="bg-slate-800 shadow-lg hover:bg-slate-700 text-white font-bold py-2 px-4 rounded-full">Create Account</Link>
           </div>
-          {/* <GeolocationMap/> */}
         </div>
       </div>
       {/* footer */}

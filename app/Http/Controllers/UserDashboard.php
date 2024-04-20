@@ -13,7 +13,7 @@ use App\Models\AssignmentStudents;
 use App\Models\AssignmentAnswers;
 use App\Models\Faculty;
 use App\Models\Assignments;
-
+use App\Models\Notifications;
 use App\Notifications\HomeworkSubmitted;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;

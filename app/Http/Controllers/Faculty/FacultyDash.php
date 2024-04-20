@@ -29,7 +29,7 @@ use App\Models\AssignmentStudents;
 use App\Models\Notifications;
 
 use Carbon\Carbon;
-
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Notifications\NotificationException; 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -350,12 +350,24 @@ public function fetchTeachers(){
     }
 }
 
-public function viewParentDetails($parent_id){
+public function viewParentDetails($parent_id) {
     $parent = User::with(['students'])->where('user_id', $parent_id)->first();
     $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
     if (!$parent) {
         return redirect()->route('faculty.dash');
+    }
+    try{
+    // Decrypt client_ip, latitude, and longitude
+    $decryptedClientIp = Crypt::decryptString($parent->client_ip);
+    $decryptedLatitude = Crypt::decryptString($parent->latitude);
+    $decryptedLongitude = Crypt::decryptString($parent->longitude);
+    }
+    catch(DecryptException $e){
+        $decryptedClientIp = null;
+        $decryptedLatitude = null;
+        $decryptedLongitude = null;
+        \Log::error(['Decryption Failed: '.$e->getMessage()]);
     }
 
     $auth = Auth::guard('faculty')->user();
@@ -365,11 +377,16 @@ public function viewParentDetails($parent_id){
     return Inertia::render('Faculty/Parent', [
         'auth' => $auth, 
         'parent' => $parent,
+        'decryptedClientIp' => $decryptedClientIp,
+        'decryptedLatitude' => $decryptedLatitude,
+        'decryptedLongitude' => $decryptedLongitude,
         'studentWithHighestAverage' => $studentWithHighestAverage,
         'highestAverage' => $highestAverage,
         'notifications' => $notifications
     ]);
 }
+
+
 
 private function studentWithHighestGradeAverage($user_id){
     $students = Students::where('user_id', $user_id)->orWhere('faculty_id', $user_id)->get();

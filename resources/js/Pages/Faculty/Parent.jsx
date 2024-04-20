@@ -15,9 +15,9 @@ import Fade from '@mui/material/Fade';
 import Backdrop from '@mui/material/Backdrop';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import StudentsTable from '@/Components/AdminComponents/StudentsTable';
+import GeolocationMap from '@/Components/GeoLocationMap';
 
-
-export default function Parent({auth, notifications, parent, studentWithHighestAverage, highestAverage}) {
+export default function Parent({auth, notifications, parent, studentWithHighestAverage, highestAverage, decryptedClientIp, decryptedLatitude, decryptedLongitude}) {
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -135,7 +135,10 @@ useEffect(() => {
                             </li>
                             
                         </ul>
-
+                        {decryptedLatitude && decryptedLongitude &&  
+                        <GeolocationMap latitude={decryptedLatitude} longitude={decryptedLongitude}/>
+                        }
+                        
                     </div>
                
                    
@@ -193,7 +196,7 @@ useEffect(() => {
   </div>
   </>
 }
-  
+ 
 </div>
 {/* <StudentAssignments studentID={student.student_id} /> */}
 <StudentsTable auth={auth} path={`/showStudentsForParent/${parent.user_id}`}/>

@@ -242,6 +242,7 @@ export default function CreateFacultyModal() {
             value={values.name}
             style={{
                 width: '100%',
+                marginBottom: 10,
                 ...(touched.name && errors.name && { border: '1px solid #ef4444' }),
             }}
             onChange={handleChange} 
@@ -258,6 +259,7 @@ export default function CreateFacultyModal() {
             value={values.email}
             style={{
                 width: '100%',
+                marginBottom: 10,
                 ...(touched.email && errors.email && { border: '1px solid #ef4444' }),
             }}
             onChange={handleChange} 
@@ -276,6 +278,7 @@ export default function CreateFacultyModal() {
              value={values.phone} 
              style={{
                 width: '100%',
+                marginBottom: 10,
                 ...(touched.phone && errors.phone && { border: '1px solid #ef4444' }),
             }}
              onChange={handleChange} 
@@ -289,7 +292,7 @@ export default function CreateFacultyModal() {
             {/* <Field as={TextField} onChange={handleChange} value={values.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone" placeholder="Phone Number" fullWidth style={{margin: 5}} /> */}
             <select name="role" 
             id="role"
-            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded border-slate-300 p-3"
+            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded border-slate-300 p-3 mb-5"
             value={values.role}
             onChange={handleChange}
             >
