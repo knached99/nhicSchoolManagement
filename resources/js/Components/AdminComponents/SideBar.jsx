@@ -211,7 +211,7 @@ export default function SideBar({auth, notifications}) {
     </span>
     <Dropdown.Content>
     <div className="overflow-y-scroll">
-    {notifications && 
+    {notifications && notifications.length > 0 && 
      <button className="m-3 text-red-700 dark:text-red-500 hover:underline" onClick={()=>massDeleteNotifications()}>
      Mark all as read 
    </button>

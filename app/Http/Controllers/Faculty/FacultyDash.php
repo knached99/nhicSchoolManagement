@@ -157,6 +157,7 @@ class FacultyDash extends Controller
         $logFiles = isset($filesCount['logs']) ? $filesCount['logs'] : 0;
         $wallpaperFiles = isset($filesCount['wallpaper']) ? $filesCount['wallpaper'] : 0;
         $profileFiles = isset($filesCount['profile']) ? $filesCount['profile'] : 0;
+        $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
 
         return Inertia::render('Faculty/Analytics', [
@@ -172,7 +173,8 @@ class FacultyDash extends Controller
             'totalFiles' =>$totalFiles, 
             'logFiles' =>$logFiles, 
             'wallpaperFiles'=>$wallpaperFiles, 
-            'profileFiles'=>$profileFiles 
+            'profileFiles'=>$profileFiles,
+            'notifications'=>$notifications
         ]);
 
 

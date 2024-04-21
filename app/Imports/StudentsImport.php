@@ -8,33 +8,61 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithProgressBar;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Events\ImportFailed;
 use App\Notifications\ImportHasFailedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 
-class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, WithUpserts{
+class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, WithUpserts, WithProgressBar{
 
- 
+    use Importable;
 
     public function model(array $row)
     {
-        $role = Auth::guard('faculty')->user()->role;
-        $permissions = collect(Auth::guard('faculty')->user()->permissions);
-        $dateOfBirth = null;
-    
-        // Check if the date column is set and not empty
-        if (isset($row[3]) && !empty($row[3])) {
-            try {
-                $dateOfBirth = Carbon::parse($row[3])->format('Y-m-d');
-            } catch (\Exception $e) {
-              
-                \Log::error("Import Exception: {$e->getMessage()}");
+        // $role = Auth::guard('faculty')->user()->role;
+        // $permissions = collect(Auth::guard('faculty')->user()->permissions);
+
+            $formats = ['m/d/Y', 'd/m/Y', 'Y-m-d', 'm-d-Y']; // Add other formats as necessary
+            foreach ($formats as $format) {
+                try {
+                    $dateOfBirth = Carbon::createFromFormat($format, trim($row[3]));
+                    break; // If parsing succeeds, break out of the loop
+                } catch (\Exception $e) {
+                    // Continue trying the next format
+                }
             }
-        }
+            
+     
+        
+        // Check if the date column is set and not empty
+        // if (isset($row[3]) && !empty($row[3])) {
+            // try {
+            //     $dateOfBirth = null;
+            //     if (isset($row[3]) && !empty($row[3])) {
+            //         $formats = ['Y-m-d', 'd/m/Y', 'm/d/Y']; // Add other formats as needed
+            //         foreach ($formats as $format) {
+            //             try {
+            //                 $dateOfBirth = Carbon::createFromFormat($format, $row[3]);
+            //                 break; // If parsing is successful, break out of the loop
+            //             } catch (\Exception $e) {
+            //                 // Continue trying the next format
+            //             }
+            //         }
+            //         if ($dateOfBirth === null) {
+            //             throw new \Exception('Failed to parse date of birth in all available formats.');
+            //         }
+            //     }
+            // } catch (\Exception $e) {
+            //     \Log::error("Failed to parse date of birth: {$e->getMessage()}");
+            //     $dateOfBirth = null;
+            // }
+            
+            
     
         return Students::firstOrNew(
             [
@@ -55,7 +83,7 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
                 'emergency_contact_person' => $row[11] ?? null, 
                 'emergency_contact_hospital' => $row[12] ?? null, 
                 'user_id' => $row[13] ?? null, 
-                'faculty_id' => $role === 'Teacher' ? Auth::guard('faculty')->id() : null
+                // 'faculty_id' => $role === 'Teacher' ? Auth::guard('faculty')->id() : null
             ]
         );
         

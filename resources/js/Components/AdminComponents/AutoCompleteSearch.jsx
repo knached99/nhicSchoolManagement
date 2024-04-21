@@ -170,7 +170,7 @@ const AutoCompleteSearch = ({ auth }) => {
     {item.assignment_id && (
       <div>
           <span className="mr-1">Assignment: {item.assignment_name}, </span>
-          <span>{item.assignment_description}</span>
+          <span className="truncate">{item.assignment_description}</span>
       </div>
   )}
   </div>
