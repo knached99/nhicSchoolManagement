@@ -152,7 +152,7 @@ const FormBuilder = ({ auth, notifications }) => {
         >
             <div className="flex justify-center">
                 <div className="w-full max-w-md">
-                    <h1 className="font-black text-xl mb-5 text-center">Form Builder</h1>
+                    <h1 className="font-black dark:text-white text-xl mb-5 text-center">Form Builder</h1>
                     {error && <div style={{ color: 'red' }}>{error}</div>}
                     {success && <div style={{ color: 'green' }}>{success}</div>}
                     <div className="shadow-md p-4 bg-white dark:bg-slate-800 m-5">

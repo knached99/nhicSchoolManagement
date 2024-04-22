@@ -96,15 +96,15 @@ const GeolocationMap = ({ latitude, longitude }) => {
           <p className="dark:text-white">Getting hospitals...</p>
         </>
       )}
-      <h1 className="text-slate-200 text-xl font-bold mt-4 mb-3 border-b-2 border-slate-100">Hospitals Nearby</h1>
+      <h1 className="text-slate-600 dark:text-slate-200 text-xl font-bold mt-4 mb-3 border-b-2 border-slate-100">Hospitals Nearby</h1>
       {!latitude && !longitude && <p className="dark:text-orange-500 text-orange-600">Cannot determine location</p>}
-      {error && <p className="text-slate-100 text-xl font-bold">Error: {error}</p>}
+      {error && <p className="text-slate-600 dark:text-slate-200 text-xl font-bold">Error: {error}</p>}
       {!loadingData && !error && latitude && longitude && data && (
         <div className="max-h-60 overflow-auto">
           <ul className="divide-y divide-gray-200 dark:divide-slate-600">
             {data.map((hospital, index) => (
               <li key={index} className="py-4">
-                <p className="text-slate-300 text-xl">{hospital.display_name}</p>
+                <p className="text-slate-600 dark:text-slate-200 text-xl">{hospital.display_name}</p>
               </li>
             ))}
           </ul>
