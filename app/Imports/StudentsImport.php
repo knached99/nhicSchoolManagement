@@ -26,16 +26,22 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
     {
         // $role = Auth::guard('faculty')->user()->role;
         // $permissions = collect(Auth::guard('faculty')->user()->permissions);
-
+        if(isset($row[3]) && !empty($row[3])){
             $formats = ['m/d/Y', 'd/m/Y', 'Y-m-d', 'm-d-Y']; // Add other formats as necessary
             foreach ($formats as $format) {
                 try {
+                   
                     $dateOfBirth = Carbon::createFromFormat($format, trim($row[3]));
                     break; // If parsing succeeds, break out of the loop
                 } catch (\Exception $e) {
                     // Continue trying the next format
                 }
             }
+        }
+        else{
+            // throw new \Exception('Failed to parse row, no data set');
+            \Log::error('Missing data for date_of_birth column, must enter data manually');
+        }
             
      
         

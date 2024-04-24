@@ -21,6 +21,10 @@ use Illuminate\Support\Facades\Validator;
 class AssignmentsController extends Controller
 {
     public function myAssignments(){
+        if(Auth::guard('faculty')->user()->role !== 'Teacher'){
+            return redirect()->route('faculty.dash');
+        }
+        
         $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
         return Inertia::render('Faculty/Assignments',[
@@ -42,7 +46,7 @@ class AssignmentsController extends Controller
     public function assignmentDetails($assignment_id){
         try {
             $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
-            $assignment = Assignments::with(['students'])->findOrFail($assignment_id);
+            $assignment = Assignments::with(['students', 'admin'])->findOrFail($assignment_id);
             return Inertia::render('Faculty/AssignmentDetails', [
                 'auth' => Auth::guard('faculty')->user(),
                 'assignment' => $assignment,

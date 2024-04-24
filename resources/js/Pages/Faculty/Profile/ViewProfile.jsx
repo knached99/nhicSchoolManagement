@@ -840,7 +840,7 @@ const handleBanCloseError = () => {
         </h5>
         <p class="block font-sans text-base antialiased font-light leading-relaxed text-inherit">
         <p className="font-bold text-2xl text-center">
-          {highestAverage}
+          {highestAverage} / 100
       </p>
 
         </p>

@@ -117,40 +117,40 @@ class FacultyAuth extends Controller
          
             // Get Approximate Location 
 
-        $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
+        // $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
 
-        // Fetch the JSON response using file_get_contents
-        $response = file_get_contents($url);
+        // // Fetch the JSON response using file_get_contents
+        // $response = file_get_contents($url);
 
-        if ($response === false) {
-            // Error fetching data
-            $data = null;
-        } else {
-            // Parse JSON response
-            $locationData = json_decode($response);
-            $latitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->latitude) ? $locationData->coordinates->latitude : '';
-            $longitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->longitude) ? $locationData->coordinates->longitude : '';
-            // Build data array
-            $data = [
-                'email_used' => $request->email,
-                'client_ip' => Crypt::encryptString($request->ip()),
-                'user_agent' => $userAgent,
-                'location_information' => $locationData ?
-                    ($locationData->city ?? '') . ', ' .
-                    ($locationData->region ?? '') . ', ' .
-                    ($locationData->area_code ?? '') . ', ' .
-                    ($locationData->country ?? '') . ', ' .
-                    ($locationData->timezone ?? '') . ', '. 
-                    ($latitude ?? '') . ', ' . 
-                    ($longitude ?? '') : 
-                    null,
-                    'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
-                    'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r",
-            ];
-        }
+        // if ($response === false) {
+        //     // Error fetching data
+        //     $data = null;
+        // } else {
+        //     // Parse JSON response
+        //     $locationData = json_decode($response);
+        //     $latitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->latitude) ? $locationData->coordinates->latitude : '';
+        //     $longitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->longitude) ? $locationData->coordinates->longitude : '';
+        //     // Build data array
+        //     $data = [
+        //         'email_used' => $request->email,
+        //         'client_ip' => Crypt::encryptString($request->ip()),
+        //         'user_agent' => $userAgent,
+        //         'location_information' => $locationData ?
+        //             ($locationData->city ?? '') . ', ' .
+        //             ($locationData->region ?? '') . ', ' .
+        //             ($locationData->area_code ?? '') . ', ' .
+        //             ($locationData->country ?? '') . ', ' .
+        //             ($locationData->timezone ?? '') . ', '. 
+        //             ($latitude ?? '') . ', ' . 
+        //             ($longitude ?? '') : 
+        //             null,
+        //             'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
+        //             'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r",
+        //     ];
+        // }
 
 
-            LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
+        //     LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
 
             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
         }

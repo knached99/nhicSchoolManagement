@@ -60,6 +60,21 @@ const GeolocationMap = ({ latitude, longitude }) => {
     }
   }
   
+// Calculate offsets for the bounding box
+const latitudeOffset = 0.005; // Small offset for latitude
+const longitudeOffset = 0.005; // Small offset for longitude
+
+// Calculate the bounding box using valid format
+const minLongitude = longitude - longitudeOffset;
+const maxLongitude = longitude + longitudeOffset;
+const minLatitude = latitude - latitudeOffset;
+const maxLatitude = latitude + latitudeOffset;
+
+const bbox = `${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}`;
+
+// Set zoom level (try adjusting this value if needed)
+const zoomLevel = 16;
+
 
   useEffect (()=>{
     const fetchData = async () => {
@@ -86,8 +101,26 @@ const GeolocationMap = ({ latitude, longitude }) => {
         <p className="dark:text-white">Detecting Address...</p>
         </>
       )}
+{
+  address && (
+    <>
+      {/* If you want to display the detected address, use a separate <p> element */}
+      <p className="dark:text-white mt-4 mb-5 font-normal text-lg">Detected Address: {address.display_name}</p>
+      
+      {/* Render the iframe outside any <p> elements */}
+      {/* <div>
+      <iframe
+  width="600"
+  height="450"
+  style={{ border: '0' }}
+  src={`https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&zoom=${zoomLevel}`}
+  allowFullScreen
+/>
+      </div> */}
+    </>
+  )
+}
 
-    {address && <p className="dark:text-white mt-4 mb-5 font-normal text-lg">Detected Address: {address.display_name}</p>}
 
 
       {loadingData && (

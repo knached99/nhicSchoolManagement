@@ -63,6 +63,19 @@ const FormBuilder = ({ auth, notifications }) => {
                 setIsLoading(false);
             });
     };
+
+    const deleteForm = (formID) => {
+
+        axios.delete(`/faculty/forms/delete/${formID}`)
+        .then(response => {
+            setSuccess(response.data.success);
+        })
+        .catch(error => {
+            setError(error.message || 'Unable to delete form ', error);
+        })
+
+
+    }   
     
     
     const addField = (formId) => {
@@ -153,8 +166,8 @@ const FormBuilder = ({ auth, notifications }) => {
             <div className="flex justify-center">
                 <div className="w-full max-w-md">
                     <h1 className="font-black dark:text-white text-xl mb-5 text-center">Form Builder</h1>
-                    {error && <div style={{ color: 'red' }}>{error}</div>}
-                    {success && <div style={{ color: 'green' }}>{success}</div>}
+                    {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
+                    {success && <div className="text-emerald-500 dark:text-emerald-400">{success}</div>}
                     <div className="shadow-md p-4 bg-white dark:bg-slate-800 m-5">
                         <InputText
                             className="mr-3"
@@ -171,10 +184,14 @@ const FormBuilder = ({ auth, notifications }) => {
                     ) : (
                         <>
                             {forms.map(form => (
+                                
                                 <div className="my-4 shadow-lg p-4 bg-white dark:bg-slate-800 dark:text-white rounded-md dark:slate-800" key={form.id}>
+                                      {form.faculty.faculty_id === auth.faculty_id && (
+                                      <button onClick={()=>deleteForm(form.form_id)} className="text-white mt-3 mr-3 float-start text-start inline-block bg-red-500 dark:bg-red-400 p-1 rounded-sm border-none">Delete Form</button>
+                                )}
                                 <a className="float-start inline-block mr-6 underline text-blue-500 dark:text-blue-400" href={`/faculty/form/${form.form_id}/editForm`}>View Form</a>
-
-                                <h3 className="font-bold text-xl mb-5">{form.name}</h3>
+                                
+                                <h3 className="font-bold text-xl text-center mb-5">{form.name}</h3>
 
                                <div className="mb-3 inline-block">
                                 <h3 className="text-xl mb-3">Created By: </h3>
@@ -191,6 +208,7 @@ const FormBuilder = ({ auth, notifications }) => {
                                     </>
                                     )}
                                     </div>
+                                  
 
                                     <div>
                                   
@@ -205,6 +223,8 @@ const FormBuilder = ({ auth, notifications }) => {
                                             ))}
                                         </ul>
                                     )}
+
+                                    
                                 </div>
                             ))}
                         </>

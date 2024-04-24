@@ -146,6 +146,7 @@ Route::get('/faculty/forms', [DynamicFormBuilder::class, 'builderUI'])->name('fo
 Route::get('/faculty/getForms', [DynamicFormBuilder::class, 'getForms'])->name('getForms');
 Route::get('/faculty/form/{form_id}/editForm', [DynamicFormBuilder::class, 'viewForm'])->name('faculty.form.editForm');
 Route::post('/faculty/forms', [DynamicFormBuilder::class, 'buildForm'])->name('forms.buildForm');
+Route::delete('/faculty/forms/delete/{form_id}', [DynamicFormBuilder::class, 'deleteForm'])->name('faculty.forms.delete');
 Route::get('/forms/{form}', [DynamicFormBuilder::class, 'show'])->name('forms.show');
 Route::put('/forms/{form}', [DynamicFormBuilder::class, 'update'])->name('forms.update');
 Route::delete('/forms/{form}', [DynamicFormBuilder::class, 'destroy'])->name('forms.destroy');

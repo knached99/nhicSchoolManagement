@@ -21,6 +21,10 @@ class DynamicFormBuilder extends Controller
 {
     public function builderUI()
     { 
+        if(Auth::guard('faculty')->user()->role !== 'Admin'){
+            return redirect()->route('faculty.dash');
+        }
+
         $notifications = Notifications::whereRaw("JSON_EXTRACT(data, '$[0].id') = ?", [auth('faculty')->id()])->get();
 
         return Inertia::render('Faculty/FormBuilder', ['auth'=>Auth::guard('faculty')->user(), 'notifications'=>$notifications]);
@@ -89,17 +93,26 @@ class DynamicFormBuilder extends Controller
         }
     }
     
+
+    public function deleteForm($formID){
+       try{
+        Form::destroy($formID);
+        return response()->json(['success'=>'Form with ID: '. $formID. ' along with associated content deleted successfully!']);
+    
+    }
+
+       catch(\Exception $e){
+        \Log::error('Error deleting form: '.$e->getMessage());
+        return response()->json(['error'=>'Unable to delete with ID: '. $formID. '. Something went wrong!']);
+
+       }
+    }
     
     
 
     public function addField(Request $request, Faculty $faculty, Form $form)
     {   
 
-        // Log raw request data for debugging purposes
-        \Log::info('Request Data: ' . json_encode($request->all()));
-        \Log::info('Faculty ID: '.Auth::guard('faculty')->id());
-    
-        // You may want to implement additional authorization logic here to ensure the faculty has permission to add fields to this form.
         $fieldId = Str::uuid();
     
         $validatedData = $request->validate([
@@ -111,8 +124,7 @@ class DynamicFormBuilder extends Controller
     
         // Check if the form belongs to the specified faculty
         if ($form->faculty_id !== Auth::guard('faculty')->id()) {
-            \Log::info('Form Faculty ID: '.$form->faculty_id);
-            \Log::info('Faculty ID: '. Auth::guard('faculty')->id());
+
             return response()->json(['error' => 'This form does not belong to the specified faculty.'], 403);
         }
     
@@ -141,6 +153,11 @@ class DynamicFormBuilder extends Controller
     }
     
     public function viewform($form_id){
+
+        if(Auth::guard('faculty')->user()->role !== 'Admin'){
+            return redirect()->route('faculty.dash');
+        }
+        
         $form = Form::with(['fields', 'faculty'])->where('form_id', $form_id)->firstOrFail();
         
         $successMessage = session('success');
