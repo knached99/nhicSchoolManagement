@@ -26,69 +26,56 @@ class StudentsImport implements ToModel, WithBatchInserts, WithChunkReading, Wit
     {
         // $role = Auth::guard('faculty')->user()->role;
         // $permissions = collect(Auth::guard('faculty')->user()->permissions);
-        if(isset($row[3]) && !empty($row[3])){
-            $formats = ['m/d/Y', 'd/m/Y', 'Y-m-d', 'm-d-Y']; // Add other formats as necessary
-            foreach ($formats as $format) {
-                try {
-                   
-                    $dateOfBirth = Carbon::createFromFormat($format, trim($row[3]));
-                    break; // If parsing succeeds, break out of the loop
-                } catch (\Exception $e) {
-                    // Continue trying the next format
-                }
+
+        if (isset($row[3]) && !empty($row[3])) {
+            try {
+                
+                // Normalize date to mm/dd/yyyy format
+                $dateOfBirth = Carbon::createFromFormat('m/d/Y', trim($row[3]));
+            } catch (\Exception $e) {
+
+                \Log::error('Failed to parse date_of_birth: ' . $e->getMessage() . ' in row: ' . json_encode($row));
+                return null; // Skip this row due to invalid date
             }
+        } else {
+            \Log::error('Missing data for date_of_birth column in row: ' . json_encode($row));
+            return null; // Skip this row due to missing date
         }
-        else{
-            // throw new \Exception('Failed to parse row, no data set');
-            \Log::error('Missing data for date_of_birth column, must enter data manually');
-        }
-            
-     
-        
-        // Check if the date column is set and not empty
-        // if (isset($row[3]) && !empty($row[3])) {
-            // try {
-            //     $dateOfBirth = null;
-            //     if (isset($row[3]) && !empty($row[3])) {
-            //         $formats = ['Y-m-d', 'd/m/Y', 'm/d/Y']; // Add other formats as needed
-            //         foreach ($formats as $format) {
-            //             try {
-            //                 $dateOfBirth = Carbon::createFromFormat($format, $row[3]);
-            //                 break; // If parsing is successful, break out of the loop
-            //             } catch (\Exception $e) {
-            //                 // Continue trying the next format
-            //             }
-            //         }
-            //         if ($dateOfBirth === null) {
-            //             throw new \Exception('Failed to parse date of birth in all available formats.');
-            //         }
-            //     }
-            // } catch (\Exception $e) {
-            //     \Log::error("Failed to parse date of birth: {$e->getMessage()}");
-            //     $dateOfBirth = null;
-            // }
-            
+
+       
             
     
         return Students::firstOrNew(
             [
-                'student_id'=>Str::uuid(),
-                'first_name' => $row[0] ?? null,
-                'last_name' => $row[1] ?? null,
+                'student_id'=> $row[0] ?? null,     //Str::uuid() -> Uncomment this out for production
+                'first_name' => $row[1] ?? null,
+                'last_name' => $row[2] ?? null,
             ],
-            [
-                'gender' => $row[2] ?? null,
-                'date_of_birth' => $dateOfBirth ?? null,
+            [   'date_of_birth' => $dateOfBirth ?? null,
                 'address' => $row[4] ?? null,
                 'street_address_2' => $row[5] ?? null,
                 'city' => $row[6] ?? null,
                 'state' => $row[7] ?? null,
                 'zip' => $row[8] ?? null,
-                'grade' => $row[9] ?? null,
-                'allergies_or_special_needs' => $row[10] ?? null,
-                'emergency_contact_person' => $row[11] ?? null, 
-                'emergency_contact_hospital' => $row[12] ?? null, 
-                'user_id' => $row[13] ?? null, 
+                'level' => $row[9] ?? null,
+                'gender' => $row[10] ?? null,
+                'allergies_or_special_needs' => $row[11] ?? null,
+                'emergency_contact_person' => $row[12] ?? null,
+                'emergency_contact_hospital' => $row[13] ?? null
+
+                // Below is the correct order for production 
+                // 'gender' => $row[2] ?? null,
+                // 'date_of_birth' => $dateOfBirth ?? null,
+                // 'address' => $row[4] ?? null,
+                // 'street_address_2' => $row[5] ?? null,
+                // 'city' => $row[6] ?? null,
+                // 'state' => $row[7] ?? null,
+                // 'zip' => $row[8] ?? null,
+                // 'grade' => $row[9] ?? null,
+                // 'allergies_or_special_needs' => $row[10] ?? null,
+                // 'emergency_contact_person' => $row[11] ?? null, 
+                // 'emergency_contact_hospital' => $row[12] ?? null, 
+                // 'user_id' => $row[13] ?? null, 
                 // 'faculty_id' => $role === 'Teacher' ? Auth::guard('faculty')->id() : null
             ]
         );

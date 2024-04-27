@@ -105,6 +105,7 @@ export default function LoginAttempts({ auth, attempts, notifications }) {
   >
  <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 m-5">
   <h1 className="text-center mb-5 font-black text-2xl dark:text-white">Failed Login Attempts</h1>
+  <p className="text-center mb-3 mt-3 font-medium text-xl dark:text-white">If a user fails to enter their correct login credentials from an unknown IP address, it will be logged here</p>
    {error && (
                         <Box   style={{
                           padding: '1rem',

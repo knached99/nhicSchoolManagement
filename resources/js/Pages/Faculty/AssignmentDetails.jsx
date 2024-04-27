@@ -102,7 +102,7 @@ export default function AssignmentDetails({ auth, assignment, notifications }) {
 
             <Tooltip title="Delete Assignment" arrow>
             <IconButton onClick={() => deleteAssignment(assignment.assignment_id)}>
-            <DeleteOutlineOutlinedIcon className="hover:bg-red-500" style={{ fontSize: 40, marginRight: 10, color: isDarkMode ? '#fff' : 'inherit' }} />
+            <DeleteOutlineOutlinedIcon style={{ fontSize: 40, marginRight: 10, color: isDarkMode ? '#fff' : 'inherit' }} />
            </IconButton>
            </Tooltip>
            </>

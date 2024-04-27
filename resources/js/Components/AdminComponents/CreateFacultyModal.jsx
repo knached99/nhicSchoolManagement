@@ -24,9 +24,6 @@ import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Zoom from '@mui/material/Zoom';
 
 import { InputText } from 'primereact/inputtext';
-        
-
-        
 
 
 export default function CreateFacultyModal() {
@@ -130,6 +127,7 @@ export default function CreateFacultyModal() {
       };
 
   
+
 
   return (
     <div className="inline-flex items-center px-1 pt-1 text-lg font-medium leading-5 transition duration-150 ease-in-out focus:outline-none">
@@ -289,10 +287,11 @@ export default function CreateFacultyModal() {
              </InputMask>
              <span className="text-red-500">{touched.phone && errors.phone}</span>
 
-            {/* <Field as={TextField} onChange={handleChange} value={values.phone} helperText={touched.phone && errors.phone} error={touched.phone && Boolean(errors.phone)} onBlur={handleBlur} id="phone" name="phone" placeholder="Phone Number" fullWidth style={{margin: 5}} /> */}
+
+
             <select name="role" 
             id="role"
-            className="dark:bg-slate-900 dark:text-white w-full mt-3 mb-3 rounded border-slate-300 p-3 mb-5"
+            className="dark:bg-slate-900 dark:text-white w-full mt-3 hover:border-blue-500 rounded border-slate-300 p-3 mb-5"
             value={values.role}
             onChange={handleChange}
             >
@@ -300,25 +299,7 @@ export default function CreateFacultyModal() {
             <option value="Teacher">Teacher</option>
             <option value="Assistant Teacher">Assistant Teacher</option>
             </select>
-          {/* <FormControl sx={{ m: 1, width: '100%', }}>
-            <InputLabel id="role">Select Role</InputLabel>
-            <Select
-                labelId="role"
-                id="role"
-                name="role"
-                value={values.role}
-                onChange={handleChange} >
-                <MenuItem value="">
-                    <em>Make a Selection</em>
-                </MenuItem>
-                <MenuItem value="Admin">Admin</MenuItem>
-                <MenuItem value="Teacher">Teacher</MenuItem>
-                <MenuItem value="Asisstant Teacher">Asisstant Teacher</MenuItem>
-            </Select>
-             {touched.role && errors.role && (
-                <FormHelperText>{errors.role}</FormHelperText>
-             )}
-        </FormControl> */}
+
 
         {/* <Button onClick={handleTogglePermissionsMenu} variant="outlined" style={{ margin: '10px 0' }}>
         {openPermissionsMenu ? 'Hide Permissions' : 'Show Permissions (For Teachers Only)'}

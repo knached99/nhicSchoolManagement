@@ -231,10 +231,10 @@ export default function SideBar({auth, notifications}) {
 
             // Rendering out the notifications as Links
             return (
-                <div className="notification-item hover:bg-slate-300">
+                <div className="notification-item hover:bg-blue-500">
                     {/* Link to view the notification */}
                     <Link href={link}>
-                        <h3 className="text-black m-2">{notificationTitle}</h3>
+                        <h3 className="text-black hover:text-white m-2">{notificationTitle}</h3>
                     </Link>
                 </div>
             );

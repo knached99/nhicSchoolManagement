@@ -133,7 +133,7 @@ const AutoCompleteSearch = ({ auth }) => {
   completeMethod={autoCompleteSearch}
   onChange={(e) => setSearchQuery(e.target.value)}
   field="search"
-  placeholder="Search for people..."
+  placeholder="Search for anything.."
  
 
   itemTemplate={(item) => (

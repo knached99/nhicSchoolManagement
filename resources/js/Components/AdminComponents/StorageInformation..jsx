@@ -43,7 +43,7 @@ export default function StorageInformation({ totalSize, logsSize, wallpaperSize,
         <div className="card">
             <h6 className="dark:text-slate-200 text-xl">Storage Usage (Approximate)</h6>
             <div className="m-3">
-                <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-100">
+                <ul class="max-w-md space-y-1 text-black list-disc list-inside dark:text-gray-100">
                     <li><StorageIcon /> Total Storage Used: {totalSize}</li>
                     <li><StorageIcon /> Available Free Space: {storageLeft}</li>
                     <li><ForestOutlinedIcon /> Logs Storage Used: {logsSize}</li>

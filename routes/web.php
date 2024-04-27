@@ -40,6 +40,12 @@ Route::middleware(['web','banMiddleware'])->group(function () {
     });
 });
 
+Route::get('/auth/two-factor-challenge', function () {
+    $message = session('message');
+    return Inertia::render('Auth/TwoFactorChallenge', [
+        'message'=>$message
+    ]);
+});
 
 
 Route::get('/dashboard', function () {

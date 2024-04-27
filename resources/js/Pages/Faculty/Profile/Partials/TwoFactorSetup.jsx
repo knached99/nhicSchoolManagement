@@ -132,8 +132,8 @@ const TwoFactorSetup = ({auth}) => {
       </> // <-- Closing tag for the fragment
     ) : null}   
     <div className="bg-slate-100 dark:bg-slate-700 w-50 m-3 p-3 rounded">
-    <h5 className="dark:text-white mb-3 mt-3 text-xl font-medium">Recovery Codes:</h5>
-    <p className="dark:text-white mt-3 mb-3 text-lg text-wrap">Store these recovery codes in a secure password manager. They can be used to 
+    <h5 className="dark:text-white mb-3 mt-3 text-xl font-bold">Recovery Codes:</h5>
+    <p className="dark:text-white mt-3 mb-3 text-lg text-wrap font-medium">Store these recovery codes in a secure password manager. They can be used to 
     recover access to your account if your two-step verification device is lost
     </p>
     {recoveryCodes.map((code, index) => (

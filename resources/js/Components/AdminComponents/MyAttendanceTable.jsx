@@ -309,21 +309,19 @@ renderCell: (params) => (
                             </Box>
                         )}
 
-        <Paper sx={{width: '100%'}}>
-     
-      <DataGrid
-        sx={{backgroundColor: backgroundColor,
-        color: isDarkMode ? '#fff' : 'inherit'
-        }}
-        rows={rows}
-        columns={columns}
-        loading={loading}
-        autoHeight
-        pageSize={10}
-         pagination
-        rowsPerPageOptions={[5, 10, 20]}
-      />
-      </Paper>
+<Paper sx={{ width: '100%', backgroundColor}}>
+            <div style={{ height: 400, width: '100%' }}>
+              
+              <DataGrid
+              style={{color: isDarkMode ? '#fff' : 'inherit'}}
+                rows={rows}
+                columns={columns}
+                pageSize={5}
+                pagination
+                rowsPerPageOptions={[5, 10, 20]}
+              />
+            </div>
+          </Paper>
       {!isAttendanceTaken  && rows.every(row => row.faculty_id === auth) ? (
     <Button
     variant="contained"
