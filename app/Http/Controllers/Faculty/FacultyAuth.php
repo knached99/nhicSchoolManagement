@@ -41,19 +41,153 @@ class FacultyAuth extends Controller
     }
 
 
-//     public function authenticate(Request $request)
-// {
-//     try {
+    public function authenticate(Request $request)
+{
+    try {
 
-//         $ip = Faculty::where('email', $request->email)->value('client_ip');
-//         if($ip){
-//             $decryptedIP = Crypt::decryptString($ip);
-//         }
-//         else{
-//             $decryptedIP = null;
-//         }
+        $ip = Faculty::where('email', $request->email)->value('client_ip');
+        if($ip){
+            $decryptedIP = Crypt::decryptString($ip);
+        }
+        else{
+            $decryptedIP = null;
+        }
       
         
+        $request->validate([
+            'email' => 'required|email|exists:faculty',
+            'password' => 'required',
+        ], [
+            'email.required' => 'Your email is required',
+            'email.email' => 'You\'ve entered an invalid email',
+            'email.exists' => 'An account for that email does not exist',
+            'password.required' => 'Your password is required',
+        ]);
+
+        $user = Faculty::where('email', $request->email)->first();
+        $banned = $this->isBanned($user->faculty_id);
+
+        if ($banned !== null) {
+            return redirect()->back()->withErrors(['auth_error'=>$banned]);
+        }
+       
+        $rateLimitKey = $request->ip();
+        $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
+
+        // Set the lockout duration to 10 minutes (600 seconds)
+        $lockoutDuration = 600;
+
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+            $minutesRemaining = ceil(RateLimiter::availableIn($rateLimitKey) / 60);
+            return $this->rateLimitExceededResponse($minutesRemaining);
+        }
+
+        $rememberMe = $request->input('remember');
+
+        if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
+            
+            $user = Auth::guard('faculty')->user();
+
+            // if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
+            //      return redirect('auth/two-factor-challenge');
+            
+            //   }
+
+            if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
+                // Return an Inertia redirect to the two-factor challenge page
+                return Inertia::location('/auth/two-factor-challenge');
+            }
+
+           
+            if ($rememberMe) {
+                $encryptedEmail = Crypt::encryptString($request->input('email'));
+                $encryptedPassword = Crypt::encryptString($request->input('password'));
+
+                // Use secure cookies instead of regular cookies
+                cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
+                cookie()->queue('password', $encryptedPassword, 60);
+            }
+
+
+            if ($ip !== null) {
+
+                if ($decryptedIP !== $request->ip()) {
+
+                    $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+
+                }
+            } else {
+                $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
+            }
+            
+
+            RateLimiter::clear($rateLimitKey);
+            $request->session()->regenerate();
+            
+            return redirect()->intended(RouteServiceProvider::DASH);
+            
+        } else {
+            RateLimiter::hit($rateLimitKey, $lockoutDuration);
+
+            // If decrypted IP is not equal to current IP, then log failed attempt with location 
+
+            if($decryptedIP !== $request->ip()){
+
+            $userAgent = $request->header('User-Agent');
+
+         
+            // Get Approximate Location 
+
+        $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
+
+        // Fetch the JSON response using file_get_contents
+        $response = file_get_contents($url);
+
+        if ($response === false) {
+            // Error fetching data
+            $data = null;
+        } else {
+            // Parse JSON response
+            $locationData = json_decode($response);
+            $latitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->latitude) ? $locationData->coordinates->latitude : '';
+            $longitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->longitude) ? $locationData->coordinates->longitude : '';
+            // Build data array
+            $data = [
+                'email_used' => $request->email,
+                'client_ip' => Crypt::encryptString($request->ip()),
+                'user_agent' => $userAgent,
+                'location_information' => $locationData ?
+                    ($locationData->city ?? '') . ', ' .
+                    ($locationData->region ?? '') . ', ' .
+                    ($locationData->area_code ?? '') . ', ' .
+                    ($locationData->country ?? '') . ', ' .
+                    ($locationData->timezone ?? '') . ', '. 
+                    ($latitude ?? '') . ', ' . 
+                    ($longitude ?? '') : 
+                    null,
+                    'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
+                    'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r",
+            ];
+        }
+
+
+            LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
+
+        }
+
+            return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
+        }
+    
+    } catch (ValidationException $e) {
+        return redirect()->back()->withErrors($e->errors())->withInput();
+    } 
+}
+
+
+// public function authenticate(Request $request)
+// {
+//     try {
+//         // Validate the request data
 //         $request->validate([
 //             'email' => 'required|email|exists:faculty',
 //             'password' => 'required',
@@ -64,82 +198,36 @@ class FacultyAuth extends Controller
 //             'password.required' => 'Your password is required',
 //         ]);
 
-//         $user = Faculty::where('email', $request->email)->first();
-//         $banned = $this->isBanned($user->faculty_id);
-
-//         if ($banned !== null) {
-//             return redirect()->back()->withErrors(['auth_error'=>$banned]);
-//         }
-       
-//         $rateLimitKey = $request->ip();
-//         $remainingAttempts = 5 - RateLimiter::attempts($rateLimitKey);
-
-//         // Set the lockout duration to 10 minutes (600 seconds)
-//         $lockoutDuration = 600;
-
-//         if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
-//             $minutesRemaining = ceil(RateLimiter::availableIn($rateLimitKey) / 60);
-//             return $this->rateLimitExceededResponse($minutesRemaining);
-//         }
-
+//         // Attempt to authenticate the user
 //         $rememberMe = $request->input('remember');
-
 //         if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-            
 //             $user = Auth::guard('faculty')->user();
 
-//              // Handle two-factor authentication check
-//              \Log::info('Checking if 2fa is enabled...');
-//             //  \Log::info('2FA Secret: '.$user->two_factor_secret);
-//             //  \Log::info('2FA Confirmed_at'.$user->two_factor_confirmed_at);
-//              if ($user->two_factor_secret && $user->two_factor_confirmed_at !== NULL ) {
-//                 \Log::info('2FA Enabled!');
-//                 Session::flash('message', '2fa code required, please open your authenticator app and enter the 6 digit code below, or enter a recovery token');
-//                 return redirect('/auth/two-factor-challenge');
-            
-//             }
+//            // Here, we check if two-factor authentication is enabled and redirect to the challenge
+//            if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
+//             \Log::info('2FA Enabled!');
+//             \Log::info(Crypt::decryptString($user->two_factor_secret));
+//             \Log::info('Redirecting to Auth/TwoFactorChallenge ....');
+//             return redirect('auth/two-factor-challenge');
+//             \Log::info('Redirect Success!');
 
-           
-//             if ($rememberMe) {
-//                 $encryptedEmail = Crypt::encryptString($request->input('email'));
-//                 $encryptedPassword = Crypt::encryptString($request->input('password'));
-
-//                 // Use secure cookies instead of regular cookies
-//                 cookie()->queue('email', $encryptedEmail, 60); // 60 minutes
-//                 cookie()->queue('password', $encryptedPassword, 60);
-//             }
-
-
-//             if ($ip !== null) {
-
-//                 if ($decryptedIP !== $request->ip()) {
-
-//                     $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
-
-//                 }
-//             } else {
-//                 $saveIP = Faculty::where('email', $request->email)->update(['client_ip' => Crypt::encryptString($request->ip())]);
-//             }
-            
-
-//             RateLimiter::clear($rateLimitKey);
-//             $request->session()->regenerate();
-            
+//         }
         
-      
 
-//             return redirect()->intended(RouteServiceProvider::DASH);
-            
-//         } else {
-//             RateLimiter::hit($rateLimitKey, $lockoutDuration);
+//             // Update user's IP and set cookies if necessary
+//             $this->updateIpAndSetCookies($request, $user, $rememberMe);
 
-//             // If decrypted IP is not equal to current IP, then log failed attempt with location 
+//             // Clear rate limit and regenerate session
+//             RateLimiter::clear($request->ip());
+//             $request->session()->regenerate();
+//             return redirect()->route('faculty.dash');
+           
+//         }
 
-//             if($decryptedIP !== $request->ip()){
+//         // If authentication fails, handle accordingly
+//         RateLimiter::hit($request->ip(), 600);
+//         $userAgent = $request->header('User-Agent');
 
-//             $userAgent = $request->header('User-Agent');
-
-         
 //             // Get Approximate Location 
 
 //         $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
@@ -172,71 +260,16 @@ class FacultyAuth extends Controller
 //                     'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
 //                     'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r",
 //             ];
-//         }
-
-
-//             LoginAttempts::updateOrCreate(['client_ip' => Crypt::encryptString($request->ip())], $data);
-
-//         }
-
 //             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
+
 //         }
-    
+
 //     } catch (ValidationException $e) {
-//         return redirect()->back()->withErrors($e->errors())->withInput();
-//     } 
+//         \Log::error($e->getMessage());
+//         // Handle validation errors
+//         return response()->json($e->errors(), 422);
+//     }
 // }
-
-
-public function authenticate(Request $request)
-{
-    try {
-        // Validate the request data
-        $request->validate([
-            'email' => 'required|email|exists:faculty',
-            'password' => 'required',
-        ], [
-            'email.required' => 'Your email is required',
-            'email.email' => 'You\'ve entered an invalid email',
-            'email.exists' => 'An account for that email does not exist',
-            'password.required' => 'Your password is required',
-        ]);
-
-        // Attempt to authenticate the user
-        $rememberMe = $request->input('remember');
-        if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-            $user = Auth::guard('faculty')->user();
-
-           // Here, we check if two-factor authentication is enabled and redirect to the challenge
-           if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
-            \Log::info('2FA Enabled!');
-            \Log::info(Crypt::decryptString($user->two_factor_secret));
-            \Log::info('Redirecting to Auth/TwoFactorChallenge ....');
-            return redirect('auth/two-factor-challenge');
-            \Log::info('Redirect Success!');
-
-        }
-        
-
-            // Update user's IP and set cookies if necessary
-            $this->updateIpAndSetCookies($request, $user, rememberMe);
-
-            // Clear rate limit and regenerate session
-            RateLimiter::clear($request->ip());
-            $request->session()->regenerate();
-
-            // Return a 204 HTTP response indicating successful authentication
-            return response()->json([], 204);
-        }
-
-        // If authentication fails, handle accordingly
-        RateLimiter::hit($request->ip(), 600);
-        return $this->handleFailedAuthentication($request);
-    } catch (ValidationException $e) {
-        // Handle validation errors
-        return response()->json($e->errors(), 422);
-    }
-}
 
 
 

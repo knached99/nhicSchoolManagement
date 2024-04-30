@@ -131,11 +131,11 @@ export default function AssignmentDetails({ auth, assignment, notifications }) {
               {new Date(assignment.assignment_due_date).toLocaleString()}</p>
             <h2 className="font-bold text-2xl mb-4 mt-4">Assigned To:</h2>
 
-            <ul className="flex flex-col shadow-lg dark:bg-slate-700 p-4 overflow-y-auto max-h-64 rounded">
+            <ul className="flex flex-col shadow-lg dark:bg-slate-800 p-4 overflow-y-auto max-h-64 rounded">
   {assignment.students ? (
     assignment.students.map((student, index) => (
       <Link  href={`/faculty/studentassignment/${student.student_id}/${assignment.assignment_id}`}>
-      <li key={index} className="border-gray-400 flex flex-row mb-2 justify-start items-center p-2 bg-white dark:bg-slate-500 dark:text-white rounded-md hover:bg-blue-500 hover:dark:bg-blue-40 hover:text-white">
+      <li key={index} className="border-gray-400 flex flex-row mb-2 justify-start items-center p-2 bg-white dark:bg-slate-800 dark:text-white rounded-md hover:bg-blue-500 hover:dark:bg-blue-40 hover:text-white">
         {student.first_name} {student.last_name}
       </li>
       </Link>

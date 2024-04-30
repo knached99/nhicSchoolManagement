@@ -14,7 +14,6 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
 use Inertia\Inertia;
 
-
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -35,7 +34,8 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::twoFactorChallengeView(function () {
-            return Inertia::render('Auth/TwoFactorChallenge');
+            // return Inertia::render('Auth/TwoFactorChallenge');
+            return view('auth.two-factor-challenge');
         });
 
         RateLimiter::for('login', function (Request $request) {

@@ -857,7 +857,7 @@ export default function Student({auth, student, notifications, assignments, over
                     <Box sx={{ width: '100%', maxWidth: 360, bgcolor: backgroundColor }}>
                     <nav aria-label="main mailbox folders">
                       <List>
-
+                      <Link href={`/parent/${student.user.user_id}/view`}>
                       <ListItem disablePadding>
                           <ListItemButton>
                             <ListItemIcon style={{color: isDarkMode ? '#fff' : 'inherit'}}>
@@ -868,6 +868,7 @@ export default function Student({auth, student, notifications, assignments, over
                             <ListItemText primary={student.user.name ? student.user.name : 'N/A'} />
                           </ListItemButton>
                         </ListItem>
+                        </Link>
                         <Divider/>
 
                                     

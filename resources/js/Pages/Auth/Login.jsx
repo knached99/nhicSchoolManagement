@@ -19,12 +19,19 @@ export default function Login({ status }) {
             reset('password');
         };
     }, []);
-
     const submit = (e) => {
         e.preventDefault();
-
-        post(route('login'));
+    
+        // Call the post function and handle the response
+        post(route('login')).then(response => {
+            // Check if the response is successful
+            console.log(response, ' is successful');
+        }).catch(error => {
+            // Handle errors (network issues, etc.)
+            console.error('Error during login:', error);
+        });
     };
+    
 
     return (
         <GuestLayout>
