@@ -83,21 +83,47 @@ class FacultyAuth extends Controller
         }
 
         $rememberMe = $request->input('remember');
-
         if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-            
+    
             $user = Auth::guard('faculty')->user();
-
-            // if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
-            //      return redirect('auth/two-factor-challenge');
+        
+            if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
+    
+                $user = Auth::guard('faculty')->user();
             
-            //   }
-
-            if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
-                // Return an Inertia redirect to the two-factor challenge page
-                return Inertia::location('/auth/two-factor-challenge');
-            }
-
+                if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
+    
+                    $user = Auth::guard('faculty')->user();
+                
+                    // Check if two-factor authentication is required
+                    if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
+                        // Return a JSON response indicating two-factor authentication is required
+                        return response()->json([
+                            'success' => true,
+                            'message' => 'Authentication successful, but two-factor authentication is required.',
+                            'two_factor' => true,
+                            'redirect_url' => route('two-factor.login') // Use the correct route for the two-factor challenge
+                        ]);
+                    }
+                
+                    // Return a JSON response indicating successful authentication without two-factor authentication requirement
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Authentication successful.',
+                        'two_factor' => false
+                    ]);
+                }
+                
+            
+        
+            // Return a JSON response indicating successful authentication without two-factor authentication requirement
+            return response()->json([
+                'success' => true,
+                'message' => 'Authentication successful.',
+                'two_factor' => false
+            ]);
+        
+        
            
             if ($rememberMe) {
                 $encryptedEmail = Crypt::encryptString($request->input('email'));
@@ -184,92 +210,6 @@ class FacultyAuth extends Controller
 }
 
 
-// public function authenticate(Request $request)
-// {
-//     try {
-//         // Validate the request data
-//         $request->validate([
-//             'email' => 'required|email|exists:faculty',
-//             'password' => 'required',
-//         ], [
-//             'email.required' => 'Your email is required',
-//             'email.email' => 'You\'ve entered an invalid email',
-//             'email.exists' => 'An account for that email does not exist',
-//             'password.required' => 'Your password is required',
-//         ]);
-
-//         // Attempt to authenticate the user
-//         $rememberMe = $request->input('remember');
-//         if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-//             $user = Auth::guard('faculty')->user();
-
-//            // Here, we check if two-factor authentication is enabled and redirect to the challenge
-//            if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
-//             \Log::info('2FA Enabled!');
-//             \Log::info(Crypt::decryptString($user->two_factor_secret));
-//             \Log::info('Redirecting to Auth/TwoFactorChallenge ....');
-//             return redirect('auth/two-factor-challenge');
-//             \Log::info('Redirect Success!');
-
-//         }
-        
-
-//             // Update user's IP and set cookies if necessary
-//             $this->updateIpAndSetCookies($request, $user, $rememberMe);
-
-//             // Clear rate limit and regenerate session
-//             RateLimiter::clear($request->ip());
-//             $request->session()->regenerate();
-//             return redirect()->route('faculty.dash');
-           
-//         }
-
-//         // If authentication fails, handle accordingly
-//         RateLimiter::hit($request->ip(), 600);
-//         $userAgent = $request->header('User-Agent');
-
-//             // Get Approximate Location 
-
-//         $url = "https://nordvpn.com/wp-admin/admin-ajax.php?action=get_user_info_data&ip={$request->ip()}";
-
-//         // Fetch the JSON response using file_get_contents
-//         $response = file_get_contents($url);
-
-//         if ($response === false) {
-//             // Error fetching data
-//             $data = null;
-//         } else {
-//             // Parse JSON response
-//             $locationData = json_decode($response);
-//             $latitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->latitude) ? $locationData->coordinates->latitude : '';
-//             $longitude = isset($locationData->coordinates) && is_object($locationData->coordinates) && isset($locationData->coordinates->longitude) ? $locationData->coordinates->longitude : '';
-//             // Build data array
-//             $data = [
-//                 'email_used' => $request->email,
-//                 'client_ip' => Crypt::encryptString($request->ip()),
-//                 'user_agent' => $userAgent,
-//                 'location_information' => $locationData ?
-//                     ($locationData->city ?? '') . ', ' .
-//                     ($locationData->region ?? '') . ', ' .
-//                     ($locationData->area_code ?? '') . ', ' .
-//                     ($locationData->country ?? '') . ', ' .
-//                     ($locationData->timezone ?? '') . ', '. 
-//                     ($latitude ?? '') . ', ' . 
-//                     ($longitude ?? '') : 
-//                     null,
-//                     'google_maps_link'=>"https://www.google.com/maps?q=$latitude,$longitude",
-//                     'google_earth_link'=>"https://earth.google.com/web/@$latitude,$longitude,1000a,41407.87820565d,1y,0h,0t,0r",
-//             ];
-//             return redirect()->back()->withErrors(['auth_error' => 'Your login credentials do not match our records. You have ' . $remainingAttempts . ' attempts remaining before your account gets locked out for 10 minutes']);
-
-//         }
-
-//     } catch (ValidationException $e) {
-//         \Log::error($e->getMessage());
-//         // Handle validation errors
-//         return response()->json($e->errors(), 422);
-//     }
-// }
 
 
 
