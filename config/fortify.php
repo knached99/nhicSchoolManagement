@@ -74,7 +74,8 @@ return [
     |
     */
 
-    'home' => RouteServiceProvider::DASH,
+    // 'home' => RouteServiceProvider::DASH,
+    'home'=>'/faculty/dash', // was originally '/home'
 
     /*
     |--------------------------------------------------------------------------

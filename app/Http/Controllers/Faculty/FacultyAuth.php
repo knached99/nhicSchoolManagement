@@ -83,47 +83,20 @@ class FacultyAuth extends Controller
         }
 
         $rememberMe = $request->input('remember');
+
         if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-    
+            
             $user = Auth::guard('faculty')->user();
-        
-            if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-    
-                $user = Auth::guard('faculty')->user();
-            
-                if (Auth::guard('faculty')->attempt(['email' => $request->input('email'), 'password' => $request->input('password')], $rememberMe)) {
-    
-                    $user = Auth::guard('faculty')->user();
-                
-                    // Check if two-factor authentication is required
-                    if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
-                        // Return a JSON response indicating two-factor authentication is required
-                        return response()->json([
-                            'success' => true,
-                            'message' => 'Authentication successful, but two-factor authentication is required.',
-                            'two_factor' => true,
-                            'redirect_url' => route('two-factor.login') // Use the correct route for the two-factor challenge
-                        ]);
-                    }
-                
-                    // Return a JSON response indicating successful authentication without two-factor authentication requirement
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Authentication successful.',
-                        'two_factor' => false
-                    ]);
-                }
-                
-            
-        
-            // Return a JSON response indicating successful authentication without two-factor authentication requirement
-            return response()->json([
-                'success' => true,
-                'message' => 'Authentication successful.',
-                'two_factor' => false
-            ]);
-        
-        
+
+
+            if ($user->two_factor_secret && $user->two_factor_confirmed_at !== null) {
+                \Log::info(response()->json());
+                \Log::info('User: '.json_encode($user));
+                // Return an Inertia redirect to the two-factor challenge page
+                return redirect('/auth/two-factor-challenge');
+                // return Inertia::location('/auth/two-factor-challenge');
+            }
+
            
             if ($rememberMe) {
                 $encryptedEmail = Crypt::encryptString($request->input('email'));
